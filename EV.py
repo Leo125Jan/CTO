@@ -84,7 +84,7 @@ if __name__ == '__main__':
 					self.target = [Cluster[0]]
 					self.Cluster_Teammate = np.array([1, 0])
 	'''
-	'''
+	
 	L = 8
 	Wi = 8
 	x_range = np.arange(-L/2, L/2, 0.01)
@@ -135,9 +135,9 @@ if __name__ == '__main__':
 	# dist_prob_B = np.exp(-np.divide(np.power(np.subtract(d, range_max), 2).transpose()[0], 2*0.5**2))
 	# persp_prob_B = np.exp(-np.divide(np.power(np.subtract(abs(a), alpha), 2), 2*0.5**2))
 	# JP_Boundary = P0*np.multiply(np.multiply(dist_prob_B, persp_prob_B), In_polygon)
-	print( (1/(np.sqrt(2*np.pi)*0.5))*np.exp(-(abs(a) - alpha)**2/(alpha**2)/(2*0.5**2)) )
+	# print( (1/(np.sqrt(2*np.pi)*0.5))*np.exp(-(abs(a) - alpha)**2/(alpha**2)/(2*0.5**2)) )
 	d = d.transpose()[0]
-	print( (1/(np.sqrt(2*np.pi)*0.5))*np.exp(-((d-0.5*range_max)**2-(0.5*range_max**2))/(0.5*range_max**2)/(2*0.5**2)) )
+	# print( (1/(np.sqrt(2*np.pi)*0.5))*np.exp(-((d-0.5*range_max)**2-(0.5*range_max**2))/(0.5*range_max**2)/(2*0.5**2)) )
 	# JP_Boundary = P_(d, a, In_polygon, P0)
 	JP_Boundary = (1/(np.sqrt(2*np.pi)*1.0))*np.exp(-(abs(a) - alpha)**2/(alpha**2)/(2*1.0**2))*\
 	(1/(np.sqrt(2*np.pi)*1.0))*np.exp(-((d-0.5*range_max)**2-(0.5*range_max**2))/(0.5*range_max**2)/(2*1.0**2))*\
@@ -146,8 +146,8 @@ if __name__ == '__main__':
 				+ np.sum(np.multiply(F2.pdf(W), JP_Boundary))\
 				+ np.sum(np.multiply(F3.pdf(W), JP_Boundary));
 
-	print(HW_Interior)
-	print(HW_Boundary)
+	# print(HW_Interior)
+	# print(HW_Boundary)
 
 	Q = lambda W, d, IoO, P0: P0*np.multiply(np.multiply((np.divide(\
 						np.dot(np.subtract(W, pos), perspective), d) - np.cos(alpha))/(1 - np.cos(alpha)),\
@@ -159,8 +159,18 @@ if __name__ == '__main__':
 	# q_persp = (np.divide(np.dot(np.subtract(W, pos), perspective), d) - np.cos(alpha))/(1 - np.cos(alpha))
 	# q_res = np.divide(np.multiply((range_*cos(alpha) - lambda_*np.subtract(d, range_*cos(alpha))), np.power(d, lambda_)), range_**(lambda_+1))
 	# q_res = np.multiply((range_*np.cos(alpha) - lambda_*(d - range_*np.cos(alpha))),(np.power(d, lambda_)/(range_**(lambda_+1))))
-	SQ = Q(W, d, In_polygon, 0.7)
-	'''
+	# SQ = Q(W, d, In_polygon, 1.0)
 
-	a = [(0, 1), (1, 2)]
-	print(np.delete(a, [0,1]))
+	d = np.linalg.norm(np.subtract(W, pos), axis = 1)
+	d = np.array([d]).transpose()
+	d = d.transpose()[0]
+
+	q_persp = (np.divide(np.dot(np.subtract(W, pos), perspective), d) - np.cos(alpha))\
+			/(1 - np.cos(alpha))
+
+	q_res = np.multiply((range_*np.cos(alpha) - lambda_*(d - range_*np.cos(alpha))),\
+							(np.power(d, lambda_)/(range_**(lambda_+1))))
+
+	Q = np.multiply(q_persp, q_res)
+
+	print(W)

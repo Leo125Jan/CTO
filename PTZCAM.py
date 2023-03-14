@@ -497,8 +497,8 @@ class PTZcon():
 		d = np.array([d]).transpose()
 		d = d.transpose()[0]
 
-		return np.multiply((self.R_max*np.cos(self.alpha) - self.lamb*(d - self.R_max*np.cos(self.alpha))),\
-							(np.power(d, self.lamb)/(self.R_max**(self.lamb+1))))
+		return np.multiply((self.R*np.cos(self.alpha) - self.lamb*(d - self.R*np.cos(self.alpha))),\
+							(np.power(d, self.lamb)/(self.R**(self.lamb+1))))
 
 	def EscapeDensity(self, targets):
 
@@ -573,11 +573,11 @@ class PTZcon():
 
 		for neighbor in self.neighbors:
 
-			quality_map = np.where((quality_map > neighbor.FoV), quality_map, 0)
+			quality_map = np.where((quality_map >= neighbor.FoV), quality_map, 0)
 
 		# self.voronoi = np.array(np.where((quality_map != 0) & (self.FoV != 0)))
 		self.voronoi = np.array(np.where((self.FoV > 0)))
-		self.map_plt = np.array(np.where(quality_map != 0, self.id, 0))
+		self.map_plt = np.array(np.where(quality_map != 0, self.id + 1, 0))
 
 		return
 
