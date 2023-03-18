@@ -7,8 +7,8 @@ import pygame
 import random
 import numpy as np
 from time import sleep, time
-from PTZCAM import PTZcon
-# from PTZcamera import PTZcon
+# from PTZCAM import PTZcon
+from PTZcamera import PTZcon
 from math import cos, acos, sqrt, exp, sin
 from scipy.stats import multivariate_normal
 
@@ -58,7 +58,7 @@ class Visualize():
 
 		pygame.display.update()
 
-	'''
+	
 	def Visualize2D(self, cameras, event_plt, targets):
 
 		map_plt = np.zeros((event_plt.shape)) - 1
@@ -151,8 +151,8 @@ class Visualize():
 		pygame.draw.rect(self.display, (0, 0, 0), (0, 0, map_size[0]/grid_size[0]*self.blockSize, \
                                                         map_size[1]/grid_size[1]*self.blockSize), width = 3)
 		pygame.display.flip()
+	
 	'''
-
 	def Visualize2D(self, cameras, event_plt, targets):
 
 		map_plt = np.zeros(np.shape(event_plt)[0]) - 1
@@ -247,7 +247,8 @@ class Visualize():
 		pygame.display.flip()
 
 		# print(halt)
-
+	'''
+	
 def norm(arr):
 
 	sum = 0
@@ -258,33 +259,33 @@ def norm(arr):
 
 	return sqrt(sum)
 
-# def event_density(event, target, grid_size):
+def event_density(event, target, grid_size):
 
-# 	x = np.arange(event.shape[0])*grid_size[0]
+	x = np.arange(event.shape[0])*grid_size[0]
 
-# 	for y_map in range(0, event.shape[1]):
+	for y_map in range(0, event.shape[1]):
 
-# 	    y = y_map*grid_size[1]
-# 	    density = 0
+	    y = y_map*grid_size[1]
+	    density = 0
 
-# 	    for i in range(len(target)):
+	    for i in range(len(target)):
 
-# 	        density += target[i][2]*np.exp(-target[i][1]*np.linalg.norm(np.array([x,y], dtype=object)\
-# 	                        -np.array((target[i][0][1],target[i][0][0]))))
-# 	    event[:][y_map] = density
-
-# 	return 0 + event
-
-def event_density(event, targets, grid_size, map_size):
-
-	for target in targets:
-
-		F = multivariate_normal([target[0][0], target[0][1]],\
-						[[target[1], 0.0], [0.0, target[1]]])
-		
-		event += F.pdf(W)
+	        density += target[i][2]*np.exp(-target[i][1]*np.linalg.norm(np.array([x,y], dtype=object)\
+	                        -np.array((target[i][0][1],target[i][0][0]))))
+	    event[:][y_map] = density
 
 	return 0 + event
+
+# def event_density(event, targets, grid_size, map_size):
+
+# 	for target in targets:
+
+# 		F = multivariate_normal([target[0][0], target[0][1]],\
+# 						[[target[1], 0.0], [0.0, target[1]]])
+		
+# 		event += F.pdf(W)
+
+# 	return 0 + event
 
 def TargetDynamic(x, y):
     dx = np.random.uniform(-0.5, 0.5, 1)
@@ -303,8 +304,8 @@ if __name__ == "__main__":
 	cameras = []
 
 	camera0 = { 'id'            :  0,
-				'position'      :  np.array([1., 8.]),
-				'perspective'   :  np.array([0.9,1]),
+				'position'      :  np.array([2.0, 0.0]),
+				'perspective'   :  np.array([1.0, 0.0]),
 				'AngleofView'   :  20,
 				'range_limit'   :  5,
 				'lambda'        :  2,
@@ -312,8 +313,8 @@ if __name__ == "__main__":
 	cameras.append(camera0)
 
 	camera1 = { 'id'            :  1,
-				'position'      :  np.array([1., 1.]),
-				'perspective'   :  np.array([0.7,1]),
+				'position'      :  np.array([0.0, 0.0]),
+				'perspective'   :  np.array([1.0, 0.0]),
 				'AngleofView'   :  20,
 				'range_limit'   :  5,
 				'lambda'        :  2,
@@ -321,8 +322,8 @@ if __name__ == "__main__":
 	cameras.append(camera1)
 
 	camera2 = { 'id'            :  2,
-				'position'      :  np.array([8., 1.]),
-				'perspective'   :  np.array([0.7,1]),
+				'position'      :  np.array([0.0, 2.0]),
+				'perspective'   :  np.array([1.0, 0.0]),
 				'AngleofView'   :  20,
 				'range_limit'   :  5,
 				'lambda'        :  2,
@@ -346,14 +347,15 @@ if __name__ == "__main__":
 
 	# initialize environment with targets
 	size = (map_size/grid_size).astype(np.int64)
-	x_range = np.arange(0, map_size[0], grid_size[0])
-	y_range = np.arange(0, map_size[1], grid_size[1])
-	X, Y = np.meshgrid(x_range, y_range)
+	# x_range = np.arange(0, map_size[0], grid_size[0])
+	# y_range = np.arange(0, map_size[1], grid_size[1])
+	# X, Y = np.meshgrid(x_range, y_range)
 
-	W = np.vstack([X.ravel(), Y.ravel()])
-	W = W.transpose()
+	# W = np.vstack([X.ravel(), Y.ravel()])
+	# W = W.transpose()
 
-	event = np.zeros(np.shape(W)[0])
+	# event = np.zeros(np.shape(W)[0])
+	event = np.zeros((size[0], size[1]))
 
 	# target's [position, certainty, weight, velocity]
 	targets = [[(6.5, 19), 1, 10], [(6.0, 18.0), 1, 10], [(7.0, 18.0), 1, 10]]
@@ -398,8 +400,8 @@ if __name__ == "__main__":
 
 			sleep(0.001)
 
-		# event1 = event_density(event, targets, grid_size)
-		event1 = event_density(event, targets, grid_size, map_size)
+		event1 = event_density(event, targets, grid_size)
+		# event1 = event_density(event, targets, grid_size, map_size)
 		event_plt1 = ((event - event1.min()) * (1/(event1.max() - event1.min()) * 255)).astype('uint8')
 
 		for i in range(len(uav_team.members)):

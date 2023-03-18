@@ -242,6 +242,8 @@ class PTZcon():
 			# event1 = np.transpose(event1)
 			cluster_quality += np.sum(np.multiply(F.pdf(self.W), self.FoV))
 
+		print(cluster_quality)
+
 		# print(cluster_quality)
 		# Calculate dist between each target for Hungarian Algorithm
 		if cluster_quality >= 10:
@@ -562,10 +564,10 @@ class PTZcon():
 		self.HW_Boundary = HW_Boundary*0.1**2
 		self.In_polygon = In_polygon
 
-		if self.id == 0:
+		# if self.id == 0:
 
-			print(self.HW_Interior)
-			print(self.HW_Boundary, "\n")
+		# 	print(self.HW_Interior)
+		# 	print(self.HW_Boundary, "\n")
 
 	def UpdateLocalVoronoi(self):
 

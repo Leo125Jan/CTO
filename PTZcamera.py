@@ -50,7 +50,7 @@ class PTZcon():
 		self.ltop = 0
 		self.rtop = 0
 		self.r = 0
-		self.centroid = None
+		self.centroid = np.array([0, 0])
 		self.cluster_count = 0
 		self.dist_to_cluster = 0
 		self.dist_to_targets = 0
@@ -69,7 +69,6 @@ class PTZcon():
 		self.UpdateLocalVoronoi()
 
 		self.Cluster_Formation(targets)
-		# self.Cluster_Assignment(targets)
 		self.Cluster_Assignment(targets, time_)
 
 		event = np.zeros((self.size[0], self.size[1]))
@@ -239,24 +238,46 @@ class PTZcon():
 		Avg_dist = []
 		k1, k2 = self.HW_IT, self.HW_BT
 
-		for i in range(len(targets)):
+		# for i in range(len(targets)):
 
-			if i == 2:
+		# 	if i == 2:
 
-				j = 0
-			else:
+		# 		j = 0
+		# 	else:
 
-				j = i + 1
+		# 		j = i + 1
 
-			p1 = np.array([targets[i][0][0], targets[i][0][1]])
-			p2 = np.array([targets[j][0][0], targets[j][0][1]])
+		# 	p1 = np.array([targets[i][0][0], targets[i][0][1]])
+		# 	p2 = np.array([targets[j][0][0], targets[j][0][1]])
 
-			dist = self.norm(p1 - p2)
-			Avg_dist.append(dist)
+		# 	dist = self.norm(p1 - p2)
+		# 	Avg_dist.append(dist)
 
-		Avg_dist = np.sum(Avg_dist)/len(targets)
+		# Avg_dist = np.sum(Avg_dist)/len(targets)
+		# Avg_Sense = np.sum(self.HW_Sensing)/len(self.HW_Sensing)
+		# C_3 = (1/k1)*(1/Avg_Sense) + k2*Avg_dist
+
+		t_index = [0,1,2]
+		t_index = np.delete(t_index, np.argmax(self.dist_to_targets))
+		p1 = np.array([targets[t_index[0]][0][0], targets[t_index[0]][0][1]])
+		p2 = np.array([targets[t_index[1]][0][0], targets[t_index[1]][0][1]])
+		base = self.norm(p1 - p2)
+
+		coords = [(targets[0][0][0], targets[0][0][1]),\
+					(targets[1][0][0], targets[1][0][1]),\
+					(targets[2][0][0], targets[2][0][1])]
+
+		polygon = Polygon(coords)
+		area = polygon.area
+		height = (2*area)/base
+
+		line_1 = p1 - self.pos; line_1 = line_1/self.norm(line_1)
+		line_2 = p2 - self.pos; line_2 = line_2/self.norm(line_2)
+		theta = np.arccos(np.dot(line_1, line_2))
+
+		dist = height*np.exp(3*(theta - 0.5*self.alpha))
 		Avg_Sense = np.sum(self.HW_Sensing)/len(self.HW_Sensing)
-		C_3 = (1/k1)*(1/Avg_Sense) + k2*Avg_dist
+		C_3 = (1/k1)*(1/Avg_Sense) + k2*dist
 
 		# Cost Function 1-2
 		# if (self.dist_to_cluster == 100.00).all():
@@ -288,16 +309,36 @@ class PTZcon():
 		p1 = np.array([targets[t_index[0]][0][0], targets[t_index[0]][0][1]])
 		p2 = np.array([targets[t_index[1]][0][0], targets[t_index[1]][0][1]])
 		Avg_dist = self.norm(p1 - p2)
-		Avg_Sense = (np.sum(self.HW_Sensing[t_index[0]] +\
-							self.HW_Sensing[t_index[1]])/2)
+		# Avg_Sense = (np.sum(self.HW_Sensing[t_index[0]] +\
+		# 					self.HW_Sensing[t_index[1]])/2)
 		C_2 = (1/k1)*(1/Avg_Sense) + k2*Avg_dist
 
 		# Cost Function 1-1
+		# switch_index = np.argmin(self.dist_to_targets)
+		# Avg_dist = np.sum(np.where(self.dist_to_targets < 100))/len(np.where(self.dist_to_targets < 100))
+		# # dist = self.dist_to_targets[switch_index]
+		# Sense = self.HW_Sensing[switch_index]
+		# C_1 = (1/k1)*(1/Sense) + k2*Avg_dist
+
 		switch_index = np.argmin(self.dist_to_targets)
-		Avg_dist = np.sum(np.where(self.dist_to_targets < 100))/len(np.where(self.dist_to_targets < 100))
-		# dist = self.dist_to_targets[switch_index]
-		Sense = self.HW_Sensing[switch_index]
-		C_1 = (1/k1)*(1/Sense) + k2*Avg_dist
+		t_index = [0,1,2]
+		t_index = np.delete(t_index, np.argmax(self.dist_to_targets))
+		p1 = np.array([targets[t_index[0]][0][0], targets[t_index[0]][0][1]])
+		p2 = np.array([targets[t_index[1]][0][0], targets[t_index[1]][0][1]])
+		# mid_point = np.array([(p1[0]+p2[0])/2, (p1[1]+p2[1])/2])
+
+		L_1 = Avg_dist = self.norm(self.centroid - p1)
+		L_2 = Avg_dist = self.norm(self.centroid - p2)
+		line_1 = p1 - self.pos; line_1 = line_1/self.norm(line_1)
+		line_2 = p2 - self.pos; line_2 = line_2/self.norm(line_2)
+		theta_1 = np.arccos(np.dot(line_1, self.perspective))
+		theta_2 = np.arccos(np.dot(line_2, self.perspective))
+
+		Avg_dist = L_1*np.exp(0.5*self.alpha - theta_1) + L_2*np.exp(0.5*self.alpha - theta_2)
+		# Avg_Sense = (np.sum(self.HW_Sensing[t_index[0]] + self.HW_Sensing[t_index[1]])/2)
+		# Sense = self.HW_Sensing[switch_index]
+
+		C_1 = (1/k1)*(1/Avg_Sense) + k2*Avg_dist
 
 		C_total = [C_1, C_2, C_3]
 		min_C = np.argmin(C_total)+1
@@ -307,8 +348,8 @@ class PTZcon():
 		print("C3: " + str(C_3))
 
 		C_total.append(time_)
-		# filename = "D:/上課資料/IME/實驗室研究/Paper/Coverage Control/Quality based switch mode/Data/"
-		filename = "D:/Leo/IME/Paper Study/Coverage Control/Quality based switch mode/Data/"
+		filename = "D:/上課資料/IME/實驗室研究/Paper/Coverage Control/Quality based switch mode/Data/"
+		# filename = "D:/Leo/IME/Paper Study/Coverage Control/Quality based switch mode/Data/"
 		filename += "Data_" + str(self.id) + ".csv"
 		with open(filename, "a", encoding='UTF8', newline='') as f:
 
@@ -316,6 +357,18 @@ class PTZcon():
 			writer = csv.writer(f)
 			writer.writerow(row)
 
+		# if time_ <= 40:
+
+		# 	x, y = 0, 0
+
+		# 	for target in targets:
+
+		# 		x += target[0][0]
+		# 		y += target[0][1]
+
+		# 	self.target = [[(x/3, y/3), 1, 10]]
+
+		
 		if (len(Cluster) == AtoT):
 
 			if min_C == 3:
@@ -463,8 +516,10 @@ class PTZcon():
 						# 	self.Cluster_Teammate = np.array([0, switch_index])
 
 				self.dispatch_occpied == False
+		
 
 		print(self.id, "\n")
+	
 	'''
 	def Cluster_Assignment(self, targets):
 
@@ -1181,8 +1236,8 @@ class PTZcon():
 
 		# 0.35 & 0.35
 		P_t = lambda d, a, IoO, P0: P0*np.multiply(np.multiply(\
-					np.exp(-np.divide(np.power(np.subtract(d, self.R*np.cos(self.alpha)), 2).transpose()[0], (2*0.35**2)*(self.R*np.cos(self.alpha)**2))),\
-					np.exp(-np.divide(np.power(np.subtract(abs(a), 0), 2), (2*0.35**2)*(self.alpha**2)))), IoO)
+					np.exp(-np.divide(np.power(np.subtract(d, self.R*np.cos(self.alpha)), 2).transpose()[0], (2*0.2**2)*(self.R*np.cos(self.alpha)**2))),\
+					np.exp(-np.divide(np.power(np.subtract(abs(a), 0), 2), (2*0.2**2)*(self.alpha**2)))), IoO)
 
 		# P_ = lambda d, a, IoO, P0: P0*np.multiply(np.multiply(\
 		# 			np.exp(-np.divide(np.power(np.subtract(d, range_max), 2).transpose()[0], (2*0.125**2)*(range_max**2))),\
@@ -1193,9 +1248,17 @@ class PTZcon():
 		# 			np.exp(-np.divide(np.power(np.subtract(abs(a), self.alpha), 2), (2*0.3**2)*(self.alpha**2)))), IoO)
 		
 		# 0.25 & 0.25
-		P_tt = lambda d, a, IoO, P0: P0*np.multiply(np.multiply(\
+		# P_tt = lambda d, a, IoO, P0: P0*np.multiply(np.add(\
+		# 			np.exp(-np.divide(np.power(np.subtract(abs(d-0.5*range_max), 0.5*range_max), 2).transpose()[0], (2*0.25**2)*(0.5*range_max**2))),\
+		# 			np.exp(-np.divide(np.power(np.subtract(abs(a), self.alpha), 2), (2*0.35**2)*(self.alpha**2)))), IoO)
+
+		P_tt = lambda d, a, IoO, P0: P0*np.multiply(np.add(np.add(\
 					np.exp(-np.divide(np.power(np.subtract(abs(d-0.5*range_max), 0.5*range_max), 2).transpose()[0], (2*0.25**2)*(0.5*range_max**2))),\
-					np.exp(-np.divide(np.power(np.subtract(abs(a), self.alpha), 2), (2*0.25**2)*(self.alpha**2)))), IoO)	
+					np.exp(-np.divide(np.power(np.subtract(abs(a), self.alpha), 2), (2*0.35**2)*(self.alpha**2)))),\
+					P0*np.multiply(np.multiply(\
+					np.exp(-np.divide(np.power(np.subtract(d, 0.5*self.R), 2).transpose()[0], (2*0.3**2)*(0.5*self.R**2))),\
+					np.exp(-np.divide(np.power(np.subtract(abs(a), 0), 2), (2*0.5**2)*(self.alpha**2)))), IoO)
+					), IoO)
 
 		# Points in FoV
 		pt = [A+np.array([0, 0.1]), B+np.array([0.1, -0.1]), C+np.array([-0.1, -0.1]), A+np.array([0, 0.1])]
