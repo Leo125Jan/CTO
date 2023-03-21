@@ -1293,6 +1293,7 @@ class PTZcon():
 		# self.HW_Boundary = HW_Boundary*0.1**2
 
 		JP_Boundary = P_tt(d, a, In_polygon, P0_B)
+		JP_Boundary = (np.subtract(JP_Boundary, min(JP_Boundary)))/(np.subtract(max(JP_Boundary), min(JP_Boundary)))
 		HW_Boundary = np.sum(np.multiply(F1.pdf(W), JP_Boundary))\
 					+ np.sum(np.multiply(F2.pdf(W), JP_Boundary))\
 					+ np.sum(np.multiply(F3.pdf(W), JP_Boundary))
