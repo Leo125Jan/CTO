@@ -57,6 +57,7 @@ class PTZcon():
 		self.Clsuter_Checklist = None
 		self.Cluster_Teammate = np.array([None, None])
 		self.dispatch_occpied = False
+		self.state_machine = {"self": None, "mode": None, "target": None}
 
 	def UpdateState(self, targets, neighbors, time_):
 
@@ -225,7 +226,8 @@ class PTZcon():
 		for (mem, i) in zip(targets, range(len(targets))):
 
 			gemos = Point(mem[0])
-			if polygon.is_valid and polygon.contains(gemos):
+			# if polygon.is_valid and polygon.contains(gemos):
+			if polygon.is_valid:
 
 				p1 = np.array([self.pos[0], self.pos[1]])
 				p2 = np.array([mem[0][0], mem[0][1]])
@@ -237,6 +239,7 @@ class PTZcon():
 		# Cost function 1-3
 		Avg_dist = []
 		k1, k2 = self.HW_IT, self.HW_BT
+		sweet_spot = self.pos + self.R*np.cos(self.alpha)*self.perspective
 
 		# for i in range(len(targets)):
 
@@ -261,6 +264,20 @@ class PTZcon():
 		t_index = np.delete(t_index, np.argmax(self.dist_to_targets))
 		p1 = np.array([targets[t_index[0]][0][0], targets[t_index[0]][0][1]])
 		p2 = np.array([targets[t_index[1]][0][0], targets[t_index[1]][0][1]])
+		mid_point = np.array([(p1[0]+p2[0])/2, (p1[1]+p2[1])/2])
+		decision_line = (mid_point - self.pos)/np.linalg.norm(mid_point - self.pos)
+		dl_1 = (p1 - self.pos)/np.linalg.norm(p1 - self.pos)
+		dl_2 = (p2 - self.pos)/np.linalg.norm(p2 - self.pos)
+
+		if np.cross(dl_1, decision_line) < 0:
+
+			p1 = np.array([targets[t_index[0]][0][0], targets[t_index[0]][0][1]])
+			p2 = np.array([targets[t_index[1]][0][0], targets[t_index[1]][0][1]])
+		else:
+
+			p2 = np.array([targets[t_index[0]][0][0], targets[t_index[0]][0][1]])
+			p1 = np.array([targets[t_index[1]][0][0], targets[t_index[1]][0][1]])
+
 		base = self.norm(p1 - p2)
 
 		coords = [(targets[0][0][0], targets[0][0][1]),\
@@ -275,9 +292,12 @@ class PTZcon():
 		line_2 = p2 - self.pos; line_2 = line_2/self.norm(line_2)
 		theta = np.arccos(np.dot(line_1, line_2))
 
-		dist = height*np.exp(3*(theta - 0.5*self.alpha))
+		dist = height*np.exp(3*(theta - 0.5*self.alpha)/0.5*self.alpha)
 		Avg_Sense = np.sum(self.HW_Sensing)/len(self.HW_Sensing)
 		C_3 = (1/k1)*(1/Avg_Sense) + k2*dist
+
+		print("dist to target: ", end="")
+		print(self.dist_to_targets)
 
 		# Cost Function 1-2
 		# if (self.dist_to_cluster == 100.00).all():
@@ -306,9 +326,18 @@ class PTZcon():
 				# 						self.HW_Sensing[Cluster_pair[i][1]])/2)
 		t_index = [0,1,2]
 		t_index = np.delete(t_index, np.argmax(self.dist_to_targets))
-		p1 = np.array([targets[t_index[0]][0][0], targets[t_index[0]][0][1]])
-		p2 = np.array([targets[t_index[1]][0][0], targets[t_index[1]][0][1]])
+
+		# if targets[t_index[0]][0][0] < sweet_spot[0]:
+
+		# 	p1 = np.array([targets[t_index[0]][0][0], targets[t_index[0]][0][1]])
+		# 	p2 = np.array([targets[t_index[1]][0][0], targets[t_index[1]][0][1]])
+		# else:
+
+		# 	p2 = np.array([targets[t_index[0]][0][0], targets[t_index[0]][0][1]])
+		# 	p1 = np.array([targets[t_index[1]][0][0], targets[t_index[1]][0][1]])
+
 		Avg_dist = self.norm(p1 - p2)
+		print("L: " + str(Avg_dist))
 		# Avg_Sense = (np.sum(self.HW_Sensing[t_index[0]] +\
 		# 					self.HW_Sensing[t_index[1]])/2)
 		C_2 = (1/k1)*(1/Avg_Sense) + k2*Avg_dist
@@ -323,18 +352,38 @@ class PTZcon():
 		switch_index = np.argmin(self.dist_to_targets)
 		t_index = [0,1,2]
 		t_index = np.delete(t_index, np.argmax(self.dist_to_targets))
-		p1 = np.array([targets[t_index[0]][0][0], targets[t_index[0]][0][1]])
-		p2 = np.array([targets[t_index[1]][0][0], targets[t_index[1]][0][1]])
+
+		# if targets[t_index[0]][0][0] < sweet_spot[0]:
+
+		# 	p1 = np.array([targets[t_index[0]][0][0], targets[t_index[0]][0][1]])
+		# 	p2 = np.array([targets[t_index[1]][0][0], targets[t_index[1]][0][1]])
+		# else:
+
+		# 	p2 = np.array([targets[t_index[0]][0][0], targets[t_index[0]][0][1]])
+		# 	p1 = np.array([targets[t_index[1]][0][0], targets[t_index[1]][0][1]])
 		# mid_point = np.array([(p1[0]+p2[0])/2, (p1[1]+p2[1])/2])
 
-		L_1 = Avg_dist = self.norm(self.centroid - p1)
-		L_2 = Avg_dist = self.norm(self.centroid - p2)
 		line_1 = p1 - self.pos; line_1 = line_1/self.norm(line_1)
 		line_2 = p2 - self.pos; line_2 = line_2/self.norm(line_2)
+		L_1 = self.norm(sweet_spot - p1)
+		L_2 = self.norm(sweet_spot - p2)
 		theta_1 = np.arccos(np.dot(line_1, self.perspective))
 		theta_2 = np.arccos(np.dot(line_2, self.perspective))
 
-		Avg_dist = L_1*np.exp(0.5*self.alpha - theta_1) + L_2*np.exp(0.5*self.alpha - theta_2)
+		lenth_1 = sweet_spot - p1; lenth_1 = lenth_1/self.norm(lenth_1)
+		lenth_2 = sweet_spot - p2; lenth_2 = lenth_2/self.norm(lenth_2)
+		base_line = (p1 - p2)/base
+		delta_1 = np.dot(lenth_1, -base_line)
+		delta_2 = np.dot(lenth_2, +base_line)
+		L_1 *= delta_1
+		L_2 *= delta_2
+
+		print("L1: " + str(L_1), "L2: " + str(L_2), "theta 1: " + str(theta_1), "theta 2: " + str(theta_2))
+		print("alpha: " + str(self.alpha))
+
+		Avg_dist = L_1*np.exp(0.6*self.alpha - theta_1) + L_2*np.exp(0.6*self.alpha - theta_2)
+		# Avg_dist = (L_1 + L_2)*(np.exp(theta_1 + theta_2 - self.alpha))
+		print("l1 + l2: " + str(Avg_dist))
 		# Avg_Sense = (np.sum(self.HW_Sensing[t_index[0]] + self.HW_Sensing[t_index[1]])/2)
 		# Sense = self.HW_Sensing[switch_index]
 
@@ -348,14 +397,14 @@ class PTZcon():
 		print("C3: " + str(C_3))
 
 		C_total.append(time_)
-		filename = "D:/上課資料/IME/實驗室研究/Paper/Coverage Control/Quality based switch mode/Data/"
-		# filename = "D:/Leo/IME/Paper Study/Coverage Control/Quality based switch mode/Data/"
-		filename += "Data_" + str(self.id) + ".csv"
-		with open(filename, "a", encoding='UTF8', newline='') as f:
+		# filename = "D:/上課資料/IME/實驗室研究/Paper/Coverage Control/Quality based switch mode/Data/"
+		# # filename = "D:/Leo/IME/Paper Study/Coverage Control/Quality based switch mode/Data/"
+		# filename += "Data_" + str(self.id) + ".csv"
+		# with open(filename, "a", encoding='UTF8', newline='') as f:
 
-			row = C_total
-			writer = csv.writer(f)
-			writer.writerow(row)
+		# 	row = C_total
+		# 	writer = csv.writer(f)
+		# 	writer.writerow(row)
 
 		# if time_ <= 40:
 
@@ -381,10 +430,43 @@ class PTZcon():
 					y += target[0][1]
 
 				self.target = [[(x/AtoT, y/AtoT), 1, 10]]
+				self.state_machine["self"] = self.id
+				self.state_machine["mode"] = min_C
+				self.state_machine["target"] = 0
 			elif min_C == 2:
 
 				switch_index = np.argmin(self.dist_to_cluster)
-				self.target = [Cluster[switch_index]]
+
+				self.state_machine["self"] = self.id
+				self.state_machine["mode"] = min_C
+				self.state_machine["target"] = int(switch_index)
+				
+				for neighbor in self.neighbors:
+
+					if (neighbor.state_machine["mode"] == self.state_machine["mode"]) and\
+						(neighbor.state_machine["target"] == self.state_machine["target"]):
+
+						self.dist_to_cluster[self.state_machine["target"]] == 100
+						self.state_machine["target"] = int(np.argmin(self.dist_to_cluster))
+
+				self.target = [Cluster[self.state_machine["target"]]]
+			elif min_C == 1:
+
+				switch_index = np.argmin(self.dist_to_targets)
+
+				self.state_machine["self"] = self.id
+				self.state_machine["mode"] = min_C
+				self.state_machine["target"] = int(switch_index)
+
+				for neighbor in self.neighbors:
+
+					if (neighbor.state_machine["mode"] == self.state_machine["mode"]) and\
+						(neighbor.state_machine["target"] == self.state_machine["target"]):
+
+						self.dist_to_targets[self.state_machine["target"]] == 100
+						self.state_machine["target"] = int(np.argmin(self.dist_to_targets))
+
+				self.target = [targets[self.state_machine["target"]]]
 
 		# if (self.HW_Interior <= self.HW_Boundary):
 		if (len(Cluster) < AtoT):
@@ -392,7 +474,9 @@ class PTZcon():
 			# if (len(Cluster) == AtoT):
 			if min_C == 3:
 
-				cost_matrix = [self.dist_to_cluster]
+				x, y = 0, 0
+
+				# cost_matrix = [self.dist_to_cluster]
 				# for neighbor in self.neighbors:
 
 				# 	cost_matrix = np.concatenate((cost_matrix, [neighbor.dist_to_cluster]),\
@@ -403,71 +487,118 @@ class PTZcon():
 				# switch_index = np.argmin(self.dist_to_cluster)
 				# self.target = [Cluster[switch_index]]
 
+			# elif min_C == 2:
+
+			# 	if (len(Cluster) == AtoT - 1):
+
+			# 		switch_index = np.argmin(self.dist_to_cluster)
+			# 		self.target = [Cluster[switch_index]]
+			# 		self.Cluster_Teammate = np.array([2, switch_index])
+
+			# 		cost_matrix = [self.dist_to_cluster]
+			# 		Teammate_matrix = [self.Cluster_Teammate]
+			# 		count = np.ones(len(Cluster))
+			# 		count[self.Cluster_Teammate[1]] = 0
+			# 		len_ = len(count)
+
+			# 		for neighbor in self.neighbors:
+
+			# 			temp1 = neighbor.dist_to_cluster
+			# 			cost_matrix = np.concatenate((cost_matrix, [temp1]), axis = 0)
+
+			# 			if int(len_) <= 1:
+
+			# 				count = np.array([0])
+			# 			else:
+			# 				if ((neighbor.Cluster_Teammate != None).all()) and\
+			# 					(neighbor.Cluster_Teammate[0] == 2):
+
+			# 					temp2 = neighbor.Cluster_Teammate
+			# 					Teammate_matrix = np.concatenate((Teammate_matrix, [temp2]), axis = 0)
+			# 					count[neighbor.Cluster_Teammate[1]] = 0
+			# 				else:
+			# 					temp2 = np.array([None, None])
+			# 					Teammate_matrix = np.concatenate((Teammate_matrix, [temp2]), axis = 0)
+
+			# 		if (not (count == 0).all() and (Teammate_matrix != None).all()):
+
+			# 			dist_untracked = cost_matrix[:,np.nonzero(count)[0]]
+			# 			dispatch_index = np.argmin(dist_untracked)
+
+			# 			if dispatch_index == 0:
+
+			# 				self.target = [Cluster[np.nonzero(count)[0][0]]]
+			# 				self.Cluster_Teammate = np.array([2, np.nonzero(count)[0][0]])
+
+			# 		self.last_Cluster_pair = Cluster_pair
+			# 	elif (len(Cluster) == AtoT - 2):
+
+			# 		# index = np.delete(self.last_Cluster_pair, Cluster_pair)
+
+			# 		# p1 = np.array([targets[index[0]][0][0], targets[index[0]][0][1]])
+			# 		# p2 = np.array([targets[index[1]][0][0], targets[index[1]][0][1]])
+			# 		# dist = self.norm(p1 - p2)
+
+			# 		# cost_matrix = [self.dist_to_cluster[0], dist]
+			# 		# switch_index = np.argmin(cost_matrix)
+
+			# 		# if switch_index == 0:
+
+			# 		# 	switch_index = np.argmin(self.dist_to_cluster)
+			# 		# 	self.target = [Cluster[switch_index]]
+			# 		# elif switch_index == 1:
+
+			# 		# 	x = (targets[index[0]][0][0] + targets[index[1]][0][0])/2
+			# 		# 	y = (targets[index[0]][0][1] + targets[index[1]][0][1])/2
+
+			# 		# 	self.target = [[(x, y), 1, 10]]
+
+			# 		index = [0,1,2]
+			# 		index = np.delete(index, np.argmax(self.dist_to_targets))
+			# 		x = (targets[index[0]][0][0] + targets[index[1]][0][0])/2
+			# 		y = (targets[index[0]][0][1] + targets[index[1]][0][1])/2
+
+			# 		self.target = [[(x, y), 1, 10]]
 			elif min_C == 2:
 
 				if (len(Cluster) == AtoT - 1):
 
 					switch_index = np.argmin(self.dist_to_cluster)
-					self.target = [Cluster[switch_index]]
-					self.Cluster_Teammate = np.array([2, switch_index])
 
-					cost_matrix = [self.dist_to_cluster]
-					Teammate_matrix = [self.Cluster_Teammate]
-					count = np.ones(len(Cluster))
-					count[self.Cluster_Teammate[1]] = 0
-					len_ = len(count)
+					self.state_machine["self"] = self.id
+					self.state_machine["mode"] = min_C
+					self.state_machine["target"] = int(switch_index)
+
+					registration_form = np.ones(len(Cluster))
+					sign_form = []
 
 					for neighbor in self.neighbors:
 
-						temp1 = neighbor.dist_to_cluster
-						cost_matrix = np.concatenate((cost_matrix, [temp1]), axis = 0)
+						sign_form.append(neighbor.state_machine["target"])
 
-						if int(len_) <= 1:
+					sign_form = np.array(sign_form)
 
-							count = np.array([0])
-						else:
-							if ((neighbor.Cluster_Teammate != None).all()) and\
-								(neighbor.Cluster_Teammate[0] == 2):
+					if (sign_form == [1,2]).all() or (sign_form == [2,1]).all():
 
-								temp2 = neighbor.Cluster_Teammate
-								Teammate_matrix = np.concatenate((Teammate_matrix, [temp2]), axis = 0)
-								count[neighbor.Cluster_Teammate[1]] = 0
-							else:
-								temp2 = np.array([None, None])
-								Teammate_matrix = np.concatenate((Teammate_matrix, [temp2]), axis = 0)
+						registration_form[0], registration_form[1] = 0, 0
+					if (sign_form == [0,2]).all() or (sign_form == [2,0]).all():
 
-					if (not (count == 0).all() and (Teammate_matrix != None).all()):
+						registration_form[0], registration_form[1] = 0, 0
+					if (sign_form == [0,1]).all() or (sign_form == [1,0]).all():
 
-						dist_untracked = cost_matrix[:,np.nonzero(count)[0]]
-						dispatch_index = np.argmin(dist_untracked)
+						registration_form[0], registration_form[1] = 0, 0
 
-						if dispatch_index == 0:
+					if (registration_form == 0).all():
 
-							self.target = [Cluster[np.nonzero(count)[0][0]]]
-							self.Cluster_Teammate = np.array([2, np.nonzero(count)[0][0]])
+						self.target = [Cluster[self.state_machine["target"]]]
+					else:
 
-					self.last_Cluster_pair = Cluster_pair
+						untracked_index = np.nonzero(registration_form)[0][0]
+						self.state_machine["target"] = int(untracked_index)
+						self.target = [Cluster[self.state_machine["target"]]]
+
+					# self.last_Cluster_pair = Cluster_pair
 				elif (len(Cluster) == AtoT - 2):
-
-					# index = np.delete(self.last_Cluster_pair, Cluster_pair)
-
-					# p1 = np.array([targets[index[0]][0][0], targets[index[0]][0][1]])
-					# p2 = np.array([targets[index[1]][0][0], targets[index[1]][0][1]])
-					# dist = self.norm(p1 - p2)
-
-					# cost_matrix = [self.dist_to_cluster[0], dist]
-					# switch_index = np.argmin(cost_matrix)
-
-					# if switch_index == 0:
-
-					# 	switch_index = np.argmin(self.dist_to_cluster)
-					# 	self.target = [Cluster[switch_index]]
-					# elif switch_index == 1:
-
-					# 	x = (targets[index[0]][0][0] + targets[index[1]][0][0])/2
-					# 	y = (targets[index[0]][0][1] + targets[index[1]][0][1])/2
-
-					# 	self.target = [[(x, y), 1, 10]]
 
 					index = [0,1,2]
 					index = np.delete(index, np.argmax(self.dist_to_targets))
@@ -475,6 +606,9 @@ class PTZcon():
 					y = (targets[index[0]][0][1] + targets[index[1]][0][1])/2
 
 					self.target = [[(x, y), 1, 10]]
+					self.state_machine["self"] = self.id
+					self.state_machine["mode"] = min_C
+					self.state_machine["target"] = -1
 
 			# elif (len(Cluster) < AtoT - 1):
 			elif min_C == 1:
@@ -482,43 +616,57 @@ class PTZcon():
 				print(self.dist_to_targets)
 
 				switch_index = np.argmin(self.dist_to_targets)
-				self.target = [targets[switch_index]]
-				self.Cluster_Teammate = np.array([0, switch_index])
 
-				cost_matrix = [self.dist_to_targets]
-				Teammate_matrix = [self.Cluster_Teammate]
-				count = np.ones(len(targets))
-				count[self.Cluster_Teammate[1]] = 0
+				self.state_machine["self"] = self.id
+				self.state_machine["mode"] = min_C
+				self.state_machine["target"] = int(switch_index)
 
 				for neighbor in self.neighbors:
 
-					if (neighbor.Cluster_Teammate[0] == 0) and\
-						(neighbor.Cluster_Teammate[1] == self.Cluster_Teammate[1]):
+					if (neighbor.state_machine["mode"] == self.state_machine["mode"]) and\
+						(neighbor.state_machine["target"] == self.state_machine["target"]):
 
-						self.dist_to_targets[self.Cluster_Teammate[1]] = 100
-						switch_index = np.argmin(self.dist_to_targets)
-						self.target = [targets[switch_index]]
-						self.Cluster_Teammate = np.array([0, switch_index])
+						self.dist_to_targets[self.state_machine["target"]] = 100
+						self.state_machine["target"] = int(np.argmin(self.dist_to_targets))
 
-						# temp1 = neighbor.dist_to_targets
-						# cost_matrix = np.concatenate((cost_matrix, [temp1]), axis = 0)
+				self.target = [targets[self.state_machine["target"]]]
 
-						# over_tracked = cost_matrix[:,self.Cluster_Teammate[1]]
-						# dispatch_index = np.argmin(over_tracked)
+				# self.target = [targets[switch_index]]
+				# self.Cluster_Teammate = np.array([0, switch_index])
 
-						# if dispatch_index != 0:
+				# cost_matrix = [self.dist_to_targets]
+				# Teammate_matrix = [self.Cluster_Teammate]
+				# count = np.ones(len(targets))
+				# count[self.Cluster_Teammate[1]] = 0
 
-						# 	self.dist_to_targets[self.Cluster_Teammate[1]] = 100
-						# 	print(self.dist_to_targets)
-						# 	switch_index = np.argmin(self.dist_to_targets)
-						# 	print(switch_index)
-						# 	self.target = [targets[switch_index]]
-						# 	self.Cluster_Teammate = np.array([0, switch_index])
+				# for neighbor in self.neighbors:
 
-				self.dispatch_occpied == False
+				# 	if (neighbor.Cluster_Teammate[0] == 0) and\
+				# 		(neighbor.Cluster_Teammate[1] == self.Cluster_Teammate[1]):
+
+				# 		self.dist_to_targets[self.Cluster_Teammate[1]] = 100
+				# 		switch_index = np.argmin(self.dist_to_targets)
+				# 		self.target = [targets[switch_index]]
+				# 		self.Cluster_Teammate = np.array([0, switch_index])
+
+				# 		# temp1 = neighbor.dist_to_targets
+				# 		# cost_matrix = np.concatenate((cost_matrix, [temp1]), axis = 0)
+
+				# 		# over_tracked = cost_matrix[:,self.Cluster_Teammate[1]]
+				# 		# dispatch_index = np.argmin(over_tracked)
+
+				# 		# if dispatch_index != 0:
+
+				# 		# 	self.dist_to_targets[self.Cluster_Teammate[1]] = 100
+				# 		# 	print(self.dist_to_targets)
+				# 		# 	switch_index = np.argmin(self.dist_to_targets)
+				# 		# 	print(switch_index)
+				# 		# 	self.target = [targets[switch_index]]
+				# 		# 	self.Cluster_Teammate = np.array([0, switch_index])
+
+				# self.dispatch_occpied == False
 		
-
-		print(self.id, "\n")
+		print("id: " + str(self.id), "\n")
 	
 	'''
 	def Cluster_Assignment(self, targets):
