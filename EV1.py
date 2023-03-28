@@ -8,8 +8,8 @@ from scipy.stats import multivariate_normal
 from shapely.geometry.polygon import Polygon
 from scipy.optimize import linear_sum_assignment
 
-a = np.arange(0, 25, 0.1)
-b = np.arange(0, 25, 0.1)
+a = np.arange(0, 10, 0.1)
+b = np.arange(0, 10, 0.1)
 X, Y = np.meshgrid(a, b)
 
 W = np.vstack([X.ravel(), Y.ravel()])
@@ -32,3 +32,9 @@ if __name__ == '__main__':
 	print(x)
 	x = timeit.timeit(stmt = "nen()", number = number, globals = globals())
 	print(x)
+
+	# a = np.array([[1,2],[3,4]])
+	# b = np.array([1,2])
+	# c = ne.evaluate("a/b")
+
+	# print(c)

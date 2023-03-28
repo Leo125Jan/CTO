@@ -304,14 +304,14 @@ class PTZcon():
 		Avg_Sense = np.sum(self.HW_Sensing)/len(self.HW_Sensing)
 		C_3 = (1/k1)*(1/Avg_Sense) + k2*Avg_distance
 
-		print("dist to target: ", end = "")
-		print(self.dist_to_targets)
+		# print("dist to target: ", end = "")
+		# print(self.dist_to_targets)
 
 		# Cost Function 1-2
 		Avg_distance = np.linalg.norm(p_l - p_r)
 		C_2 = (1/k1)*(1/Avg_Sense) + k2*Avg_distance
 
-		print("L: " + str(Avg_distance))
+		# print("L: " + str(Avg_distance))
 
 		# Cost Function 1-1
 		top_side_l_v = sweet_spot - p_l; top_side_l_v = top_side_l_v/np.linalg.norm(top_side_l_v)
@@ -328,17 +328,17 @@ class PTZcon():
 		Avg_distance = top_side_l*np.exp(0.7*self.alpha - theta_l) + top_side_r*np.exp(0.7*self.alpha - theta_r)
 		C_1 = (1/k1)*(1/Avg_Sense) + k2*Avg_distance
 
-		print("L1: " + str(top_side_l), "L2: " + str(top_side_r), end = "")
-		print(" theta1: " + str(theta_l), "theta2: " + str(theta_r))
-		print("alpha: " + str(self.alpha))
-		print("l1 + l2: " + str(Avg_distance))
+		# print("L1: " + str(top_side_l), "L2: " + str(top_side_r), end = "")
+		# print(" theta1: " + str(theta_l), "theta2: " + str(theta_r))
+		# print("alpha: " + str(self.alpha))
+		# print("l1 + l2: " + str(Avg_distance))
 
 		C_total = [C_1, C_2, C_3]
 		min_C = np.argmin(C_total)+1
 
-		print("C1: " + str(C_1))
-		print("C2: " + str(C_2))
-		print("C3: " + str(C_3))
+		# print("C1: " + str(C_1))
+		# print("C2: " + str(C_2))
+		# print("C3: " + str(C_3))
 
 		C_total.append(time_)
 
@@ -454,7 +454,7 @@ class PTZcon():
 					self.state_machine["target"] = -1
 			elif min_C == 1:
 
-				print(self.dist_to_targets)
+				# print(self.dist_to_targets)
 
 				switch_index = np.argmin(self.dist_to_targets)
 
@@ -504,53 +504,49 @@ class PTZcon():
 
 	def UpdateFoV(self):
 
-		# d = np.linalg.norm(np.subtract(self.W, self.pos), axis = 1)
-		# d = np.array([d]).transpose()
-		# d = d.transpose()[0]
+		W = self.W; pos = self.pos; perspective = self.perspective; alpha = self.alpha; R = self.R
+		lamb = self.lamb; R_ = R**(lamb+1)
 
-		W = self.W; pos = self.pos
-		out = np.empty_like(self.W)
-		ne.evaluate("W - pos", out = out)
+		# out = np.empty_like(self.W)
+		# ne.evaluate("W - pos", out = out)
 
-		x = out[:,0]; y = out[:,1]
-		d = np.empty_like(x)
-		ne.evaluate("sqrt(x**2 + y**2)", out = d)
+		# x = out[:,0]; y = out[:,1]
+		# d = np.empty_like(x)
+		# ne.evaluate("sqrt(x**2 + y**2)", out = d)
 
+		d = np.linalg.norm(np.subtract(self.W, self.pos), axis = 1)
 		d = np.array([d]).transpose()
 		d = d.transpose()[0]
 
-		q_per = self.PerspectiveQuality(d)
-		q_res = self.ResolutionQuality(d)
+		q_per = self.PerspectiveQuality(d, W, pos, perspective, alpha)
+		q_res = self.ResolutionQuality(d, W, pos, perspective, alpha, R, lamb)
 		Q = np.multiply(q_per, q_res)
 
-		quality_map = np.where((q_per > 0) & (q_res > 0), Q, 0)
+		quality_map = ne.evaluate("where((q_per > 0) & (q_res > 0), Q, 0)")
 		self.FoV = quality_map
 		
 		return
 
-	def PerspectiveQuality(self, d):
+	def PerspectiveQuality(self, d, W, pos, perspective, alpha):
 
-		# d = np.linalg.norm(np.subtract(self.W, self.pos), axis = 1)
-		# d = np.array([d]).transpose()
-		# d = d.transpose()[0]
+		out = np.empty_like(d)
+		ne.evaluate("sum((W - pos)*perspective, axis = 1)", out = out)
+		ne.evaluate("(out/d - cos(alpha))/(1 - cos(alpha) )", out = out)
 
-		W = self.W; pos = self.pos
-		out = np.empty_like(self.W)
-		ne.evaluate("W - pos", out = out)
+		# return (np.divide(np.dot(np.subtract(self.W, self.pos), self.perspective), d) - np.cos(self.alpha))\
+		# 		/(1 - np.cos(self.alpha))
+		return out
 
-		np.dot(out, self.perspective)
+	def ResolutionQuality(self, d, W, pos, perspective, alpha, R, lamb):
 
-		return (np.divide(np.dot(np.subtract(self.W, self.pos), self.perspective), d) - np.cos(self.alpha))\
-				/(1 - np.cos(self.alpha))
+		R_ = R**(lamb+1)
 
-	def ResolutionQuality(self, d):
+		out = np.empty_like(d)
+		ne.evaluate("(R*cos(alpha) - lamb*(d - R*cos(alpha)))*(d**lamb)/R_", out = out)
 
-		# d = np.linalg.norm(np.subtract(self.W, self.pos), axis = 1)
-		# d = np.array([d]).transpose()
-		# d = d.transpose()[0]
-
-		return np.multiply((self.R*np.cos(self.alpha) - self.lamb*(d - self.R*np.cos(self.alpha))),\
-							(np.power(d, self.lamb)/(self.R**(self.lamb+1))))
+		# return np.multiply((self.R*np.cos(self.alpha) - self.lamb*(d - self.R*np.cos(self.alpha))),\
+		# 					(np.power(d, self.lamb)/(self.R**(self.lamb+1))))
+		return out
 
 	def EscapeDensity(self, targets, time_):
 
@@ -570,6 +566,8 @@ class PTZcon():
 		# W = W.transpose()
 
 		W = self.W[np.where(self.FoV > 0)]
+		pos = self.pos; perspective = self.perspective; alpha = self.alpha; R = self.R
+		lamb = self.lamb; R_ = R**(lamb+1)
 
 		# Vertices of Boundary of FoV
 		A = np.array([self.pos[0], self.pos[1]])
@@ -617,9 +615,18 @@ class PTZcon():
 
 		# Distance and Angle of W with respect to self.pos
 		d = np.linalg.norm(np.subtract(W, self.pos), axis = 1)
+		# out = np.empty_like(W)
+		# ne.evaluate("W - pos", out = out)
+		# x = out[:,0]; y = out[:,1]
+		# d = np.empty_like(x)
+		# ne.evaluate("sqrt(x**2 + y**2)", out = d)
 		d = np.array([d]).transpose()
+
 		# a = np.arccos( np.dot(np.divide(np.subtract(W, self.pos),np.concatenate((d,d), axis = 1)), self.perspective) )
-		a = np.arccos( np.dot(np.subtract(W, self.pos)/np.concatenate((d,d), axis = 1), self.perspective) )
+		# a = np.arccos( np.dot(np.subtract(W, self.pos)/np.concatenate((d,d), axis = 1), self.perspective) )
+		d_ = np.concatenate((d,d), axis = 1); a = np.empty_like(d.transpose()[0])
+		ne.evaluate("sum(((W - pos)/d_)*perspective, axis = 1)", out = a)
+		ne.evaluate("arccos(a)", out = a)
 
 		# Cost Function
 		P0_I = 0.9
@@ -663,15 +670,17 @@ class PTZcon():
 
 	def UpdateLocalVoronoi(self):
 
+		id_ = self.id
 		quality_map = self.FoV
 
 		for neighbor in self.neighbors:
 
-			quality_map = np.where((quality_map >= neighbor.FoV), quality_map, 0)
+			FoV = neighbor.FoV
+			quality_map = ne.evaluate("where((quality_map >= FoV), quality_map, 0)")
 
 		# self.voronoi = np.array(np.where((quality_map != 0) & (self.FoV != 0)))
 		self.voronoi = np.array(np.where((self.FoV > 0)))
-		self.map_plt = np.array(np.where(quality_map != 0, self.id + 1, 0))
+		self.map_plt = np.array(ne.evaluate("where(quality_map != 0, id_ + 1, 0)"))
 
 		return
 
@@ -682,8 +691,14 @@ class PTZcon():
 		zoom_force = 0
 		centroid = None
 
-		W = self.W[np.where(self.FoV > 0)]
-		# W = self.W
+		W = self.W[np.where(self.FoV > 0)]; pos = self.pos; lamb = self.lamb; R = self.R; R_ = R**lamb
+		alpha = self.alpha; perspective = self.perspective
+		
+		# out = np.empty_like(W)
+		# ne.evaluate("W - pos", out = out)
+		# x = out[:,0]; y = out[:,1]
+		# d = np.empty_like(x)
+		# ne.evaluate("sqrt(x**2 + y**2)", out = d)
 
 		d = np.linalg.norm(np.subtract(W, self.pos), axis = 1)
 		d = np.array([d]).transpose()
@@ -696,35 +711,47 @@ class PTZcon():
 
 		if len(self.voronoi[0]) > 0:
 
-			mu_V = 0
-			v_V_t = np.array([0, 0], dtype = np.float64)
-			delta_V_t = 0
-			x_center = 0
-			y_center = 0
+			mu_V = np.empty_like([0.0], dtype = np.float64)
+			v_V_t = np.empty_like([0, 0], dtype = np.float64)
+			delta_V_t = np.empty_like([0.0], dtype = np.float64)
+			x_center = np.empty_like([0.0], dtype = np.float64)
+			y_center = np.empty_like([0.0], dtype = np.float64)
 
 			# mu_V = np.sum(np.multiply(\
 			# 		np.multiply(np.power(d, self.lamb).transpose()[0], F.pdf(W))/(self.R**self.lamb),\
 			# 		self.In_polygon))
-			mu_V = np.sum(\
-					np.multiply(np.power(d, self.lamb).transpose()[0], F.pdf(W))/(self.R**self.lamb)
-					)
+			# mu_V = np.sum(\
+			# 		np.multiply(np.power(d, self.lamb).transpose()[0], F.pdf(W))/(self.R**self.lamb)
+			# 		)
+
+			out = np.empty_like(d); F_ = F.pdf(W)
+			ne.evaluate("d**lamb", out = out)
+			out = out.transpose()[0]
+			ne.evaluate("sum((out*F_)/R_)", out = mu_V)
+			mu_V = mu_V[0]
 
 			# temp = np.multiply(np.multiply(np.multiply(\
 			# 	np.cos(self.alpha) - (self.lamb/self.R/(self.lamb+1))*d.transpose()[0],\
 			# 	d.transpose()[0]**(self.lamb)/(self.R**self.lamb)),\
 			# 	F.pdf(self.W)),\
 			# 	self.In_polygon)
-			temp = np.multiply(np.multiply(\
-				np.cos(self.alpha) - (self.lamb/self.R/(self.lamb+1))*d.transpose()[0],\
-				d.transpose()[0]**(self.lamb)/(self.R**self.lamb)),\
-				F.pdf(W))
 
+			# temp = np.multiply(np.multiply(\
+			# 	np.cos(self.alpha) - (self.lamb/self.R/(self.lamb+1))*d.transpose()[0],\
+			# 	d.transpose()[0]**(self.lamb)/(self.R**self.lamb)),\
+			# 	F.pdf(W))
+			# temp = np.array([temp]).transpose()
+
+			# v_V_t =  np.sum(np.multiply(\
+			# 		(np.subtract(W, self.pos)/np.concatenate((d,d), axis = 1)),\
+			# 		temp), axis = 0)
+
+			d_ = d.transpose()[0]; temp = np.empty_like(d_); F_ = F.pdf(W);
+			ne.evaluate("(cos(alpha) - (lamb/R/(lamb+1))*d_)*(d_**lamb/R_)*F_", out = temp)
 			temp = np.array([temp]).transpose()
 
-			v_V_t =  np.sum(np.multiply(\
-					(np.subtract(W, self.pos)/np.concatenate((d,d), axis = 1)),\
-					temp), axis = 0)
-	
+			d_ = np.concatenate((d,d), axis = 1)
+			ne.evaluate("sum(((W - pos)/d_)*temp, axis = 0)", out = v_V_t)
 
 			# delta_V_t = np.sum(np.multiply(np.multiply(np.multiply(np.multiply(\
 			# 			(1 - np.dot(np.divide(np.subtract(W, self.pos),np.concatenate((d,d), axis = 1)), self.perspective)),\
@@ -732,11 +759,17 @@ class PTZcon():
 			# 			d.transpose()[0]**(self.lamb)/(self.R**self.lamb)),\
 			# 			F.pdf(W)),\
 			# 			self.In_polygon))
-			delta_V_t = np.sum(np.multiply(np.multiply(np.multiply(\
-						(1 - np.dot(np.divide(np.subtract(W, self.pos),np.concatenate((d,d), axis = 1)), self.perspective)),\
-						(1 - (self.lamb/self.R/(self.lamb+1))*d.transpose()[0])),\
-						d.transpose()[0]**(self.lamb)/(self.R**self.lamb)),\
-						F.pdf(W)))
+			# delta_V_t = np.sum(np.multiply(np.multiply(np.multiply(\
+			# 			(1 - np.dot(np.divide(np.subtract(W, self.pos),np.concatenate((d,d), axis = 1)), self.perspective)),\
+			# 			(1 - (self.lamb/self.R/(self.lamb+1))*d.transpose()[0])),\
+			# 			d.transpose()[0]**(self.lamb)/(self.R**self.lamb)),\
+			# 			F.pdf(W)))
+
+			d_ = np.concatenate((d,d), axis = 1); F_ = F.pdf(W); out = np.empty_like(F_)
+			ne.evaluate("sum(((W - pos)/d_)*perspective, axis = 1)", out = out)
+			d_ = d.transpose()[0];
+			ne.evaluate("sum((1 - out)*(1 - (lamb/R/(lamb+1))*d_)*(d_**lamb/R_)*F_, axis = 0)", out = delta_V_t)
+			delta_V_t = delta_V_t[0]
 
 			v_V = v_V_t/mu_V
 			delta_V = delta_V_t/mu_V
@@ -753,13 +786,18 @@ class PTZcon():
 			# 	W[:,1],\
 			# 	(np.multiply(d.transpose()[0]**(self.lamb),F.pdf(W))/(self.R**self.lamb))),\
 			# 	self.In_polygon))/mu_V
-			x_center = np.sum(np.multiply(\
-				W[:,0],\
-				(np.multiply(d.transpose()[0]**(self.lamb),F.pdf(W))/(self.R**self.lamb))))/mu_V
 
-			y_center = np.sum(np.multiply(\
-				W[:,1],\
-				(np.multiply(d.transpose()[0]**(self.lamb),F.pdf(W))/(self.R**self.lamb))))/mu_V
+			# x_center = np.sum(np.multiply(\
+			# 	W[:,0],\
+			# 	(np.multiply(d.transpose()[0]**(self.lamb),F.pdf(W))/(self.R**self.lamb))))/mu_V
+
+			# y_center = np.sum(np.multiply(\
+			# 	W[:,1],\
+			# 	(np.multiply(d.transpose()[0]**(self.lamb),F.pdf(W))/(self.R**self.lamb))))/mu_V
+
+			W_x = W[:,0]; W_y = W[:,1]; d_ = d.transpose()[0]; F_ = F.pdf(W);
+			ne.evaluate("sum(W_x*(d_**lamb/R_)*F_)", out = x_center); x_center = x_center[0]/mu_V
+			ne.evaluate("sum(W_y*(d_**lamb/R_)*F_)", out = y_center); y_center = y_center[0]/mu_V
 		    
 			centroid = np.array([x_center, y_center])
 			translational_force += self.Kp*(np.linalg.norm(centroid - self.pos)\

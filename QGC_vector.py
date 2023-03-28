@@ -283,10 +283,12 @@ if __name__ == "__main__":
 		event1 = event_density(event, targets, W)
 		event_plt1 = ((event - event1.min()) * (1/(event1.max() - event1.min()) * 255)).astype('uint8')
 
+		past = time()
 		for i in range(len(uav_team.members)):
 
 			neighbors = [uav_team.members[j] for j in range(len(uav_team.members)) if j != i]
 			uav_team.members[i].UpdateState(targets, neighbors, np.round(time() - last, 2))
+		print("Calculation Time: " + str(time() - past))
 
 		vis.Visualize2D(uav_team.members, event_plt1, targets)
 
