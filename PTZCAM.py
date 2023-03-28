@@ -5,6 +5,7 @@ import sys
 import csv
 import random
 import numpy as np
+import numexpr as ne
 from time import sleep, time
 import matplotlib.pyplot as plt
 from matplotlib.path import Path
@@ -19,7 +20,7 @@ from shapely.plotting import plot_polygon, plot_points
 class PTZcon():
 
 	def __init__(self, properties, map_size, grid_size,\
-					Kv = 40, Ka = 3, Kp = 3, step = 0.1):
+					Kv = 50, Ka = 3, Kp = 2, step = 0.1):
 
 		# Environment
 		self.grid_size = grid_size
@@ -62,7 +63,7 @@ class PTZcon():
 		self.target = None
 		self.target_assigned = -1
 		self.step = step
-		self.FoV = np.zeros(np.shape(W)[1])
+		self.FoV = np.zeros(np.shape(self.W)[0])
 		self.Kv = Kv                # control gain for perspective control law toward voronoi cell
 		self.Ka = Ka                # control gain for zoom level control stems from voronoi cell
 		self.Kp = Kp                # control gain for positional change toward voronoi cell 
@@ -266,8 +267,14 @@ class PTZcon():
 
 		t_index = [0,1,2]
 		t_index = np.delete(t_index, np.argmax(self.dist_to_targets))
+		p1 = np.array([targets[t_index[0]][0][0], targets[t_index[0]][0][1]])
+		p2 = np.array([targets[t_index[1]][0][0], targets[t_index[1]][0][1]])
+		mid_point = np.array([(p1[0]+p2[0])/2, (p1[1]+p2[1])/2])
+		decision_line = (mid_point - self.pos)/np.linalg.norm(mid_point - self.pos)
+		dl_1 = (p1 - self.pos)/np.linalg.norm(p1 - self.pos)
+		dl_2 = (p2 - self.pos)/np.linalg.norm(p2 - self.pos)
 
-		if targets[t_index[0]][0][0] < sweet_spot[0]:
+		if np.cross(dl_1, decision_line) < 0:
 
 			p_l = np.array([targets[t_index[0]][0][0], targets[t_index[0]][0][1]])
 			p_r = np.array([targets[t_index[1]][0][0], targets[t_index[1]][0][1]])
@@ -297,7 +304,7 @@ class PTZcon():
 		Avg_Sense = np.sum(self.HW_Sensing)/len(self.HW_Sensing)
 		C_3 = (1/k1)*(1/Avg_Sense) + k2*Avg_distance
 
-		print("dist to target: ", end="")
+		print("dist to target: ", end = "")
 		print(self.dist_to_targets)
 
 		# Cost Function 1-2
@@ -313,12 +320,12 @@ class PTZcon():
 		delta_l = np.dot(top_side_l_v, -base_v)
 		delta_r = np.dot(top_side_r_v, +base_v)
 
-		top_side_l = np.linalg.norm(sweet_spot - p_l)*delta_l
-		top_side_r = np.linalg.norm(sweet_spot - p_r)*delta_r
+		top_side_l = np.linalg.norm(top_side_l_v)*delta_l
+		top_side_r = np.linalg.norm(top_side_r_v)*delta_r
 		theta_l = np.arccos(np.dot(l_line_v, self.perspective))
 		theta_r = np.arccos(np.dot(r_line_v, self.perspective))
 
-		Avg_distance = top_side_l*np.exp(0.6*self.alpha - theta_l) + top_side_r*np.exp(0.6*self.alpha - theta_r)
+		Avg_distance = top_side_l*np.exp(0.7*self.alpha - theta_l) + top_side_r*np.exp(0.7*self.alpha - theta_r)
 		C_1 = (1/k1)*(1/Avg_Sense) + k2*Avg_distance
 
 		print("L1: " + str(top_side_l), "L2: " + str(top_side_r), end = "")
@@ -350,13 +357,13 @@ class PTZcon():
 				self.target = [[(x/AtoT, y/AtoT), 1, 10]]
 				self.state_machine["self"] = self.id
 				self.state_machine["mode"] = min_C
-				self.state_machine["target"] = 0
+				self.state_machine["target"] = -1
 			elif min_C == 2:
 
 				switch_index = np.argmin(self.dist_to_cluster)
 
 				self.state_machine["self"] = self.id
-				self.state_machine["mode"] = min_C
+				self.state_machine["mode"] = 2.3
 				self.state_machine["target"] = int(switch_index)
 				
 				for neighbor in self.neighbors:
@@ -398,7 +405,7 @@ class PTZcon():
 					switch_index = np.argmin(self.dist_to_cluster)
 
 					self.state_machine["self"] = self.id
-					self.state_machine["mode"] = min_C
+					self.state_machine["mode"] = 2.2
 					self.state_machine["target"] = int(switch_index)
 
 					registration_form = np.ones(len(Cluster))
@@ -414,10 +421,13 @@ class PTZcon():
 					if (sign_form == [1,2]).all() or (sign_form == [2,1]).all():
 
 						registration_form[0], registration_form[1] = 0, 0
-					if (sign_form == [0,2]).all() or (sign_form == [2,0]).all():
+					elif (sign_form == [0,2]).all() or (sign_form == [2,0]).all():
 
 						registration_form[0], registration_form[1] = 0, 0
-					if (sign_form == [0,1]).all() or (sign_form == [1,0]).all():
+					elif (sign_form == [0,1]).all() or (sign_form == [1,0]).all():
+
+						registration_form[0], registration_form[1] = 0, 0
+					elif (sign_form == [0,0]).all():
 
 						registration_form[0], registration_form[1] = 0, 0
 
@@ -440,7 +450,7 @@ class PTZcon():
 
 					self.target = [[(x, y), 1, 10]]
 					self.state_machine["self"] = self.id
-					self.state_machine["mode"] = min_C
+					self.state_machine["mode"] = 2.1
 					self.state_machine["target"] = -1
 			elif min_C == 1:
 
@@ -466,8 +476,8 @@ class PTZcon():
 
 	def StageAssignment(self):
 
-		# range_max = 0.85*(self.lamb + 1)/(self.lamb)*self.R*cos(self.alpha)
-		range_max = self.R*cos(self.alpha)
+		range_max = 0.85*(self.lamb + 1)/(self.lamb)*self.R*cos(self.alpha)
+		# range_max = self.R*cos(self.alpha)
 
 		if self.centroid is not None:
 
@@ -494,7 +504,18 @@ class PTZcon():
 
 	def UpdateFoV(self):
 
-		d = np.linalg.norm(np.subtract(self.W, self.pos), axis = 1)
+		# d = np.linalg.norm(np.subtract(self.W, self.pos), axis = 1)
+		# d = np.array([d]).transpose()
+		# d = d.transpose()[0]
+
+		W = self.W; pos = self.pos
+		out = np.empty_like(self.W)
+		ne.evaluate("W - pos", out = out)
+
+		x = out[:,0]; y = out[:,1]
+		d = np.empty_like(x)
+		ne.evaluate("sqrt(x**2 + y**2)", out = d)
+
 		d = np.array([d]).transpose()
 		d = d.transpose()[0]
 
@@ -505,27 +526,6 @@ class PTZcon():
 		quality_map = np.where((q_per > 0) & (q_res > 0), Q, 0)
 		self.FoV = quality_map
 		
-		# for y_map in range(max(int((self.pos[1] - range_max)/self.grid_size[1]), 0),\
-		# 		min(int((self.pos[1] + range_max)/self.grid_size[1]), self.size[1])):
-
-		# 	x_map = np.arange(max(int((self.pos[0] - range_max)/self.grid_size[0]), 0),
-		# 			min(int((self.pos[0] + range_max)/self.grid_size[0]), self.size[0]))
-		# 	q_per = self.PerspectiveQuality(x_map*self.grid_size[0], y_map*self.grid_size[1])
-		# 	q_res = self.ResolutionQuality(x_map*self.grid_size[0], y_map*self.grid_size[1])
-		# 	quality = np.where((q_per > 0) & (q_res > 0), q_per*q_res, 0)
-
-		# 	if quality_map is None:
-
-		# 		quality_map = quality
-		# 	else:
-
-		# 		quality_map = np.vstack((quality_map, quality))
-
-		# self.FoV[max(int((self.pos[1] - range_max)/self.grid_size[1]), 0):\
-		# 		min(int((self.pos[1] + range_max)/self.grid_size[1]), self.size[0]), \
-		#     	max(int((self.pos[0] - range_max)/self.grid_size[0]), 0):\
-		#     	min(int((self.pos[0] + range_max)/self.grid_size[0]), self.size[0])]\
-		#     	= quality_map
 		return
 
 	def PerspectiveQuality(self, d):
@@ -533,6 +533,12 @@ class PTZcon():
 		# d = np.linalg.norm(np.subtract(self.W, self.pos), axis = 1)
 		# d = np.array([d]).transpose()
 		# d = d.transpose()[0]
+
+		W = self.W; pos = self.pos
+		out = np.empty_like(self.W)
+		ne.evaluate("W - pos", out = out)
+
+		np.dot(out, self.perspective)
 
 		return (np.divide(np.dot(np.subtract(self.W, self.pos), self.perspective), d) - np.cos(self.alpha))\
 				/(1 - np.cos(self.alpha))
@@ -553,14 +559,17 @@ class PTZcon():
 		# Wi = 25
 		# x_range = np.arange(0, L, 0.1)
 		# y_range = np.arange(0, L, 0.1)
-		L = self.map_size[0]
-		Wi = self.map_size[1]
-		x_range = np.arange(0, L, self.grid_size[0])
-		y_range = np.arange(0, L, self.grid_size[1])
-		X, Y = np.meshgrid(x_range, y_range)
 
-		W = np.vstack([X.ravel(), Y.ravel()])
-		W = W.transpose()
+		# L = self.map_size[0]
+		# Wi = self.map_size[1]
+		# x_range = np.arange(0, L, self.grid_size[0])
+		# y_range = np.arange(0, L, self.grid_size[1])
+		# X, Y = np.meshgrid(x_range, y_range)
+
+		# W = np.vstack([X.ravel(), Y.ravel()])
+		# W = W.transpose()
+
+		W = self.W[np.where(self.FoV > 0)]
 
 		# Vertices of Boundary of FoV
 		A = np.array([self.pos[0], self.pos[1]])
@@ -579,23 +588,32 @@ class PTZcon():
 		# Joint Probability
 
 		# Interior
-		P = lambda d, a, IoO, P0: P0*np.multiply(np.multiply(\
+		# P = lambda d, a, IoO, P0: P0*np.multiply(np.multiply(\
+		# 			np.exp(-np.divide(np.power(np.subtract(d, self.R*np.cos(self.alpha)), 2).transpose()[0], (2*0.2**2)*(self.R*np.cos(self.alpha)**2))),\
+		# 			np.exp(-np.divide(np.power(np.subtract(abs(a), 0), 2), (2*0.2**2)*(self.alpha**2)))), IoO)
+		P = lambda d, a, IoO, P0: P0*np.multiply(\
 					np.exp(-np.divide(np.power(np.subtract(d, self.R*np.cos(self.alpha)), 2).transpose()[0], (2*0.2**2)*(self.R*np.cos(self.alpha)**2))),\
-					np.exp(-np.divide(np.power(np.subtract(abs(a), 0), 2), (2*0.2**2)*(self.alpha**2)))), IoO)
+					np.exp(-np.divide(np.power(np.subtract(abs(a), 0), 2), (2*0.2**2)*(self.alpha**2))))
 
 		# Boundary
-		P_ = lambda d, a, IoO, P0: P0*np.multiply(np.add(np.add(\
+		# P_ = lambda d, a, IoO, P0: P0*np.multiply(np.add(np.add(\
+		# 			np.exp(-np.divide(np.power(np.subtract(abs(d-0.5*range_max), 0.5*range_max), 2).transpose()[0], (2*0.25**2)*(0.5*range_max**2))),\
+		# 			np.exp(-np.divide(np.power(np.subtract(abs(a), self.alpha), 2), (2*0.35**2)*(self.alpha**2)))),\
+		# 			P0*np.multiply(np.multiply(\
+		# 			np.exp(-np.divide(np.power(np.subtract(d, 0.5*self.R), 2).transpose()[0], (2*0.3**2)*(0.5*self.R**2))),\
+		# 			np.exp(-np.divide(np.power(np.subtract(abs(a), 0), 2), (2*0.5**2)*(self.alpha**2)))), IoO)
+		# 			), IoO)
+		P_ = lambda d, a, IoO, P0: P0*np.add(np.add(\
 					np.exp(-np.divide(np.power(np.subtract(abs(d-0.5*range_max), 0.5*range_max), 2).transpose()[0], (2*0.25**2)*(0.5*range_max**2))),\
 					np.exp(-np.divide(np.power(np.subtract(abs(a), self.alpha), 2), (2*0.35**2)*(self.alpha**2)))),\
-					P0*np.multiply(np.multiply(\
+					P0*np.multiply(\
 					np.exp(-np.divide(np.power(np.subtract(d, 0.5*self.R), 2).transpose()[0], (2*0.3**2)*(0.5*self.R**2))),\
-					np.exp(-np.divide(np.power(np.subtract(abs(a), 0), 2), (2*0.5**2)*(self.alpha**2)))), IoO)
-					), IoO)
+					np.exp(-np.divide(np.power(np.subtract(abs(a), 0), 2), (2*0.5**2)*(self.alpha**2)))))
 
 		# Points in FoV
 		pt = [A+np.array([0, 0.1]), B+np.array([0.1, -0.1]), C+np.array([-0.1, -0.1]), A+np.array([0, 0.1])]
 		polygon = Path(pt)
-		In_polygon = polygon.contains_points(W) # Boolean
+		In_polygon = polygon.contains_points(self.W) # Boolean
 
 		# Distance and Angle of W with respect to self.pos
 		d = np.linalg.norm(np.subtract(W, self.pos), axis = 1)
@@ -617,10 +635,15 @@ class PTZcon():
 					+ np.sum(np.multiply(F3.pdf(W), JP_Boundary))
 
 		# Spatial Sensing Quality
-		Q = lambda W, d, IoO, P0: P0*np.multiply(np.multiply((np.divide(\
+		# Q = lambda W, d, IoO, P0: P0*np.multiply(np.multiply((np.divide(\
+		# 			np.dot(np.subtract(W, self.pos),self.perspective), d) - np.cos(self.alpha))/(1 - np.cos(self.alpha)),\
+		# 			np.multiply((self.R*np.cos(self.alpha) - self.lamb*(d - self.R*np.cos(self.alpha))),\
+		# 			(np.power(d, self.lamb)/(self.R**(self.lamb+1))))), IoO)
+		Q = lambda W, d, IoO, P0: P0*np.multiply((np.divide(\
 					np.dot(np.subtract(W, self.pos),self.perspective), d) - np.cos(self.alpha))/(1 - np.cos(self.alpha)),\
 					np.multiply((self.R*np.cos(self.alpha) - self.lamb*(d - self.R*np.cos(self.alpha))),\
-					(np.power(d, self.lamb)/(self.R**(self.lamb+1))))), IoO)
+					(np.power(d, self.lamb)/(self.R**(self.lamb+1)))))
+
 		P0_Q = 1.0
 		d = d.transpose()[0]
 		SQ = Q(W, d, In_polygon, P0_Q)
@@ -659,7 +682,10 @@ class PTZcon():
 		zoom_force = 0
 		centroid = None
 
-		d = np.linalg.norm(np.subtract(self.W, self.pos), axis = 1)
+		W = self.W[np.where(self.FoV > 0)]
+		# W = self.W
+
+		d = np.linalg.norm(np.subtract(W, self.pos), axis = 1)
 		d = np.array([d]).transpose()
 		d[np.where(d == 0)] = 1
 
@@ -676,28 +702,41 @@ class PTZcon():
 			x_center = 0
 			y_center = 0
 
-			mu_V = np.sum(np.multiply(\
-					np.multiply(np.power(d, self.lamb).transpose()[0], F.pdf(self.W))/(self.R**self.lamb),\
-					self.In_polygon))
+			# mu_V = np.sum(np.multiply(\
+			# 		np.multiply(np.power(d, self.lamb).transpose()[0], F.pdf(W))/(self.R**self.lamb),\
+			# 		self.In_polygon))
+			mu_V = np.sum(\
+					np.multiply(np.power(d, self.lamb).transpose()[0], F.pdf(W))/(self.R**self.lamb)
+					)
 
-			temp = np.multiply(np.multiply(np.multiply(\
+			# temp = np.multiply(np.multiply(np.multiply(\
+			# 	np.cos(self.alpha) - (self.lamb/self.R/(self.lamb+1))*d.transpose()[0],\
+			# 	d.transpose()[0]**(self.lamb)/(self.R**self.lamb)),\
+			# 	F.pdf(self.W)),\
+			# 	self.In_polygon)
+			temp = np.multiply(np.multiply(\
 				np.cos(self.alpha) - (self.lamb/self.R/(self.lamb+1))*d.transpose()[0],\
 				d.transpose()[0]**(self.lamb)/(self.R**self.lamb)),\
-				F.pdf(self.W)),\
-				self.In_polygon)
+				F.pdf(W))
+
 			temp = np.array([temp]).transpose()
 
 			v_V_t =  np.sum(np.multiply(\
-					(np.subtract(self.W, self.pos)/np.concatenate((d,d), axis = 1)),\
+					(np.subtract(W, self.pos)/np.concatenate((d,d), axis = 1)),\
 					temp), axis = 0)
 	
 
-			delta_V_t = np.sum(np.multiply(np.multiply(np.multiply(np.multiply(\
-						(1 - np.dot(np.divide(np.subtract(self.W, self.pos),np.concatenate((d,d), axis = 1)), self.perspective)),\
+			# delta_V_t = np.sum(np.multiply(np.multiply(np.multiply(np.multiply(\
+			# 			(1 - np.dot(np.divide(np.subtract(W, self.pos),np.concatenate((d,d), axis = 1)), self.perspective)),\
+			# 			(1 - (self.lamb/self.R/(self.lamb+1))*d.transpose()[0])),\
+			# 			d.transpose()[0]**(self.lamb)/(self.R**self.lamb)),\
+			# 			F.pdf(W)),\
+			# 			self.In_polygon))
+			delta_V_t = np.sum(np.multiply(np.multiply(np.multiply(\
+						(1 - np.dot(np.divide(np.subtract(W, self.pos),np.concatenate((d,d), axis = 1)), self.perspective)),\
 						(1 - (self.lamb/self.R/(self.lamb+1))*d.transpose()[0])),\
 						d.transpose()[0]**(self.lamb)/(self.R**self.lamb)),\
-						F.pdf(self.W)),\
-						self.In_polygon))
+						F.pdf(W)))
 
 			v_V = v_V_t/mu_V
 			delta_V = delta_V_t/mu_V
@@ -705,15 +744,22 @@ class PTZcon():
 			alpha_v = acos(1-sqrt(delta_V))
 			alpha_v = alpha_v if alpha_v > 5/180*np.pi else 5/180*np.pi
 
-			x_center = np.sum(np.multiply(np.multiply(\
-				self.W[:,0],\
-				(np.multiply(d.transpose()[0]**(self.lamb),F.pdf(self.W))/(self.R**self.lamb))),\
-				self.In_polygon))/mu_V
+			# x_center = np.sum(np.multiply(np.multiply(\
+			# 	W[:,0],\
+			# 	(np.multiply(d.transpose()[0]**(self.lamb),F.pdf(W))/(self.R**self.lamb))),\
+			# 	self.In_polygon))/mu_V
 
-			y_center = np.sum(np.multiply(np.multiply(\
-				self.W[:,1],\
-				(np.multiply(d.transpose()[0]**(self.lamb),F.pdf(self.W))/(self.R**self.lamb))),\
-				self.In_polygon))/mu_V
+			# y_center = np.sum(np.multiply(np.multiply(\
+			# 	W[:,1],\
+			# 	(np.multiply(d.transpose()[0]**(self.lamb),F.pdf(W))/(self.R**self.lamb))),\
+			# 	self.In_polygon))/mu_V
+			x_center = np.sum(np.multiply(\
+				W[:,0],\
+				(np.multiply(d.transpose()[0]**(self.lamb),F.pdf(W))/(self.R**self.lamb))))/mu_V
+
+			y_center = np.sum(np.multiply(\
+				W[:,1],\
+				(np.multiply(d.transpose()[0]**(self.lamb),F.pdf(W))/(self.R**self.lamb))))/mu_V
 		    
 			centroid = np.array([x_center, y_center])
 			translational_force += self.Kp*(np.linalg.norm(centroid - self.pos)\

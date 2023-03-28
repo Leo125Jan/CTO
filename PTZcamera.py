@@ -296,7 +296,7 @@ class PTZcon():
 		Avg_Sense = np.sum(self.HW_Sensing)/len(self.HW_Sensing)
 		C_3 = (1/k1)*(1/Avg_Sense) + k2*dist
 
-		print("dist to target: ", end="")
+		print("dist to target: ", end = "")
 		print(self.dist_to_targets)
 
 		# Cost Function 1-2
@@ -463,7 +463,7 @@ class PTZcon():
 					if (neighbor.state_machine["mode"] == self.state_machine["mode"]) and\
 						(neighbor.state_machine["target"] == self.state_machine["target"]):
 
-						self.dist_to_targets[self.state_machine["target"]] == 100
+						self.dist_to_targets[self.state_machine["target"]] = 100
 						self.state_machine["target"] = int(np.argmin(self.dist_to_targets))
 
 				self.target = [targets[self.state_machine["target"]]]

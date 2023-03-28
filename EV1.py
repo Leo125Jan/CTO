@@ -1,4 +1,6 @@
 import numpy as np
+import numexpr as ne
+import timeit
 from math import sqrt, acos, cos
 from matplotlib.path import Path
 from shapely.geometry import Point
@@ -6,14 +8,27 @@ from scipy.stats import multivariate_normal
 from shapely.geometry.polygon import Polygon
 from scipy.optimize import linear_sum_assignment
 
+a = np.arange(0, 25, 0.1)
+b = np.arange(0, 25, 0.1)
+X, Y = np.meshgrid(a, b)
+
+W = np.vstack([X.ravel(), Y.ravel()])
+W = W.transpose()
+
+def npn():
+
+	return np.linalg.norm(W)
+
+def nen():
+
+	x = W[:,0]; y = W[:,1]
+	return ne.evaluate('sqrt(x**2 + y**2)')
+
 if __name__ == '__main__':
 
-	pos = np.array([0,0])
-	a = np.array([-2,5])
-	b = np.array([2,5])
+	number = 1
 
-	perspective = np.array([0,1])
-	v_l = (a - pos)/np.linalg.norm(a - pos)
-	v_r = (b - pos)/np.linalg.norm(b - pos)
-	print(np.cross(v_l, perspective))
-	print(np.cross(v_r, perspective))
+	x = timeit.timeit(stmt = "npn()", number = number, globals = globals())
+	print(x)
+	x = timeit.timeit(stmt = "nen()", number = number, globals = globals())
+	print(x)

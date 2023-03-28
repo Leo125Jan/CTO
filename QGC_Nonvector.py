@@ -277,7 +277,7 @@ if __name__ == "__main__":
 
 		elif np.round(time() - last, 2) > 130.00 and np.round(time() - last, 2) < 180:
 
-			targets[0][0] = (targets[0][0][0] + 0.008, targets[0][0][1] - 0.07)
+			# targets[0][0] = (targets[0][0][0] + 0.008, targets[0][0][1] - 0.07)
 			targets[1][0] = (targets[1][0][0] + 0.065, targets[1][0][1] - 0.008)
 			targets[2][0] = (targets[2][0][0] + 0.015, targets[2][0][1] - 0.015)
 			# targets[3][0] = (targets[3][0][0] + 0.004, targets[3][0][1] - 0.035)
@@ -294,7 +294,7 @@ if __name__ == "__main__":
 
 		vis.Visualize2D(uav_team.members, event_plt1, targets)
 
-		if np.round(time() - last, 2) > 80.00:
+		if np.round(time() - last, 2) > 200.00:
 
 			sys.exit()
 

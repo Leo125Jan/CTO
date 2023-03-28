@@ -73,11 +73,9 @@ class Visualize():
 
 			map_plt = cameras[i].map_plt + map_plt
 
-		x_map = 0
 		count = 0
 		for y in range(0, self.window_size[0], self.blockSize):
 
-			y_map = 0
 			for x in range(0, self.window_size[1], self.blockSize):
 
 				dense = event_plt[count]
@@ -114,9 +112,8 @@ class Visualize():
 							(1-w)*cameras[id].color[2] + w*dense)
 					rect = pygame.Rect(x, y, self.blockSize, self.blockSize)
 					pygame.draw.rect(self.display, color, rect, 0)
-				y_map += 1
+
 				count += 1
-			x_map += 1
 
 		for camera in cameras:
 
@@ -162,7 +159,7 @@ def norm(arr):
 
 	return sqrt(sum)
 
-def event_density(event, targets, grid_size, map_size):
+def event_density(event, targets, W):
 
 	for target in targets:
 
@@ -240,8 +237,6 @@ if __name__ == "__main__":
 	W = np.vstack([X.ravel(), Y.ravel()])
 	W = W.transpose()
 
-	event = np.zeros(np.shape(W)[0])
-
 	# target's [position, certainty, weight, velocity]
 	targets = [[(6.5, 19), 1, 10], [(6.0, 18.0), 1, 10], [(7.0, 18.0), 1, 10]]
 
@@ -284,7 +279,8 @@ if __name__ == "__main__":
 
 			sleep(0.001)
 
-		event1 = event_density(event, targets, grid_size, map_size)
+		event = np.zeros(np.shape(W)[0])
+		event1 = event_density(event, targets, W)
 		event_plt1 = ((event - event1.min()) * (1/(event1.max() - event1.min()) * 255)).astype('uint8')
 
 		for i in range(len(uav_team.members)):
@@ -294,7 +290,7 @@ if __name__ == "__main__":
 
 		vis.Visualize2D(uav_team.members, event_plt1, targets)
 
-		if np.round(time() - last, 2) > 80.00:
+		if np.round(time() - last, 2) > 200.00:
 
 			sys.exit()
 
