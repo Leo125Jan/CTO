@@ -6,9 +6,8 @@ import csv
 import pygame
 import random
 import numpy as np
+from PTZCAM import PTZcon
 from time import sleep, time
-# from PTZCAM import PTZcon
-from PTZcamera import PTZcon
 from math import cos, acos, sqrt, exp, sin
 from scipy.stats import multivariate_normal
 
@@ -57,102 +56,7 @@ class Visualize():
 		        pygame.draw.rect(self.display, (125,125,125), rect, 1)
 
 		pygame.display.update()
-
 	
-	def Visualize2D(self, cameras, event_plt, targets):
-
-		map_plt = np.zeros((event_plt.shape)) - 1
-
-		for i in range(len(cameras)):
-
-			if i == 1:
-
-				for (row, j) in zip(map_plt, range(np.shape(map_plt)[0])):
-
-					for col in range(np.shape(row)[0]):
-
-						if map_plt[j][col] == 0 and cameras[i].map_plt[j][col] > 0:
-
-							cameras[i].map_plt[j][col] = 1
-
-			map_plt = cameras[i].map_plt + map_plt
-
-		x_map = 0
-		for x in range(0, self.window_size[0], self.blockSize):
-
-			y_map = 0
-			for y in range(0, self.window_size[1], self.blockSize):
-
-				dense = event_plt[x_map][y_map]
-				w = 0.6
-				id = int(map_plt[y_map][x_map])
-
-				if id == -1:
-					gray = (1-w)*125 + w*dense
-					rect = pygame.Rect(x, y, self.blockSize, self.blockSize)
-					pygame.draw.rect(self.display, (gray, gray, gray), rect, 0)
-				elif id not in range(len(cameras)):
-
-					if id == 3:# N: id-2 -> Green of head of blue
-						color = ((1-w)*cameras[id-1].color[0] + w*dense,\
-								(1-w)*cameras[id-1].color[1] + w*dense,\
-								(1-w)*cameras[id-1].color[2] + w*dense)
-						rect = pygame.Rect(x, y, self.blockSize, self.blockSize)
-						pygame.draw.rect(self.display, color, rect, 0)
-					elif id == 4:
-						color = ((1-w)*cameras[id-4].color[0] + w*dense,\
-								(1-w)*cameras[id-4].color[1] + w*dense,\
-								(1-w)*cameras[id-4].color[2] + w*dense)
-						rect = pygame.Rect(x, y, self.blockSize, self.blockSize)
-						pygame.draw.rect(self.display, color, rect, 0)
-					elif id == 5:
-						color = ((1-w)*cameras[id-5].color[0] + w*dense,\
-								(1-w)*cameras[id-5].color[1] + w*dense,\
-								(1-w)*cameras[id-5].color[2] + w*dense)
-						rect = pygame.Rect(x, y, self.blockSize, self.blockSize)
-						pygame.draw.rect(self.display, color, rect, 0)
-				else:
-					color = ((1-w)*cameras[id].color[0] + w*dense,\
-							(1-w)*cameras[id].color[1] + w*dense,\
-							(1-w)*cameras[id].color[2] + w*dense)
-					rect = pygame.Rect(x, y, self.blockSize, self.blockSize)
-					pygame.draw.rect(self.display, color, rect, 0)
-				y_map += 1
-			x_map += 1
-
-		for camera in cameras:
-
-			color = (camera.color[0], camera.color[1], camera.color[2])
-			center = camera.pos/self.grid_size*self.blockSize
-
-			R = camera.R*cos(camera.alpha)/self.grid_size[0]*self.blockSize
-			pygame.draw.line(self.display, color, center, center + camera.perspective*R, 3)
-			pygame.draw.circle(self.display, color, camera.pos/self.grid_size*self.blockSize, 10)
-
-		for camera in cameras:
-
-			color = (camera.color[0]*0.5, camera.color[1]*0.5, camera.color[2]*0.5)
-			pygame.draw.polygon(self.display, color, [camera.pos/self.grid_size*self.blockSize, \
-			                                            camera.ltop/self.grid_size*self.blockSize, \
-			                                            camera.top/self.grid_size*self.blockSize, \
-			                                            camera.rtop/self.grid_size*self.blockSize], 2)
-
-		for target in targets:
-
-			pygame.draw.circle(self.display, (0,0,0), np.asarray(target[0])/self.grid_size\
-			                    *self.blockSize, 6)
-
-		for camera in cameras:
-
-			color = (camera.color[0]*0.7, camera.color[1]*0.7, camera.color[2]*0.7)
-			pygame.draw.circle(self.display, color, np.asarray(camera.target[0][0])/self.grid_size\
-			                    *self.blockSize, 3)
-
-		pygame.draw.rect(self.display, (0, 0, 0), (0, 0, map_size[0]/grid_size[0]*self.blockSize, \
-                                                        map_size[1]/grid_size[1]*self.blockSize), width = 3)
-		pygame.display.flip()
-	
-	'''
 	def Visualize2D(self, cameras, event_plt, targets):
 
 		map_plt = np.zeros(np.shape(event_plt)[0]) - 1
@@ -169,11 +73,9 @@ class Visualize():
 
 			map_plt = cameras[i].map_plt + map_plt
 
-		x_map = 0
 		count = 0
 		for y in range(0, self.window_size[0], self.blockSize):
 
-			y_map = 0
 			for x in range(0, self.window_size[1], self.blockSize):
 
 				dense = event_plt[count]
@@ -210,9 +112,8 @@ class Visualize():
 							(1-w)*cameras[id].color[2] + w*dense)
 					rect = pygame.Rect(x, y, self.blockSize, self.blockSize)
 					pygame.draw.rect(self.display, color, rect, 0)
-				y_map += 1
+
 				count += 1
-			x_map += 1
 
 		for camera in cameras:
 
@@ -247,7 +148,6 @@ class Visualize():
 		pygame.display.flip()
 
 		# print(halt)
-	'''
 	
 def norm(arr):
 
@@ -259,33 +159,16 @@ def norm(arr):
 
 	return sqrt(sum)
 
-def event_density(event, target, grid_size):
+def event_density(event, targets, W):
 
-	x = np.arange(event.shape[0])*grid_size[0]
+	for target in targets:
 
-	for y_map in range(0, event.shape[1]):
-
-	    y = y_map*grid_size[1]
-	    density = 0
-
-	    for i in range(len(target)):
-
-	        density += target[i][2]*np.exp(-target[i][1]*np.linalg.norm(np.array([x,y], dtype=object)\
-	                        -np.array((target[i][0][1],target[i][0][0]))))
-	    event[:][y_map] = density
+		F = multivariate_normal([target[0][0], target[0][1]],\
+						[[target[1], 0.0], [0.0, target[1]]])
+		
+		event += F.pdf(W)
 
 	return 0 + event
-
-# def event_density(event, targets, grid_size, map_size):
-
-# 	for target in targets:
-
-# 		F = multivariate_normal([target[0][0], target[0][1]],\
-# 						[[target[1], 0.0], [0.0, target[1]]])
-		
-# 		event += F.pdf(W)
-
-# 	return 0 + event
 
 def TargetDynamic(x, y):
     dx = np.random.uniform(-0.5, 0.5, 1)
@@ -330,14 +213,14 @@ if __name__ == "__main__":
 				'color'         : (0, 0, 200)}
 	cameras.append(camera2)
 
-	for i in range(len(cameras)):
+	# for i in range(len(cameras)):
 
-		filename = "D:/上課資料/IME/實驗室研究/Paper/Coverage Control/Quality based switch mode/Data/"
-		# filename = "D:/Leo/IME/Paper Study/Coverage Control/Quality based switch mode/Data/"
-		filename += "Data_" + str(i) + ".csv"
+	# 	filename = "D:/上課資料/IME/實驗室研究/Paper/Coverage Control/Quality based switch mode/Data/"
+	# 	# filename = "D:/Leo/IME/Paper Study/Coverage Control/Quality based switch mode/Data/"
+	# 	filename += "Data_" + str(i) + ".csv"
 
-		f = open(filename, "w+")
-		f.close()
+	# 	f = open(filename, "w+")
+	# 	f.close()
 
 	# Initialize UAV team with PTZ cameras
 	uav_team = UAVs(map_size, grid_size)
@@ -347,19 +230,15 @@ if __name__ == "__main__":
 
 	# initialize environment with targets
 	size = (map_size/grid_size).astype(np.int64)
-	# x_range = np.arange(0, map_size[0], grid_size[0])
-	# y_range = np.arange(0, map_size[1], grid_size[1])
-	# X, Y = np.meshgrid(x_range, y_range)
+	x_range = np.arange(0, map_size[0], grid_size[0])
+	y_range = np.arange(0, map_size[1], grid_size[1])
+	X, Y = np.meshgrid(x_range, y_range)
 
-	# W = np.vstack([X.ravel(), Y.ravel()])
-	# W = W.transpose()
-
-	# event = np.zeros(np.shape(W)[0])
-	event = np.zeros((size[0], size[1]))
+	W = np.vstack([X.ravel(), Y.ravel()])
+	W = W.transpose()
 
 	# target's [position, certainty, weight, velocity]
 	targets = [[(6.5, 19), 1, 10], [(6.0, 18.0), 1, 10], [(7.0, 18.0), 1, 10]]
-	# event1 = event_density(event, targets, grid_size)
 
 	# Start Simulation
 	Done = False
@@ -400,8 +279,8 @@ if __name__ == "__main__":
 
 			sleep(0.001)
 
-		event1 = event_density(event, targets, grid_size)
-		# event1 = event_density(event, targets, grid_size, map_size)
+		event = np.zeros(np.shape(W)[0])
+		event1 = event_density(event, targets, W)
 		event_plt1 = ((event - event1.min()) * (1/(event1.max() - event1.min()) * 255)).astype('uint8')
 
 		for i in range(len(uav_team.members)):
@@ -411,7 +290,7 @@ if __name__ == "__main__":
 
 		vis.Visualize2D(uav_team.members, event_plt1, targets)
 
-		if np.round(time() - last, 2) > 80.00:
+		if np.round(time() - last, 2) > 200.00:
 
 			sys.exit()
 
