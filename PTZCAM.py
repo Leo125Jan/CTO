@@ -507,14 +507,14 @@ class PTZcon():
 		W = self.W; pos = self.pos; perspective = self.perspective; alpha = self.alpha; R = self.R
 		lamb = self.lamb; R_ = R**(lamb+1)
 
-		# out = np.empty_like(self.W)
-		# ne.evaluate("W - pos", out = out)
+		out = np.empty_like(self.W)
+		ne.evaluate("W - pos", out = out)
 
-		# x = out[:,0]; y = out[:,1]
-		# d = np.empty_like(x)
-		# ne.evaluate("sqrt(x**2 + y**2)", out = d)
+		x = out[:,0]; y = out[:,1]
+		d = np.empty_like(x)
+		ne.evaluate("sqrt(x**2 + y**2)", out = d)
 
-		d = np.linalg.norm(np.subtract(self.W, self.pos), axis = 1)
+		# d = np.linalg.norm(np.subtract(self.W, self.pos), axis = 1)
 		d = np.array([d]).transpose()
 		d = d.transpose()[0]
 
@@ -548,126 +548,6 @@ class PTZcon():
 		# 					(np.power(d, self.lamb)/(self.R**(self.lamb+1))))
 		return out
 
-	def EscapeDensity(self, targets, time_):
-
-		# Environment
-		# L = 25
-		# Wi = 25
-		# x_range = np.arange(0, L, 0.1)
-		# y_range = np.arange(0, L, 0.1)
-
-		# L = self.map_size[0]
-		# Wi = self.map_size[1]
-		# x_range = np.arange(0, L, self.grid_size[0])
-		# y_range = np.arange(0, L, self.grid_size[1])
-		# X, Y = np.meshgrid(x_range, y_range)
-
-		# W = np.vstack([X.ravel(), Y.ravel()])
-		# W = W.transpose()
-
-		W = self.W[np.where(self.FoV > 0)]
-		pos = self.pos; perspective = self.perspective; alpha = self.alpha; R = self.R
-		lamb = self.lamb; R_ = R**(lamb+1)
-
-		# Vertices of Boundary of FoV
-		A = np.array([self.pos[0], self.pos[1]])
-		B = np.array([self.rtop[0], self.rtop[1]])
-		C = np.array([self.ltop[0], self.ltop[1]])
-		range_max = (self.lamb + 1)/(self.lamb)*self.R
-
-		# Bivariate Normal Distribution
-		F1 = multivariate_normal([targets[0][0][0], targets[0][0][1]],\
-								[[targets[0][1], 0.0], [0.0, targets[0][1]]])
-		F2 = multivariate_normal([targets[1][0][0], targets[1][0][1]],\
-								[[targets[1][1], 0.0], [0.0, targets[1][1]]])
-		F3 = multivariate_normal([targets[2][0][0], targets[2][0][1]],\
-								[[targets[2][1], 0.0], [0.0, targets[2][1]]])
-
-		# Joint Probability
-
-		# Interior
-		# P = lambda d, a, IoO, P0: P0*np.multiply(np.multiply(\
-		# 			np.exp(-np.divide(np.power(np.subtract(d, self.R*np.cos(self.alpha)), 2).transpose()[0], (2*0.2**2)*(self.R*np.cos(self.alpha)**2))),\
-		# 			np.exp(-np.divide(np.power(np.subtract(abs(a), 0), 2), (2*0.2**2)*(self.alpha**2)))), IoO)
-		P = lambda d, a, IoO, P0: P0*np.multiply(\
-					np.exp(-np.divide(np.power(np.subtract(d, self.R*np.cos(self.alpha)), 2).transpose()[0], (2*0.2**2)*(self.R*np.cos(self.alpha)**2))),\
-					np.exp(-np.divide(np.power(np.subtract(abs(a), 0), 2), (2*0.2**2)*(self.alpha**2))))
-
-		# Boundary
-		# P_ = lambda d, a, IoO, P0: P0*np.multiply(np.add(np.add(\
-		# 			np.exp(-np.divide(np.power(np.subtract(abs(d-0.5*range_max), 0.5*range_max), 2).transpose()[0], (2*0.25**2)*(0.5*range_max**2))),\
-		# 			np.exp(-np.divide(np.power(np.subtract(abs(a), self.alpha), 2), (2*0.35**2)*(self.alpha**2)))),\
-		# 			P0*np.multiply(np.multiply(\
-		# 			np.exp(-np.divide(np.power(np.subtract(d, 0.5*self.R), 2).transpose()[0], (2*0.3**2)*(0.5*self.R**2))),\
-		# 			np.exp(-np.divide(np.power(np.subtract(abs(a), 0), 2), (2*0.5**2)*(self.alpha**2)))), IoO)
-		# 			), IoO)
-		P_ = lambda d, a, IoO, P0: P0*np.add(np.add(\
-					np.exp(-np.divide(np.power(np.subtract(abs(d-0.5*range_max), 0.5*range_max), 2).transpose()[0], (2*0.25**2)*(0.5*range_max**2))),\
-					np.exp(-np.divide(np.power(np.subtract(abs(a), self.alpha), 2), (2*0.35**2)*(self.alpha**2)))),\
-					P0*np.multiply(\
-					np.exp(-np.divide(np.power(np.subtract(d, 0.5*self.R), 2).transpose()[0], (2*0.3**2)*(0.5*self.R**2))),\
-					np.exp(-np.divide(np.power(np.subtract(abs(a), 0), 2), (2*0.5**2)*(self.alpha**2)))))
-
-		# Points in FoV
-		pt = [A+np.array([0, 0.1]), B+np.array([0.1, -0.1]), C+np.array([-0.1, -0.1]), A+np.array([0, 0.1])]
-		polygon = Path(pt)
-		In_polygon = polygon.contains_points(self.W) # Boolean
-
-		# Distance and Angle of W with respect to self.pos
-		d = np.linalg.norm(np.subtract(W, self.pos), axis = 1)
-		# out = np.empty_like(W)
-		# ne.evaluate("W - pos", out = out)
-		# x = out[:,0]; y = out[:,1]
-		# d = np.empty_like(x)
-		# ne.evaluate("sqrt(x**2 + y**2)", out = d)
-		d = np.array([d]).transpose()
-
-		# a = np.arccos( np.dot(np.divide(np.subtract(W, self.pos),np.concatenate((d,d), axis = 1)), self.perspective) )
-		# a = np.arccos( np.dot(np.subtract(W, self.pos)/np.concatenate((d,d), axis = 1), self.perspective) )
-		d_ = np.concatenate((d,d), axis = 1); a = np.empty_like(d.transpose()[0])
-		ne.evaluate("sum(((W - pos)/d_)*perspective, axis = 1)", out = a)
-		ne.evaluate("arccos(a)", out = a)
-
-		# Cost Function
-		P0_I = 0.9
-		JP_Interior = P(d, a, In_polygon, P0_I)
-		HW_Interior = np.sum(np.multiply(F1.pdf(W), JP_Interior))\
-					+ np.sum(np.multiply(F2.pdf(W), JP_Interior))\
-					+ np.sum(np.multiply(F3.pdf(W), JP_Interior))
-
-		P0_B = 0.9
-		JP_Boundary = P_(d, a, In_polygon, P0_B)
-		HW_Boundary = np.sum(np.multiply(F1.pdf(W), JP_Boundary))\
-					+ np.sum(np.multiply(F2.pdf(W), JP_Boundary))\
-					+ np.sum(np.multiply(F3.pdf(W), JP_Boundary))
-
-		# Spatial Sensing Quality
-		# Q = lambda W, d, IoO, P0: P0*np.multiply(np.multiply((np.divide(\
-		# 			np.dot(np.subtract(W, self.pos),self.perspective), d) - np.cos(self.alpha))/(1 - np.cos(self.alpha)),\
-		# 			np.multiply((self.R*np.cos(self.alpha) - self.lamb*(d - self.R*np.cos(self.alpha))),\
-		# 			(np.power(d, self.lamb)/(self.R**(self.lamb+1))))), IoO)
-		Q = lambda W, d, IoO, P0: P0*np.multiply((np.divide(\
-					np.dot(np.subtract(W, self.pos),self.perspective), d) - np.cos(self.alpha))/(1 - np.cos(self.alpha)),\
-					np.multiply((self.R*np.cos(self.alpha) - self.lamb*(d - self.R*np.cos(self.alpha))),\
-					(np.power(d, self.lamb)/(self.R**(self.lamb+1)))))
-
-		P0_Q = 1.0
-		d = d.transpose()[0]
-		SQ = Q(W, d, In_polygon, P0_Q)
-		HW_Sensing = np.sum(np.multiply(F1.pdf(W), SQ))\
-					+ np.sum(np.multiply(F2.pdf(W), SQ))\
-					+ np.sum(np.multiply(F3.pdf(W), SQ))
-
-		self.HW_IT = HW_Interior*0.1**2
-		self.HW_BT = HW_Boundary*0.1**2
-		self.HW_Sensing = [np.sum(np.multiply(F1.pdf(W), SQ)), np.sum(np.multiply(F2.pdf(W), SQ)), np.sum(np.multiply(F3.pdf(W), SQ))]
-		self.In_polygon = In_polygon
-
-		# if self.id == 0:
-
-		# 	print(self.HW_Interior)
-		# 	print(self.HW_Boundary, "\n")
-
 	def UpdateLocalVoronoi(self):
 
 		id_ = self.id
@@ -694,13 +574,13 @@ class PTZcon():
 		W = self.W[np.where(self.FoV > 0)]; pos = self.pos; lamb = self.lamb; R = self.R; R_ = R**lamb
 		alpha = self.alpha; perspective = self.perspective
 		
-		# out = np.empty_like(W)
-		# ne.evaluate("W - pos", out = out)
-		# x = out[:,0]; y = out[:,1]
-		# d = np.empty_like(x)
-		# ne.evaluate("sqrt(x**2 + y**2)", out = d)
+		out = np.empty_like(W)
+		ne.evaluate("W - pos", out = out)
+		x = out[:,0]; y = out[:,1]
+		d = np.empty_like(x)
+		ne.evaluate("sqrt(x**2 + y**2)", out = d)
 
-		d = np.linalg.norm(np.subtract(W, self.pos), axis = 1)
+		# d = np.linalg.norm(np.subtract(W, self.pos), axis = 1)
 		d = np.array([d]).transpose()
 		d[np.where(d == 0)] = 1
 
@@ -849,6 +729,172 @@ class PTZcon():
 			self.translational_force += formation_force 
 
 			return
+
+	def P(self, d, a, In_polygon, P0_I, R, alpha):
+
+		out = np.empty_like(d)
+		ne.evaluate("(d - R*cos(alpha))**2", out = out); out = out.transpose()[0];
+		out_ = np.empty_like(d.transpose()[0]);
+		ne.evaluate("P0_I*exp(-(out/((2*0.2**2)*(R*cos(alpha)**2))))*exp(-((abs(a)-0)**2)/((2*0.2**2)*(alpha**2)))",\
+					out = out_)
+
+		return out_
+
+	def P_(self, d, a, In_polygon, P0_B, R, alpha, R_max):
+
+		out = np.empty_like(d)
+		ne.evaluate("(abs(d-0.5*R_max)-0.5*R_max)**2", out = out); out = out.transpose()[0];
+		out_1 = np.empty_like(d.transpose()[0]);
+		ne.evaluate("P0_B*exp(-(out/((2*0.25**2)*(0.5*R_max**2))))*exp(-((abs(a)-alpha)**2)/((2*0.35**2)*(alpha**2)))",\
+					out = out_1)
+
+		out = np.empty_like(d)
+		ne.evaluate("(d - 0.5*R)**2", out = out); out = out.transpose()[0];
+		out_2 = np.empty_like(d.transpose()[0]);
+		ne.evaluate("out_1 + P0_B*exp(-(out/((2*0.3**2)*(0.5*R**2))))*exp(-((abs(a)-0)**2)/((2*0.5**2)*(alpha**2)))",\
+					out = out_2)
+
+		return out_2
+
+	def EscapeDensity(self, targets, time_):
+
+		# Environment
+		# L = 25
+		# Wi = 25
+		# x_range = np.arange(0, L, 0.1)
+		# y_range = np.arange(0, L, 0.1)
+
+		# L = self.map_size[0]
+		# Wi = self.map_size[1]
+		# x_range = np.arange(0, L, self.grid_size[0])
+		# y_range = np.arange(0, L, self.grid_size[1])
+		# X, Y = np.meshgrid(x_range, y_range)
+
+		# W = np.vstack([X.ravel(), Y.ravel()])
+		# W = W.transpose()
+
+		W = self.W[np.where(self.FoV > 0)]
+		pos = self.pos; perspective = self.perspective; alpha = self.alpha; R = self.R
+		lamb = self.lamb;
+
+		# Vertices of Boundary of FoV
+		A = np.array([self.pos[0], self.pos[1]])
+		B = np.array([self.rtop[0], self.rtop[1]])
+		C = np.array([self.ltop[0], self.ltop[1]])
+		range_max = (self.lamb + 1)/(self.lamb)*self.R
+
+		# Bivariate Normal Distribution
+		F1 = multivariate_normal([targets[0][0][0], targets[0][0][1]],\
+								[[targets[0][1], 0.0], [0.0, targets[0][1]]])
+		F2 = multivariate_normal([targets[1][0][0], targets[1][0][1]],\
+								[[targets[1][1], 0.0], [0.0, targets[1][1]]])
+		F3 = multivariate_normal([targets[2][0][0], targets[2][0][1]],\
+								[[targets[2][1], 0.0], [0.0, targets[2][1]]])
+
+		# Joint Probability
+
+		# Interior
+		# P = lambda d, a, IoO, P0: P0*np.multiply(np.multiply(\
+		# 			np.exp(-np.divide(np.power(np.subtract(d, self.R*np.cos(self.alpha)), 2).transpose()[0], (2*0.2**2)*(self.R*np.cos(self.alpha)**2))),\
+		# 			np.exp(-np.divide(np.power(np.subtract(abs(a), 0), 2), (2*0.2**2)*(self.alpha**2)))), IoO)
+		P = lambda d, a, IoO, P0: P0*np.multiply(\
+					np.exp(-np.divide(np.power(np.subtract(d, self.R*np.cos(self.alpha)), 2).transpose()[0], (2*0.2**2)*(self.R*np.cos(self.alpha)**2))),\
+					np.exp(-np.divide(np.power(np.subtract(abs(a), 0), 2), (2*0.2**2)*(self.alpha**2))))
+
+		# Boundary
+		# P_ = lambda d, a, IoO, P0: P0*np.multiply(np.add(np.add(\
+		# 			np.exp(-np.divide(np.power(np.subtract(abs(d-0.5*range_max), 0.5*range_max), 2).transpose()[0], (2*0.25**2)*(0.5*range_max**2))),\
+		# 			np.exp(-np.divide(np.power(np.subtract(abs(a), self.alpha), 2), (2*0.35**2)*(self.alpha**2)))),\
+		# 			P0*np.multiply(np.multiply(\
+		# 			np.exp(-np.divide(np.power(np.subtract(d, 0.5*self.R), 2).transpose()[0], (2*0.3**2)*(0.5*self.R**2))),\
+		# 			np.exp(-np.divide(np.power(np.subtract(abs(a), 0), 2), (2*0.5**2)*(self.alpha**2)))), IoO)
+		# 			), IoO)
+		P_ = lambda d, a, IoO, P0: P0*np.add(np.add(\
+					np.exp(-np.divide(np.power(np.subtract(abs(d-0.5*range_max), 0.5*range_max), 2).transpose()[0], (2*0.25**2)*(0.5*range_max**2))),\
+					np.exp(-np.divide(np.power(np.subtract(abs(a), self.alpha), 2), (2*0.35**2)*(self.alpha**2)))),\
+					P0*np.multiply(\
+					np.exp(-np.divide(np.power(np.subtract(d, 0.5*self.R), 2).transpose()[0], (2*0.3**2)*(0.5*self.R**2))),\
+					np.exp(-np.divide(np.power(np.subtract(abs(a), 0), 2), (2*0.5**2)*(self.alpha**2)))))
+
+		# Spatial Sensing Quality
+		# Q = lambda W, d, IoO, P0: P0*np.multiply(np.multiply((np.divide(\
+		# 			np.dot(np.subtract(W, self.pos),self.perspective), d) - np.cos(self.alpha))/(1 - np.cos(self.alpha)),\
+		# 			np.multiply((self.R*np.cos(self.alpha) - self.lamb*(d - self.R*np.cos(self.alpha))),\
+		# 			(np.power(d, self.lamb)/(self.R**(self.lamb+1))))), IoO)
+		Q = lambda W, d, IoO, P0: P0*np.multiply((np.divide(\
+					np.dot(np.subtract(W, self.pos),self.perspective), d) - np.cos(self.alpha))/(1 - np.cos(self.alpha)),\
+					np.multiply((self.R*np.cos(self.alpha) - self.lamb*(d - self.R*np.cos(self.alpha))),\
+					(np.power(d, self.lamb)/(self.R**(self.lamb+1)))))
+
+		# Points in FoV
+		pt = [A+np.array([0, 0.1]), B+np.array([0.1, -0.1]), C+np.array([-0.1, -0.1]), A+np.array([0, 0.1])]
+		polygon = Path(pt)
+		In_polygon = polygon.contains_points(self.W) # Boolean
+
+		# Distance and Angle of W with respect to self.pos
+		# d = np.linalg.norm(np.subtract(W, self.pos), axis = 1)
+		out = np.empty_like(W)
+		ne.evaluate("W - pos", out = out)
+		x = out[:,0]; y = out[:,1]
+		d = np.empty_like(x)
+		ne.evaluate("sqrt(x**2 + y**2)", out = d)
+		d = np.array([d]).transpose()
+
+		# a = np.arccos( np.dot(np.divide(np.subtract(W, self.pos),np.concatenate((d,d), axis = 1)), self.perspective) )
+		# a = np.arccos( np.dot(np.subtract(W, self.pos)/np.concatenate((d,d), axis = 1), self.perspective) )
+		d_ = np.concatenate((d,d), axis = 1); a = np.empty_like(d.transpose()[0])
+		ne.evaluate("sum(((W - pos)/d_)*perspective, axis = 1)", out = a)
+		ne.evaluate("arccos(a)", out = a)
+
+		# Cost Function
+		P0_I = 0.9
+		# JP_Interior = P(d, a, In_polygon, P0_I)
+		# HW_Interior = np.sum(np.multiply(F1.pdf(W), JP_Interior))\
+		# 			+ np.sum(np.multiply(F2.pdf(W), JP_Interior))\
+		# 			+ np.sum(np.multiply(F3.pdf(W), JP_Interior))
+		JP_Interior = self.P(d, a, In_polygon, P0_I, R, alpha)
+		F1_ = F1.pdf(W); F2_ = F2.pdf(W); F3_ = F3.pdf(W)
+		HW_Interior_1 = ne.evaluate("sum(F1_*JP_Interior)")
+		HW_Interior_2 = ne.evaluate("sum(F2_*JP_Interior)")
+		HW_Interior_3 = ne.evaluate("sum(F3_*JP_Interior)")
+		HW_Interior = ne.evaluate("HW_Interior_1 + HW_Interior_2 + HW_Interior_3")
+
+		P0_B = 0.9
+		# JP_Boundary = P_(d, a, In_polygon, P0_B)
+		# HW_Boundary = np.sum(np.multiply(F1.pdf(W), JP_Boundary))\
+		# 			+ np.sum(np.multiply(F2.pdf(W), JP_Boundary))\
+		# 			+ np.sum(np.multiply(F3.pdf(W), JP_Boundary))
+		JP_Boundary = self.P_(d, a, In_polygon, P0_B, R, alpha, range_max)
+		HW_Boundary_1 = ne.evaluate("sum(F1_*JP_Boundary)")
+		HW_Boundary_2 = ne.evaluate("sum(F2_*JP_Boundary)")
+		HW_Boundary_3 = ne.evaluate("sum(F3_*JP_Boundary)")
+		HW_Boundary = ne.evaluate("HW_Boundary_1 + HW_Boundary_2 + HW_Boundary_3")
+
+		# Sensing Quality
+		P0_Q = 1.0
+		d = d.transpose()[0]
+		# SQ = Q(W, d, In_polygon, P0_Q)
+		# HW_Sensing = np.sum(np.multiply(F1.pdf(W), SQ))\
+		# 			+ np.sum(np.multiply(F2.pdf(W), SQ))\
+		# 			+ np.sum(np.multiply(F3.pdf(W), SQ))
+		q_per = self.PerspectiveQuality(d, W, pos, perspective, alpha)
+		q_res = self.ResolutionQuality(d, W, pos, perspective, alpha, R, lamb)
+		SQ = ne.evaluate("P0_Q*q_per*q_res")
+		HW_SQ = [ne.evaluate("sum(F1_*SQ)"), ne.evaluate("sum(F2_*SQ)"), ne.evaluate("sum(F3_*SQ)")]
+
+		# self.HW_IT = HW_Interior*0.1**2
+		# self.HW_BT = HW_Boundary*0.1**2
+		# self.HW_Sensing = [np.sum(np.multiply(F1.pdf(W), SQ)), np.sum(np.multiply(F2.pdf(W), SQ)), np.sum(np.multiply(F3.pdf(W), SQ))]
+		# self.In_polygon = In_polygon
+		self.HW_IT = ne.evaluate("HW_Interior*0.1**2")
+		self.HW_BT = ne.evaluate("HW_Boundary*0.1**2")
+		self.HW_Sensing = HW_SQ
+		self.In_polygon = In_polygon
+
+		# if self.id == 0:
+
+		# 	print(self.HW_Interior)
+		# 	print(self.HW_Boundary, "\n")
 
 	def UpdateOrientation(self):
 

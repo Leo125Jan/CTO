@@ -253,7 +253,7 @@ if __name__ == "__main__":
 
 				Done = True
 
-		if np.round(time() - last, 2) > 40.00 and np.round(time() - last, 2) < 80.00:
+		if np.round(time() - last, 2) > 40.00 and np.round(time() - last, 2) < 70.00:
 
 			targets[0][0] = (targets[0][0][0] + 0.00, targets[0][0][1] + 0.01)
 			targets[1][0] = (targets[1][0][0] - 0.01, targets[1][0][1] - 0.02)
@@ -261,20 +261,20 @@ if __name__ == "__main__":
 			# targets[3][0] = (targets[3][0][0] + 0.02, targets[3][0][1] - 0.03)
 
 			sleep(0.001)
-		elif np.round(time() - last, 2) > 70.00 and np.round(time() - last, 2) < 130:
+		elif np.round(time() - last, 2) > 70.00 and np.round(time() - last, 2) < 100.00:
 
-			targets[0][0] = (targets[0][0][0] + 0.06, targets[0][0][1] - 0.01)
-			targets[1][0] = (targets[1][0][0] + 0.008, targets[1][0][1] - 0.05)
+			targets[0][0] = (targets[0][0][0] + 0.07, targets[0][0][1] - 0.01)
+			targets[1][0] = (targets[1][0][0] + 0.01, targets[1][0][1] - 0.05)
 			targets[2][0] = (targets[2][0][0] + 0.03, targets[2][0][1] - 0.03)
 			# targets[3][0] = (targets[3][0][0] + 0.05, targets[3][0][1] - 0.008)
 
 			sleep(0.001)
 
-		elif np.round(time() - last, 2) > 130.00 and np.round(time() - last, 2) < 180:
+		elif np.round(time() - last, 2) > 100.00 and np.round(time() - last, 2) < 130.00:
 
-			targets[0][0] = (targets[0][0][0] + 0.008, targets[0][0][1] - 0.07)
-			targets[1][0] = (targets[1][0][0] + 0.065, targets[1][0][1] - 0.008)
-			targets[2][0] = (targets[2][0][0] + 0.015, targets[2][0][1] - 0.015)
+			targets[0][0] = (targets[0][0][0] + 0.008, targets[0][0][1] - 0.081)
+			targets[1][0] = (targets[1][0][0] + 0.074, targets[1][0][1] - 0.008)
+			targets[2][0] = (targets[2][0][0] + 0.012, targets[2][0][1] - 0.012)
 			# targets[3][0] = (targets[3][0][0] + 0.004, targets[3][0][1] - 0.035)
 
 			sleep(0.001)
@@ -292,7 +292,7 @@ if __name__ == "__main__":
 
 		vis.Visualize2D(uav_team.members, event_plt1, targets)
 
-		if np.round(time() - last, 2) > 200.00:
+		if np.round(time() - last, 2) > 160.00:
 
 			sys.exit()
 
