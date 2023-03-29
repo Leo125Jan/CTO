@@ -1,7 +1,7 @@
 from moviepy.editor import *
 
-filename = "D:/上課資料/IME/計畫/模擬影片/環繞飛行_上帝視角_快.3.23.mp4"
-Exportname = "D:/上課資料/IME/計畫/模擬影片/環繞飛行_上帝視角_快.3.23.gif"
+filename = "D:/上課資料/IME/實驗室研究/Paper/Coverage Control/Quality based switch mode/Data/Boost_Gazebo.3.29.mp4"
+Exportname = "D:/上課資料/IME/實驗室研究/Paper/Coverage Control/Quality based switch mode/Data/Boost_Gazebo.3.29.gif"
 
-video = VideoFileClip(filename).subclip(00,14)
+video = VideoFileClip(filename).subclip(00,26)
 video.write_gif(Exportname, fps = 30)
