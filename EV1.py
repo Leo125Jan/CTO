@@ -33,8 +33,8 @@ if __name__ == '__main__':
 	# x = timeit.timeit(stmt = "nen()", number = number, globals = globals())
 	# print(x)
 
-	# a = np.array([[1,2],[3,4]])
-	b = 2.0
+	a = np.array([0.6, 0.8, 0])
+	b = np.array([-0.8, 0.6, 0])
 	# c = ne.evaluate("a/b")
 
-	print(int(b))
+	print(np.cross(a, b))

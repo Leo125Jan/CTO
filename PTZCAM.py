@@ -85,7 +85,7 @@ class PTZcon():
 		# event = np.zeros((self.size[0], self.size[1]))
 		# self.event = self.event_density(event, self.target, self.grid_size)
 		
-		self.ComputeCentroidal()
+		self.ComputeCentroidal(time_)
 		self.StageAssignment()
 		self.FormationControl()
 		self.UpdateOrientation()
@@ -265,23 +265,159 @@ class PTZcon():
 		k1, k2 = self.HW_IT, self.HW_BT
 		sweet_spot = self.pos + self.R*np.cos(self.alpha)*self.perspective
 
-		t_index = [0,1,2]
-		t_index = np.delete(t_index, np.argmax(self.dist_to_targets))
-		p1 = np.array([targets[t_index[0]][0][0], targets[t_index[0]][0][1]])
-		p2 = np.array([targets[t_index[1]][0][0], targets[t_index[1]][0][1]])
+		# t_index = [0,1,2]
+		# t_index = np.delete(t_index, np.argmax(self.dist_to_targets))
+		# p1 = np.array([targets[t_index[0]][0][0], targets[t_index[0]][0][1]])
+		# p2 = np.array([targets[t_index[1]][0][0], targets[t_index[1]][0][1]])
+		# mid_point = np.array([(p1[0]+p2[0])/2, (p1[1]+p2[1])/2])
+		# decision_line = (mid_point - self.pos)/np.linalg.norm(mid_point - self.pos)
+		# dl_1 = (p1 - self.pos)/np.linalg.norm(p1 - self.pos)
+		# dl_2 = (p2 - self.pos)/np.linalg.norm(p2 - self.pos)
+
+		# if np.cross(dl_1, decision_line) < 0:
+
+		# 	p_l = np.array([targets[t_index[0]][0][0], targets[t_index[0]][0][1]])
+		# 	p_r = np.array([targets[t_index[1]][0][0], targets[t_index[1]][0][1]])
+		# else:
+
+		# 	p_r = np.array([targets[t_index[0]][0][0], targets[t_index[0]][0][1]])
+		# 	p_l = np.array([targets[t_index[1]][0][0], targets[t_index[1]][0][1]])
+
+		fail_ = 0
+		for i in range(0, 3):
+
+			if i == 0:
+
+				v_1 = np.array([targets[1][0][0], targets[1][0][1]])\
+					- np.array([targets[0][0][0], targets[0][0][1]]); v_1 = v_1/np.linalg.norm(v_1)
+				v_2 = np.array([targets[2][0][0], targets[2][0][1]])\
+					- np.array([targets[0][0][0], targets[0][0][1]]); v_2 = v_2/np.linalg.norm(v_2)
+				v_3 = np.array([self.pos[0], self.pos[1]])\
+					- np.array([targets[0][0][0], targets[0][0][1]]); v_3 = v_3/np.linalg.norm(v_3)
+
+				if (np.sign(np.cross(v_1, v_2)) == np.sign(np.cross(v_1, v_3))) and\
+					(np.sign(np.cross(v_2, v_1)) == np.sign(np.cross(v_2, v_3))):
+
+					p1 = np.array([targets[1][0][0], targets[1][0][1]])
+					p2 = np.array([targets[2][0][0], targets[2][0][1]])
+				else:
+
+					fail_ += 1
+			elif i == 1:
+
+				v_1 = np.array([targets[0][0][0], targets[0][0][1]])\
+					- np.array([targets[1][0][0], targets[1][0][1]]); v_1 = v_1/np.linalg.norm(v_1)
+				v_2 = np.array([targets[2][0][0], targets[2][0][1]])\
+					- np.array([targets[1][0][0], targets[1][0][1]]); v_2 = v_2/np.linalg.norm(v_2)
+				v_3 = np.array([self.pos[0], self.pos[1]])\
+					- np.array([targets[1][0][0], targets[1][0][1]]); v_3 = v_3/np.linalg.norm(v_3)
+
+				if (np.sign(np.cross(v_1, v_2)) == np.sign(np.cross(v_1, v_3))) and\
+					(np.sign(np.cross(v_2, v_1)) == np.sign(np.cross(v_2, v_3))):
+
+					p1 = np.array([targets[0][0][0], targets[0][0][1]])
+					p2 = np.array([targets[2][0][0], targets[2][0][1]])
+				else:
+
+					fail_ += 1
+			elif i == 2:
+
+				v_1 = np.array([targets[0][0][0], targets[0][0][1]])\
+					- np.array([targets[2][0][0], targets[2][0][1]]); v_1 = v_1/np.linalg.norm(v_1)
+				v_2 = np.array([targets[1][0][0], targets[1][0][1]])\
+					- np.array([targets[2][0][0], targets[2][0][1]]); v_2 = v_2/np.linalg.norm(v_2)
+				v_3 = np.array([self.pos[0], self.pos[1]])\
+					- np.array([targets[2][0][0], targets[2][0][1]]); v_3 = v_3/np.linalg.norm(v_3)
+
+				if (np.sign(np.cross(v_1, v_2)) == np.sign(np.cross(v_1, v_3))) and\
+					(np.sign(np.cross(v_2, v_1)) == np.sign(np.cross(v_2, v_3))):
+
+					p1 = np.array([targets[0][0][0], targets[0][0][1]])
+					p2 = np.array([targets[1][0][0], targets[1][0][1]])
+				else:
+
+					fail_ += 1
+
+			if fail_ == 3:
+
+				t_index = np.argmin(self.dist_to_targets)
+
+				if t_index == 0:
+
+					v_1 = np.array([targets[0][0][0], targets[0][0][1]])\
+						- np.array([targets[1][0][0], targets[1][0][1]]); v_1 = v_1/np.linalg.norm(v_1)
+					v_2 = np.array([targets[0][0][0], targets[0][0][1]])\
+						- np.array([targets[2][0][0], targets[2][0][1]]); v_2 = v_2/np.linalg.norm(v_2)
+					v_3 = np.array([self.pos[0], self.pos[1]])\
+						- np.array([targets[0][0][0], targets[0][0][1]]); v_3 = v_3/np.linalg.norm(v_3)
+
+					if np.arccos(np.dot(v_1, v_3)) < np.arccos(np.dot(v_2, v_3)):
+
+						p1 = np.array([targets[t_index][0][0], targets[t_index][0][1]])
+						p2 = np.array([targets[2][0][0], targets[2][0][1]])
+					else:
+
+						p1 = np.array([targets[t_index][0][0], targets[t_index][0][1]])
+						p2 = np.array([targets[1][0][0], targets[1][0][1]])
+				elif t_index == 1:
+
+					v_1 = np.array([targets[1][0][0], targets[1][0][1]])\
+						- np.array([targets[0][0][0], targets[0][0][1]]); v_1 = v_1/np.linalg.norm(v_1)
+					v_2 = np.array([targets[1][0][0], targets[1][0][1]])\
+						- np.array([targets[2][0][0], targets[2][0][1]]); v_2 = v_2/np.linalg.norm(v_2)
+					v_3 = np.array([self.pos[0], self.pos[1]])\
+						- np.array([targets[1][0][0], targets[1][0][1]]); v_3 = v_3/np.linalg.norm(v_3)
+
+					if np.arccos(np.dot(v_1, v_3)) < np.arccos(np.dot(v_2, v_3)):
+
+						p1 = np.array([targets[t_index][0][0], targets[t_index][0][1]])
+						p2 = np.array([targets[2][0][0], targets[2][0][1]])
+					else:
+
+						p1 = np.array([targets[t_index][0][0], targets[t_index][0][1]])
+						p2 = np.array([targets[0][0][0], targets[0][0][1]])
+				elif t_index == 2:
+
+					v_1 = np.array([targets[2][0][0], targets[2][0][1]])\
+						- np.array([targets[0][0][0], targets[0][0][1]]); v_1 = v_1/np.linalg.norm(v_1)
+					v_2 = np.array([targets[2][0][0], targets[2][0][1]])\
+						- np.array([targets[1][0][0], targets[1][0][1]]); v_2 = v_2/np.linalg.norm(v_2)
+					v_3 = np.array([self.pos[0], self.pos[1]])\
+						- np.array([targets[2][0][0], targets[2][0][1]]); v_3 = v_3/np.linalg.norm(v_3)
+
+					if np.arccos(np.dot(v_1, v_3)) < np.arccos(np.dot(v_2, v_3)):
+
+						p1 = np.array([targets[t_index][0][0], targets[t_index][0][1]])
+						p2 = np.array([targets[1][0][0], targets[1][0][1]])
+					else:
+
+						p1 = np.array([targets[t_index][0][0], targets[t_index][0][1]])
+						p2 = np.array([targets[0][0][0], targets[0][0][1]])
+
 		mid_point = np.array([(p1[0]+p2[0])/2, (p1[1]+p2[1])/2])
 		decision_line = (mid_point - self.pos)/np.linalg.norm(mid_point - self.pos)
 		dl_1 = (p1 - self.pos)/np.linalg.norm(p1 - self.pos)
 		dl_2 = (p2 - self.pos)/np.linalg.norm(p2 - self.pos)
 
-		if np.cross(dl_1, decision_line) < 0:
+		if np.sign(np.cross(dl_1, decision_line)) < 0:
 
-			p_l = np.array([targets[t_index[0]][0][0], targets[t_index[0]][0][1]])
-			p_r = np.array([targets[t_index[1]][0][0], targets[t_index[1]][0][1]])
+			p_l = np.array([p1[0], p1[1]])
+			p_r = np.array([p2[0], p2[1]])
 		else:
 
-			p_r = np.array([targets[t_index[0]][0][0], targets[t_index[0]][0][1]])
-			p_l = np.array([targets[t_index[1]][0][0], targets[t_index[1]][0][1]])
+			p_r = np.array([p1[0], p1[1]])
+			p_l = np.array([p2[0], p2[1]])
+
+		# Angle revision
+		base_v = (p_r - p_l)/np.linalg.norm(p_l - p_r); base_v = np.array([base_v[0], base_v[1], 0])
+		v_p = (self.pos - p_l)/np.linalg.norm(self.pos - p_l); v_p = np.array([v_p[0], v_p[1], 0])
+		z_ = np.cross(base_v, v_p)
+		ct_line = np.cross(z_, base_v); ct_line = np.array([ct_line[0], ct_line[1]])
+		perspective = self.pos - mid_point; perspective /= np.linalg.norm(perspective)
+		theta = np.arccos(np.dot(ct_line, perspective))
+		theta_penalty = np.exp(abs(theta)/(0.5*np.pi))
+		print("theta_penalty: " + str(theta_penalty))
+		# theta_penalty = 1.0
 
 		# Cost function 1-3
 
@@ -300,7 +436,7 @@ class PTZcon():
 		r_line_v = p_r - self.pos; r_line_v = r_line_v/np.linalg.norm(r_line_v)
 		theta = np.arccos(np.dot(l_line_v, r_line_v))
 
-		Avg_distance = height*np.exp(3*(theta - 0.5*self.alpha)/0.5*self.alpha)
+		Avg_distance = height*np.exp(1.5*(theta*theta_penalty - 0.5*self.alpha)/0.5*self.alpha)
 		Avg_Sense = np.sum(self.HW_Sensing)/len(self.HW_Sensing)
 		C_3 = (1/k1)*(1/Avg_Sense) + k2*Avg_distance
 
@@ -341,6 +477,14 @@ class PTZcon():
 		# print("C3: " + str(C_3))
 
 		C_total.append(time_)
+		filename = "D:/上課資料/IME/實驗室研究/Paper/Coverage Control/Quality based switch mode/Data/"
+		# filename = "D:/Leo/IME/Paper Study/Coverage Control/Quality based switch mode/Data/"
+		filename += "Data_" + str(self.id) + ".csv"
+		with open(filename, "a", encoding='UTF8', newline='') as f:
+
+			row = C_total
+			writer = csv.writer(f)
+			writer.writerow(row)
 
 		# Mode Switch Control
 		if (len(Cluster) == AtoT):
@@ -564,7 +708,7 @@ class PTZcon():
 
 		return
 
-	def ComputeCentroidal(self):
+	def ComputeCentroidal(self, time_):
 
 		translational_force = np.array([0.,0.])
 		rotational_force = np.array([0.,0.]).reshape(2,1)
@@ -678,7 +822,11 @@ class PTZcon():
 			W_x = W[:,0]; W_y = W[:,1]; d_ = d.transpose()[0]; F_ = F.pdf(W);
 			ne.evaluate("sum(W_x*(d_**lamb/R_)*F_)", out = x_center); x_center = x_center[0]/mu_V
 			ne.evaluate("sum(W_y*(d_**lamb/R_)*F_)", out = y_center); y_center = y_center[0]/mu_V
-		    
+
+			if time_ >= 35.00:
+
+				self.Kv = 10
+
 			centroid = np.array([x_center, y_center])
 			translational_force += self.Kp*(np.linalg.norm(centroid - self.pos)\
 											- self.R*cos(self.alpha))*self.perspective
