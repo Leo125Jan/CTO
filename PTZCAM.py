@@ -409,15 +409,15 @@ class PTZcon():
 			p_l = np.array([p2[0], p2[1]])
 
 		# Angle revision
-		base_v = (p_r - p_l)/np.linalg.norm(p_l - p_r); base_v = np.array([base_v[0], base_v[1], 0])
-		v_p = (self.pos - p_l)/np.linalg.norm(self.pos - p_l); v_p = np.array([v_p[0], v_p[1], 0])
-		z_ = np.cross(base_v, v_p)
-		ct_line = np.cross(z_, base_v); ct_line = np.array([ct_line[0], ct_line[1]])
-		perspective = self.pos - mid_point; perspective /= np.linalg.norm(perspective)
-		theta = np.arccos(np.dot(ct_line, perspective))
-		theta_penalty = np.exp(abs(theta)/(0.5*np.pi))
-		print("theta_penalty: " + str(theta_penalty))
-		# theta_penalty = 1.0
+		# base_v = (p_r - p_l)/np.linalg.norm(p_l - p_r); base_v = np.array([base_v[0], base_v[1], 0])
+		# v_p = (self.pos - p_l)/np.linalg.norm(self.pos - p_l); v_p = np.array([v_p[0], v_p[1], 0])
+		# z_ = np.cross(base_v, v_p)
+		# ct_line = np.cross(z_, base_v); ct_line = np.array([ct_line[0], ct_line[1]])
+		# perspective = self.pos - mid_point; perspective /= np.linalg.norm(perspective)
+		# theta = np.arccos(np.dot(ct_line, perspective))
+		# theta_penalty = np.exp(abs(theta)/(0.5*np.pi))
+		# print("theta_penalty: " + str(theta_penalty))
+		theta_penalty = 1.0
 
 		# Cost function 1-3
 
@@ -431,21 +431,30 @@ class PTZcon():
 		polygon = Polygon(coords)
 		area = polygon.area
 		height = (2*area)/base_length
+		height_n = 0.5*abs(self.R_max - self.R*cos(self.alpha))
 
 		l_line_v = p_l - self.pos; l_line_v = l_line_v/np.linalg.norm(l_line_v)
 		r_line_v = p_r - self.pos; r_line_v = r_line_v/np.linalg.norm(r_line_v)
 		theta = np.arccos(np.dot(l_line_v, r_line_v))
 
-		Avg_distance = height*np.exp(1.5*(theta*theta_penalty - 0.5*self.alpha)/0.5*self.alpha)
+		Avg_distance = base_length*(height/height_n)*\
+						np.exp(1*(theta*theta_penalty - 0.5*self.alpha)/0.5*self.alpha)
 		Avg_Sense = np.sum(self.HW_Sensing)/len(self.HW_Sensing)
-		C_3 = (1/k1)*(1/Avg_Sense) + k2*Avg_distance
+
+		if time_ >= 30:
+
+			C_3 = min((1/k1)*(1/Avg_Sense) + k2*Avg_distance*height, 6)
+		else:
+
+			C_3 = (1/k1)*(1/Avg_Sense) + k2*Avg_distance*height
+
 
 		# print("dist to target: ", end = "")
 		# print(self.dist_to_targets)
 
 		# Cost Function 1-2
 		Avg_distance = np.linalg.norm(p_l - p_r)
-		C_2 = (1/k1)*(1/Avg_Sense) + k2*Avg_distance
+		C_2 = (1/k1)*(1/Avg_Sense) + k2*Avg_distance*height
 
 		# print("L: " + str(Avg_distance))
 
@@ -456,13 +465,13 @@ class PTZcon():
 		delta_l = np.dot(top_side_l_v, -base_v)
 		delta_r = np.dot(top_side_r_v, +base_v)
 
-		top_side_l = np.linalg.norm(top_side_l_v)*delta_l
-		top_side_r = np.linalg.norm(top_side_r_v)*delta_r
+		top_side_l = np.linalg.norm(sweet_spot - p_l)*delta_l
+		top_side_r = np.linalg.norm(sweet_spot - p_r)*delta_r
 		theta_l = np.arccos(np.dot(l_line_v, self.perspective))
 		theta_r = np.arccos(np.dot(r_line_v, self.perspective))
 
-		Avg_distance = top_side_l*np.exp(0.7*self.alpha - theta_l) + top_side_r*np.exp(0.7*self.alpha - theta_r)
-		C_1 = (1/k1)*(1/Avg_Sense) + k2*Avg_distance
+		Avg_distance = top_side_l*np.exp(0.6*self.alpha - theta_l) + top_side_r*np.exp(0.6*self.alpha - theta_r)
+		C_1 = (1/k1)*(1/Avg_Sense) + k2*Avg_distance*height
 
 		# print("L1: " + str(top_side_l), "L2: " + str(top_side_r), end = "")
 		# print(" theta1: " + str(theta_l), "theta2: " + str(theta_r))
@@ -560,7 +569,7 @@ class PTZcon():
 						sign_form.append(neighbor.state_machine["target"])
 
 					sign_form = np.array(sign_form)
-					print(sign_form)
+					# print(sign_form)
 
 					if (sign_form == [1,2]).all() or (sign_form == [2,1]).all():
 
@@ -587,15 +596,46 @@ class PTZcon():
 					# self.last_Cluster_pair = Cluster_pair
 				elif (len(Cluster) == AtoT - 2):
 
-					index = [0,1,2]
-					index = np.delete(index, np.argmax(self.dist_to_targets))
-					x = (targets[index[0]][0][0] + targets[index[1]][0][0])/2
-					y = (targets[index[0]][0][1] + targets[index[1]][0][1])/2
+					escape_index, num_count = 0, 0
 
-					self.target = [[(x, y), 1, 10]]
-					self.state_machine["self"] = self.id
-					self.state_machine["mode"] = 2.1
-					self.state_machine["target"] = -1
+					for i in range(np.shape(self.Clsuter_Checklist)[0]):
+
+						if (self.Clsuter_Checklist[i,:] == 0).all():
+
+							escape_index = i
+
+							break
+
+					if np.argmin(self.dist_to_targets) == escape_index:
+
+						self.state_machine["self"] = self.id
+						self.state_machine["mode"] = 2.1
+						self.state_machine["target"] = escape_index
+
+						for neighbor in self.neighbors:
+
+							if (neighbor.state_machine["mode"] == self.state_machine["mode"]) and\
+								(neighbor.state_machine["target"] == self.state_machine["target"]):
+
+								num_count += 1
+
+						if num_count == 0:
+
+							self.target = [targets[self.state_machine["target"]]]
+					else:
+						num_count += 1
+
+					if num_count != 0:
+
+						index = [0,1,2]
+						index = np.delete(index, np.argmax(self.dist_to_targets))
+						x = (targets[index[0]][0][0] + targets[index[1]][0][0])/2
+						y = (targets[index[0]][0][1] + targets[index[1]][0][1])/2
+
+						self.target = [[(x, y), 1, 10]]
+						self.state_machine["self"] = self.id
+						self.state_machine["mode"] = 2.1
+						self.state_machine["target"] = -1
 			elif min_C == 1:
 
 				# print(self.dist_to_targets)

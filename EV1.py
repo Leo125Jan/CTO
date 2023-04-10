@@ -37,4 +37,4 @@ if __name__ == '__main__':
 	b = np.array([-0.8, 0.6, 0])
 	# c = ne.evaluate("a/b")
 
-	print(np.cross(a, b))
+	print(min((1,5)))
