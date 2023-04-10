@@ -476,15 +476,15 @@ class PTZcon():
 		# print("C2: " + str(C_2))
 		# print("C3: " + str(C_3))
 
-		C_total.append(time_)
-		filename = "D:/上課資料/IME/實驗室研究/Paper/Coverage Control/Quality based switch mode/Data/"
-		# filename = "D:/Leo/IME/Paper Study/Coverage Control/Quality based switch mode/Data/"
-		filename += "Data_" + str(self.id) + ".csv"
-		with open(filename, "a", encoding='UTF8', newline='') as f:
+		# C_total.append(time_)
+		# filename = "D:/上課資料/IME/實驗室研究/Paper/Coverage Control/Quality based switch mode/Data/"
+		# # filename = "D:/Leo/IME/Paper Study/Coverage Control/Quality based switch mode/Data/"
+		# filename += "Data_" + str(self.id) + ".csv"
+		# with open(filename, "a", encoding='UTF8', newline='') as f:
 
-			row = C_total
-			writer = csv.writer(f)
-			writer.writerow(row)
+		# 	row = C_total
+		# 	writer = csv.writer(f)
+		# 	writer.writerow(row)
 
 		# Mode Switch Control
 		if (len(Cluster) == AtoT):

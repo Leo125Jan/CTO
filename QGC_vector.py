@@ -213,14 +213,14 @@ if __name__ == "__main__":
 				'color'         : (0, 0, 200)}
 	cameras.append(camera2)
 
-	for i in range(len(cameras)):
+	# for i in range(len(cameras)):
 
-		filename = "D:/上課資料/IME/實驗室研究/Paper/Coverage Control/Quality based switch mode/Data/"
-		# filename = "D:/Leo/IME/Paper Study/Coverage Control/Quality based switch mode/Data/"
-		filename += "Data_" + str(i) + ".csv"
+	# 	filename = "D:/上課資料/IME/實驗室研究/Paper/Coverage Control/Quality based switch mode/Data/"
+	# 	# filename = "D:/Leo/IME/Paper Study/Coverage Control/Quality based switch mode/Data/"
+	# 	filename += "Data_" + str(i) + ".csv"
 
-		f = open(filename, "w+")
-		f.close()
+	# 	f = open(filename, "w+")
+	# 	f.close()
 
 	# Initialize UAV team with PTZ cameras
 	uav_team = UAVs(map_size, grid_size)
