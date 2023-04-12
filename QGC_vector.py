@@ -213,14 +213,14 @@ if __name__ == "__main__":
 				'color'         : (0, 0, 200)}
 	cameras.append(camera2)
 
-	# for i in range(len(cameras)):
+	for i in range(len(cameras)):
 
-	# 	filename = "D:/上課資料/IME/實驗室研究/Paper/Coverage Control/Quality based switch mode/Data/"
-	# 	# filename = "D:/Leo/IME/Paper Study/Coverage Control/Quality based switch mode/Data/"
-	# 	filename += "Data_" + str(i) + ".csv"
+		# filename = "D:/上課資料/IME/實驗室研究/Paper/Coverage Control/Quality based switch mode/Data/"
+		filename = "/home/leo/mts/src/QBSM/Data/"
+		filename += "Data_" + str(i) + ".csv"
 
-	# 	f = open(filename, "w+")
-	# 	f.close()
+		f = open(filename, "w+")
+		f.close()
 
 	# Initialize UAV team with PTZ cameras
 	uav_team = UAVs(map_size, grid_size)
@@ -253,28 +253,28 @@ if __name__ == "__main__":
 
 				Done = True
 
-		if np.round(time() - last, 2) > 40.00 and np.round(time() - last, 2) < 70.00:
+		if np.round(time() - last, 2) > 30.00 and np.round(time() - last, 2) < 50.00:
 
-			targets[0][0] = (targets[0][0][0] + 0.00, targets[0][0][1] + 0.01)
-			targets[1][0] = (targets[1][0][0] - 0.01, targets[1][0][1] - 0.02)
+			targets[0][0] = (targets[0][0][0] + 0.00, targets[0][0][1] + 0.005)
+			targets[1][0] = (targets[1][0][0] - 0.005, targets[1][0][1] - 0.02)
 			targets[2][0] = (targets[2][0][0] + 0.03, targets[2][0][1] - 0.04)
 			# targets[3][0] = (targets[3][0][0] + 0.02, targets[3][0][1] - 0.03)
 
 			sleep(0.001)
-		elif np.round(time() - last, 2) > 70.00 and np.round(time() - last, 2) < 100.00:
+		elif np.round(time() - last, 2) > 50.00 and np.round(time() - last, 2) < 80.00:
 
-			targets[0][0] = (targets[0][0][0] + 0.07, targets[0][0][1] - 0.01)
-			targets[1][0] = (targets[1][0][0] + 0.01, targets[1][0][1] - 0.05)
-			targets[2][0] = (targets[2][0][0] + 0.03, targets[2][0][1] - 0.03)
+			targets[0][0] = (targets[0][0][0] + 0.03, targets[0][0][1] - 0.01)
+			targets[1][0] = (targets[1][0][0] + 0.01, targets[1][0][1] - 0.025)
+			targets[2][0] = (targets[2][0][0] + 0.01, targets[2][0][1] - 0.01)
 			# targets[3][0] = (targets[3][0][0] + 0.05, targets[3][0][1] - 0.008)
 
 			sleep(0.001)
 
-		elif np.round(time() - last, 2) > 100.00 and np.round(time() - last, 2) < 130.00:
+		elif np.round(time() - last, 2) > 80.00 and np.round(time() - last, 2) < 110.00:
 
-			targets[0][0] = (targets[0][0][0] + 0.008, targets[0][0][1] - 0.081)
-			targets[1][0] = (targets[1][0][0] + 0.074, targets[1][0][1] - 0.008)
-			targets[2][0] = (targets[2][0][0] + 0.012, targets[2][0][1] - 0.012)
+			targets[0][0] = (targets[0][0][0] + 0.007, targets[0][0][1] - 0.035)
+			targets[1][0] = (targets[1][0][0] + 0.0292, targets[1][0][1] - 0.0022)
+			targets[2][0] = (targets[2][0][0] + 0.005, targets[2][0][1] - 0.005)
 			# targets[3][0] = (targets[3][0][0] + 0.004, targets[3][0][1] - 0.035)
 
 			sleep(0.001)
@@ -293,7 +293,7 @@ if __name__ == "__main__":
 
 		vis.Visualize2D(uav_team.members, event_plt1, targets)
 
-		if np.round(time() - last, 2) > 160.00:
+		if np.round(time() - last, 2) > 120.00:
 
 			sys.exit()
 
