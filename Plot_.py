@@ -115,8 +115,8 @@ def animate(i):
 		ax0.legend(loc = "upper right", bbox_to_anchor = (1.25, 0.7), ncol = 1)
 
 	ax0.set_title('Cost Finction of Agent 0 (Red)')
-	ax0.set_xlabel("Time (s)")
-	ax0.set_ylabel("Quality")
+	ax0.set_xlabel("Instant")
+	ax0.set_ylabel("Cost")
 	ax0.set_ylim((0, 20))
 
 	if y_11 == []:
@@ -139,8 +139,8 @@ def animate(i):
 		ax1.legend(loc = "upper right", bbox_to_anchor = (1.25, 0.7), ncol = 1)
 
 	ax1.set_title('Cost Finction of Agent 1 (Green)')
-	ax1.set_xlabel("Time (s)")
-	ax1.set_ylabel("Quality")
+	ax1.set_xlabel("Instant")
+	ax1.set_ylabel("Cost")
 	ax1.set_ylim((0, 20))
 
 	if y_21 == []:
@@ -163,8 +163,8 @@ def animate(i):
 		ax2.legend(loc = "upper right", bbox_to_anchor = (1.25, 0.7), ncol = 1)
 
 	ax2.set_title('Cost Finction of Agent 2 (Blue)')
-	ax2.set_xlabel("Time (s)")
-	ax2.set_ylabel("Quality")
+	ax2.set_xlabel("Instant")
+	ax2.set_ylabel("Cost")
 	ax2.set_ylim((0, 20))
 
 	# plt.tight_layout()
