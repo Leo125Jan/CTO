@@ -33,8 +33,8 @@ if __name__ == '__main__':
 	# x = timeit.timeit(stmt = "nen()", number = number, globals = globals())
 	# print(x)
 
-	a = np.array([0.6, 0.8, 0])
-	b = np.array([-0.8, 0.6, 0])
+	a = np.array([[np.cos(0.5*np.pi), -np.sin(0.5*np.pi)],[np.sin(0.5*np.pi), np.cos(0.5*np.pi)]])
+	b = np.array([1, 0])
 	# c = ne.evaluate("a/b")
 
-	print(min((1,5)))
+	print(np.matmul(a,b))
