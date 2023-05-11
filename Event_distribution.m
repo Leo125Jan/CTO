@@ -11,20 +11,20 @@ h = 0.8*hn:0.1:0.6*pi+0.8*hn;
 X = [X1(:) X2(:)]';
 
 % C3 = exp( (1./((X(2,:)./hn).*exp(abs(X(1,:))-0.5*alpha)./(2*0.3^2)) - 0.5) );
-C3 = exp( -(X(2,:)./(hn*2*0.5^2)) ).*exp( -(abs(X(1,:))-0.5*alpha)./(0.5*alpha*2*0.5^2) );
+C3 = exp( -((X(2,:)/hn).*(1/(2*0.5^2))) ).*exp( -((abs(X(1,:)))/(alpha)).*(1/(2*0.5^2)) );
 Y3 = reshape(C3, length(theta), length(h));
 surf(theta.*(180/pi), h, Y3);
-
 % C2 = exp( ( (X(2,:)./hn).*exp(abs(X(1,:))-alpha) - 0.5).*...
 %         ( (0.5.*l.*exp(alpha-0.5.*abs(X(1,:)))+0.5.*l.*exp(alpha-0.5.*abs(X(1,:))))./l - 0.5) );
-C2 = exp( -((abs(X(2,:)-hn))./(hn*2*0.5^2)) ).*exp( -(abs(abs(X(1,:)-0.5*alpha)./(0.5*alpha*2*0.5^2))) )...
-    .*exp( -( 0.5.*l.*exp(alpha-0.5.*abs(X(1,:))) + 0.5.*l.*exp(alpha-0.5.*abs(X(1,:))) - l)./(l*2*0.5^2)  );
+C2 = exp( -( (abs(abs(X(2,:)-1*hn))./hn).*(1/(2*0.5^2)) ) )...
+    .*exp( -( (abs(abs(X(1,:)-0.5*alpha))./alpha).*(1/(2*0.5^2)) ) )...
+    .*exp( -( ( (l - 0.5.*l.*exp(0.5*alpha-0.5.*abs(X(1,:))) - 0.5.*l.*exp(0.5*alpha-0.5.*abs(X(1,:))))./l ).*((1/2*0.5^2)) )  );
 Y2 = reshape(C2, length(theta), length(h));
 surf(theta.*(180/pi), h, Y2);
-
 % C1 = exp( l./(0.5.*l.*exp(alpha-0.5.*abs(X(1,:)))+0.5.*l.*exp(alpha-0.5.*abs(X(1,:)))) - 0.5 );
-C1 = exp( -( (1*alpha./abs(X(1,:)-0.5*alpha)./(2*0.5^2)) ) ).*exp( -( ( (hn./X(2,:)-0.5*hn)./(2*0.5^2) ) ) )...
-    .*exp( -( 0.5.*l.*exp(alpha-0.5.*abs(X(1,:))) + 0.5.*l.*exp(alpha-0.5.*abs(X(1,:))) )./(l*2*0.6^2) );
+C1 = exp( -( ( (1.5*hn./X(2,:)).*( 1/(2*0.5^2) ) ) ) )...
+    .*exp( -( (0.5*alpha./abs(X(1,:))).*(1/(2*0.5^2)) ) )...
+    .*exp( -( ( (0.5.*l.*exp(alpha-0.5.*abs(X(1,:))) + 0.5.*l.*exp(alpha-0.5.*abs(X(1,:))) - l)/l ).*(1/(2*0.5^2)) ) );
 Y1 = reshape(C1, length(theta), length(h));
 surf(theta.*(180/pi), h, Y1);
 
