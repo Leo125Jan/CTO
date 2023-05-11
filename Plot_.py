@@ -17,32 +17,85 @@ def init():
 	ax1.clear()
 	ax2.clear()
 
-def read_one_Data():
+def Read_Data():
 
-	C1, C2, C3, time_ = [], [], [], []
 	Data = []
 
-	filename = "D:/上課資料/IME/實驗室研究/Paper/Coverage Control/Quality based switch mode/Data/Data_0.csv"
+	# filename = "D:/上課資料/IME/實驗室研究/Paper/Coverage Control/Quality based switch mode/Data/Data_0.csv"
+	filename = "/home/leo/mts/src/QBSM/Data/Cost"
+	files = Path(filename).glob("*.csv")
 
-	with open(filename, "r", encoding='UTF8', newline='') as f:
+	for file in files:
 
-		reader = csv.reader(f)
-		
-		for mem in reader:
+		Cost, time_ = [], []
+		data = []
+
+		with open(file, "r", encoding='UTF8', newline='') as f:
+
+			reader = csv.reader(f)
 			
-			C1.append(float(mem[0]))
-			C2.append(float(mem[1]))
-			C3.append(float(mem[2]))
-			time_.append(float(mem[3]))
+			for mem in reader:
+				
+				Cost.append(float(mem[0]))
+				time_.append(float(mem[1]))
 
-		Data = [C1[84:], C2[84:], C3[84:], time_[84:]]
-		# data_ = [C1[84:], C2[84:], C3[84:], time_[84:]]
-		# data_ = [C1[67:], C2[67:], C3[67:], time_[67:]]
-		# data_ = [C1[82:], C2[82:], C3[82:], time_[82:]]
+			data = [Cost, time_]
+
+		Data.append(data)
 
 	return Data
 
-def readData():
+def Execute_read():
+
+	Data = Read_Data()
+
+	x_0 = Data[0][1]
+	y_0 = Data[0][0]
+	x_1 = Data[1][1]
+	y_1 = Data[1][0]
+	x_2 = Data[2][1]
+	y_2 = Data[2][0]
+
+	init()
+
+	ax0.plot(x_0, y_0, color = "#005AB5")
+	ax0.set_title('Cost of Agent 0 (Red)', fontdict = {'fontsize': 20})
+	ax0.set_xlabel("Time (s)", fontdict = {'fontsize': 20})
+	ax0.set_ylabel("Cost", fontdict = {'fontsize': 20})
+	ax0.tick_params(axis='both', which='major', labelsize = 20)
+
+	ax1.plot(x_1, y_1, color = "#FF9224")
+	ax1.set_title('Cost of Agent 1 (Green)', fontdict = {'fontsize': 20})
+	ax1.set_xlabel("Time (s)", fontdict = {'fontsize': 20})
+	ax1.set_ylabel("Cost", fontdict = {'fontsize': 20})
+	ax1.tick_params(axis='both', which='major', labelsize = 20)
+
+	ax2.plot(x_2, y_2, color = "#007500")
+	ax2.set_title('Cost of Agent 2 (Blue)', fontdict = {'fontsize': 20})
+	ax2.set_xlabel("Time (s)", fontdict = {'fontsize': 20})
+	ax2.set_ylabel("Cost", fontdict = {'fontsize': 20})
+	ax2.tick_params(axis='both', which='major', labelsize = 20)
+
+	plt.subplots_adjust(left = 0.1, bottom = 0.1, right = 0.8, top = 0.9, wspace = 0, hspace = 0.45)
+
+	# figure(figsize = (10, 7.5), dpi = 80)
+	# parameters = {'legend.fontsize': 15, "xtick.labelsize": 25, "ytick.labelsize": 25,
+	# 				"axes.labelsize": 30, "axes.titlesize": 20}
+	# plt.rcParams.update(parameters)
+
+	# plt.cla()
+	# plt.grid()
+	# plt.tight_layout()
+	# plt.plot(x, y, linewidth = 1.5, linestyle = '-', label = 'Cost')
+	
+	# plt.title('Cost Function of Agent 0')
+	# plt.xlabel('Time (s)')
+	# plt.ylabel('Cost')
+
+	# plt.legend()
+	plt.show()
+
+def PlotData():
 
 	Data = []
 	count = 0
@@ -175,37 +228,8 @@ def animate(i):
 
 if __name__ == "__main__":
 
-	ani = animation.FuncAnimation(plt.gcf(), animate, cache_frame_data = False,\
-									init_func = init, interval = 30, blit = False)
-	plt.show()
+	# ani = animation.FuncAnimation(plt.gcf(), animate, cache_frame_data = False,\
+	# 								init_func = init, interval = 30, blit = False)
+	# plt.show()
 
-	# Data = readData()
-	# count = 0
-
-	# for data in Data:
-
-	# 	x = data[3]
-	# 	y1 = data[0]
-	# 	y2 = data[1]
-	# 	y3 = data[2]
-
-	# 	figure(figsize = (10, 7.5), dpi = 80)
-	# 	parameters = {'legend.fontsize': 15, "xtick.labelsize": 15, "ytick.labelsize": 15,
-	# 					"axes.labelsize": 20, "axes.titlesize": 20}
-	# 	plt.rcParams.update(parameters)
-
-	# 	plt.cla()
-	# 	plt.grid()
-	# 	plt.tight_layout()
-	# 	plt.plot(x, y1, linewidth = 1.5, linestyle = '-', label = 'Cost Function 1')
-	# 	plt.plot(x, y2, linewidth = 1.5, linestyle = '-', label = 'Cost Function 2')
-	# 	plt.plot(x, y3, linewidth = 1.5, linestyle = '-', label = 'Cost Function 3')
-		
-	# 	plt.title('Cost Function of Agent ' + str(count))
-	# 	plt.xlabel('Time (s)')
-	# 	plt.ylabel('Cost')
-
-	# 	plt.legend()
-	# 	plt.show()
-
-	# 	count += 1
+	Execute_read()

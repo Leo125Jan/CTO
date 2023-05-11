@@ -37,4 +37,5 @@ if __name__ == '__main__':
 	b = np.array([1, 0])
 	# c = ne.evaluate("a/b")
 
-	print(np.matmul(a,b))
+	c = np.array([1, 0, 3])
+	print(np.nonzero(c)[0])

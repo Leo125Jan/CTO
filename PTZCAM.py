@@ -55,12 +55,14 @@ class PTZcon():
 		self.dist_to_targets = 0
 		self.Clsuter_Checklist = None
 		self.state_machine = {"self": None, "mode": None, "target": None}
+		self.attract_center = [3, None, 2, None, 1, None] # "0": 3, "1": 0, "2": 2, "3": 0, "4",: 1, "5": 0
 
 		# Relative Control Law
 		self.translation_force = 0  # dynamics of positional changes
 		self.perspective_force = 0  # dynamics of changing perspective direction
 		self.stage = 1              # 1: Tracker, 2: Formation Cooperative
 		self.target = None
+		self.virtual_target = self.R*cos(self.alpha)*self.perspective
 		self.target_assigned = -1
 		self.step = step
 		self.FoV = np.zeros(np.shape(self.W)[0])
@@ -79,8 +81,9 @@ class PTZcon():
 		self.EscapeDensity(targets, time_)
 		self.UpdateLocalVoronoi()
 
-		self.Cluster_Formation(targets)
-		self.Cluster_Assignment(targets, time_)
+		# self.Cluster_Formation(targets)
+		# self.Cluster_Assignment(targets, time_)
+		self.Gradient_Descent(targets, time_)
 
 		# event = np.zeros((self.size[0], self.size[1]))
 		# self.event = self.event_density(event, self.target, self.grid_size)
@@ -124,10 +127,10 @@ class PTZcon():
 
 		return (1/(sigma * np.sqrt(2*np.pi))) * np.exp(-(x-mu)**2/(2*sigma**2))
 
-	def Cluster_Formation(self, targets):
+	def Cluster_Formation(self, targets, d):
 
 		checklist = np.zeros((len(targets), len(targets)))
-		threshold = 2.3
+		threshold = d
 		self.cluster_count = 0
 
 		for i in range(len(targets)):
@@ -154,6 +157,8 @@ class PTZcon():
 		return
 
 	def Cluster_Assignment(self, targets, time_):
+
+		self.Cluster_Formation(targets, 2.3)
 
 		count = 0
 		Cluster = []
@@ -452,7 +457,6 @@ class PTZcon():
 
 			C_3 = (1/k1)*(1/Avg_Sense) + k2*Avg_distance*height
 
-
 		# print("dist to target: ", end = "")
 		# print(self.dist_to_targets)
 
@@ -489,15 +493,15 @@ class PTZcon():
 		# print("C2: " + str(C_2))
 		# print("C3: " + str(C_3))
 
-		C_total.append(time_)
-		# filename = "D:/上課資料/IME/實驗室研究/Paper/Coverage Control/Quality based switch mode/Data/"
-		filename = "/home/leo/mts/src/QBSM/Data/"
-		filename += "Data_" + str(self.id) + ".csv"
-		with open(filename, "a", encoding='UTF8', newline='') as f:
+		# C_total.append(time_)
+		# # filename = "D:/上課資料/IME/實驗室研究/Paper/Coverage Control/Quality based switch mode/Data/"
+		# filename = "/home/leo/mts/src/QBSM/Data/"
+		# filename += "Data_" + str(self.id) + ".csv"
+		# with open(filename, "a", encoding='UTF8', newline='') as f:
 
-			row = C_total
-			writer = csv.writer(f)
-			writer.writerow(row)
+		# 	row = C_total
+		# 	writer = csv.writer(f)
+		# 	writer.writerow(row)
 
 		# Mode Switch Control
 		if (len(Cluster) == AtoT):
@@ -661,6 +665,289 @@ class PTZcon():
 				self.target = [targets[self.state_machine["target"]]]
 
 		print("id: " + str(self.id), "\n")
+
+	def Gradient_Descent(self, targets, time_):
+
+		self.Cluster_Formation(targets, 30)
+
+		count = 0
+		Cluster = []
+		Cluster_pair = []
+
+		if len(targets) == 3:
+
+			cluster_count_ref = 6
+			AtoT = 3
+
+		for i in range(np.shape(self.Clsuter_Checklist)[0]):
+
+			nonindex = np.nonzero(self.Clsuter_Checklist[i][:])[0]
+
+			if i > 0:
+
+				for j in nonindex:
+
+					if j < i and i in np.nonzero(self.Clsuter_Checklist[j][:])[0]:
+
+						if self.id == 0:
+
+							pass
+					else:
+
+						c_x = 0.5*(targets[i][0][0] + targets[j][0][0])
+						c_y = 0.5*(targets[i][0][1] + targets[j][0][1])
+
+						Cluster.append([(c_x, c_y), 1, 10])
+						Cluster_pair.append((i,j))
+			elif i == 0:
+
+				for j in nonindex:
+		        
+					c_x = 0.5*(targets[i][0][0] + targets[j][0][0])
+					c_y = 0.5*(targets[i][0][1] + targets[j][0][1])
+
+					Cluster.append([(c_x, c_y), 1, 10])
+					Cluster_pair.append((i,j))
+
+		# Decide Geometry Center
+		if (self.cluster_count == cluster_count_ref):
+
+			x, y = 0, 0
+			cert = 0
+			score = -np.inf
+
+			for mem in targets:
+
+				x += mem[0][0]
+				y += mem[0][1]
+
+			for mem in Cluster:
+
+				p1 = np.array([mem[0][0], mem[0][1]])
+				p2 = np.array([x/len(targets), y/len(targets)])
+
+				dist = np.linalg.norm(p1 - p2)
+
+				if dist > score and dist > 0:
+
+					cert = np.exp(-0.5*(dist/1.5))
+
+			Gc = [[(x/AtoT, y/AtoT), cert, 10]]
+			self.attract_center[1] = 0
+		else:
+
+			Gc = [[self.pos, 1, 10]]
+
+		# Decide Side Center
+		dist_to_cluster = np.array([100.0000, 100.0000, 100.0000], dtype = float)
+
+		for (mem, i) in zip(Cluster, range(len(Cluster))):
+
+			p1 = np.array([self.pos[0], self.pos[1]])
+			p2 = np.array([mem[0][0], mem[0][1]])
+
+			dist_to_cluster[i] = np.linalg.norm(p1 - p2)
+
+		if (len(Cluster) == AtoT):
+
+			Sc_index = np.argmin(dist_to_cluster)
+			
+			for neighbor in self.neighbors:
+
+				if neighbor.attract_center[3] == Sc_index:
+
+					dist_to_cluster[Sc_index] = 100
+					Sc_index = np.argmin(dist_to_cluster)
+
+			self.attract_center[3] = Sc_index
+			t_index = Cluster_pair[Sc_index]
+
+		# elif (len(Cluster) == AtoT-1):
+
+		# 	registration_form = np.ones(len(Cluster))
+
+		# 	Sc_index = np.argmin(dist_to_cluster)
+			
+		# 	for neighbor in self.neighbors:
+
+		# 		if neighbor.attract_center[3] == Sc_index:
+
+		# 			registration_form[neighbor.attract_center[3]] = 0
+
+		# 	if (registration_form == 0).all():
+
+		# 		Sc_index = np.argmin(dist_to_cluster)
+		# 	else:
+
+		# 		untracked_index = np.nonzero(registration_form)[0][0]
+		# 		Sc_index = int(untracked_index)
+
+		# 	self.attract_center[3] = Sc_index
+		# 	t_index = Cluster_pair[Sc_index]
+
+		# elif (len(Cluster) == AtoT-2):
+
+		# 	Sc_index = 0
+		# 	self.attract_center[3] = Sc_index
+
+		# Decide One Target
+		pt = [self.pos, self.ltop, self.top, self.rtop, self.pos]
+		polygon = Polygon(pt)
+		
+		dist_to_targets = np.array([100.00, 100.00, 100.00], dtype = float)
+
+		for (mem, i) in zip(targets, range(len(targets))):
+
+			gemos = Point(mem[0])
+			# if polygon.is_valid and polygon.contains(gemos):
+			if polygon.is_valid:
+
+				p1 = np.array([self.pos[0], self.pos[1]])
+				p2 = np.array([mem[0][0], mem[0][1]])
+
+				dist_to_targets[i] = np.linalg.norm(p1 - p2)
+
+		No_index = np.argmin(dist_to_targets)
+		
+		for neighbor in self.neighbors:
+
+			if neighbor.attract_center[5] == No_index:
+
+				dist_to_targets[No_index] == 100
+				No_index = np.argmin(dist_to_targets)
+
+		self.attract_center[5] = No_index
+
+		# Configuration of calculation cost function
+		Avg_distance = 0.0
+		k1, k2 = self.HW_IT, self.HW_BT
+		sweet_spot = self.pos + self.R*np.cos(self.alpha)*self.perspective
+
+		# t_index = [0,1,2]
+		# t_index = np.delete(t_index, np.argmax(self.dist_to_targets))
+		p1 = np.array([targets[t_index[0]][0][0], targets[t_index[0]][0][1]])
+		p2 = np.array([targets[t_index[1]][0][0], targets[t_index[1]][0][1]])
+		mid_point = np.array([(p1[0]+p2[0])/2, (p1[1]+p2[1])/2])
+		decision_line = (mid_point - self.pos)/np.linalg.norm(mid_point - self.pos)
+		dl_1 = (p1 - self.pos)/np.linalg.norm(p1 - self.pos)
+		dl_2 = (p2 - self.pos)/np.linalg.norm(p2 - self.pos)
+
+		if np.cross(dl_1, decision_line) < 0:
+
+			p_l = np.array([targets[t_index[0]][0][0], targets[t_index[0]][0][1]])
+			p_r = np.array([targets[t_index[1]][0][0], targets[t_index[1]][0][1]])
+		else:
+
+			p_r = np.array([targets[t_index[0]][0][0], targets[t_index[0]][0][1]])
+			p_l = np.array([targets[t_index[1]][0][0], targets[t_index[1]][0][1]])
+
+		# Angle Compensation
+		base_v = (p_r - p_l)/np.linalg.norm(p_l - p_r); base_v = np.array([base_v[0], base_v[1], 0])
+		v_p = (self.pos - p_l)/np.linalg.norm(self.pos - p_l); v_p = np.array([v_p[0], v_p[1], 0])
+		z_ = np.cross(base_v, v_p)
+		ct_line = np.cross(z_, base_v); ct_line = np.array([ct_line[0], ct_line[1]]); ct_line /= np.linalg.norm(ct_line)
+		theta = np.arccos(np.dot(-self.perspective, ct_line))
+		direction = np.cross(-self.perspective, ct_line)
+		R = np.array([[np.cos(direction*theta), -np.sin(direction*theta)],[np.sin(direction*theta), np.cos(direction*theta)]])
+
+		pos_v = self.pos - mid_point;
+		pos = mid_point + np.matmul(R, pos_v)
+		perspective = -np.matmul(R, -self.perspective)
+
+		# Cost function 1-3
+
+		# Calculation of height of trianlge
+		base_length = np.linalg.norm(p_l - p_r)
+
+		coords = [(targets[0][0][0], targets[0][0][1]),\
+					(targets[1][0][0], targets[1][0][1]),\
+					(targets[2][0][0], targets[2][0][1])]
+
+		polygon = Polygon(coords)
+		area = polygon.area
+		height = (2*area)/base_length
+		height_n = abs(self.R_max - self.R*cos(self.alpha))
+
+		l_line_v = p_l - pos; l_line_v = l_line_v/np.linalg.norm(l_line_v)
+		r_line_v = p_r - pos; r_line_v = r_line_v/np.linalg.norm(r_line_v)
+		theta = np.arccos(np.dot(l_line_v, r_line_v))
+
+		Avg_distance = base_length*(height/height_n)*\
+						np.exp(1*(theta - 0.5*self.alpha)/0.5*self.alpha)
+		Avg_Sense = np.sum(self.HW_Sensing)/len(self.HW_Sensing)
+
+		# p1 = np.array([self.pos[0], self.pos[1]])
+		# Gc = np.array([self.target[0][0][0], self.target[0][0][1]])
+		d_3 = np.linalg.norm(self.virtual_target - Gc[0][0])
+
+		Coe_3 = np.exp( -( (height/height_n)*(1/(2*0.5**2)) ) )*\
+				np.exp( -( ((theta - 0.0*self.alpha)/(1*self.alpha))*(1/(2*0.5**2)) ) )
+		Cost_3 = Coe_3*d_3
+
+		# Cost Function 1-2
+		l = np.linalg.norm(p_l - p_r)
+		top_side_l_v = sweet_spot - p_l; top_side_l_v = top_side_l_v/np.linalg.norm(top_side_l_v)
+		top_side_r_v = sweet_spot - p_r; top_side_r_v = top_side_r_v/np.linalg.norm(top_side_r_v)
+		base_v = (p_l - p_r)/base_length
+		delta_l = np.dot(top_side_l_v, -base_v)
+		delta_r = np.dot(top_side_r_v, +base_v)
+
+		top_side_l = np.linalg.norm(sweet_spot - p_l)*delta_l
+		top_side_r = np.linalg.norm(sweet_spot - p_r)*delta_r
+		theta_l = np.arccos(np.dot(l_line_v, perspective))
+		theta_r = np.arccos(np.dot(r_line_v, perspective))
+
+		Avg_distance = top_side_l*np.exp(0.6*self.alpha - theta_l) + top_side_r*np.exp(0.6*self.alpha - theta_r)
+
+		# p1 = np.array([self.pos[0], self.pos[1]])
+		Sc = mid_point
+		d_2 = np.linalg.norm(self.virtual_target - Sc)
+
+		Coe_2 = np.exp( -( (abs(height-1.5*height_n)/height_n)*(1/(2*0.5**2)) ) )*\
+				np.exp( -( (abs(theta-0.6*self.alpha)/(self.alpha))*(1/(2*0.5**2)) ) )*\
+				np.exp( -( ((l-Avg_distance)/l)*(1/(2*0.5**2)) ) )
+		Cost_2 = Coe_2*d_2
+
+		# Cost Function 1-1
+		# p1 = np.array([self.pos[0], self.pos[1]])
+		# switch_index = np.argmin(self.dist_to_targets)
+		Ot = np.array([targets[self.attract_center[5]][0]])
+		d_1 = np.linalg.norm(self.virtual_target - Ot)
+
+		Coe_1 = np.exp( -( ((1.2*height_n)/height)*(1/(2*0.5**2)) ) )*\
+				np.exp( -( (0.6*self.alpha/theta)*(1/(2*0.5**2)) ) )*\
+				np.exp( -( ((Avg_distance-l)/l)*(1/(2*0.5**2)) ) )
+		Cost_1 = Coe_1*d_1
+
+		T_Cost = Cost_1 + Cost_2 + Cost_3
+		T_Cost = [T_Cost, time_]
+
+		# Gradient Desent
+		dx_3 = -Coe_3*(-2)*np.array([(Gc[0][0][0]-self.virtual_target[0]), (Gc[0][0][1]-self.virtual_target[1])])
+		dx_2 = -Coe_2*(-2)*np.array([(Sc[0]-self.virtual_target[0]), (Sc[1]-self.virtual_target[1])])
+		dx_1 = -Coe_1*(-2)*np.array([(Ot[0][0]-self.virtual_target[0]), (Ot[0][1]-self.virtual_target[1])])
+
+		dx = 1*dx_1 + 1*dx_2 + 1*dx_3
+
+		self.virtual_target += 1*dx
+		self.target = [[self.virtual_target, 1, 10]]
+
+		# # filename = "D:/上課資料/IME/實驗室研究/Paper/Coverage Control/Quality based switch mode/Data/"
+		# filename = "/home/leo/mts/src/QBSM/Data/"
+		# filename += "Cost_" + str(self.id) + ".csv"
+		# with open(filename, "a", encoding='UTF8', newline='') as f:
+
+		# 	row = T_Cost
+		# 	writer = csv.writer(f)
+		# 	writer.writerow(row)
+
+		# print("Cost 1: " + str(Cost_1), "Cost 2: " + str(Cost_2), "Cost 3: " + str(Cost_3))
+		# print("Total Cost: " + str(T_Cost))
+		# print("Virtual Target: ", end="")
+		# print(self.virtual_target)
+		# print(Sc)
+		
+		# print("id: " + str(self.id), "\n")
 
 	def StageAssignment(self):
 
