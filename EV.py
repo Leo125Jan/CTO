@@ -8,23 +8,6 @@ from scipy.optimize import linear_sum_assignment
 
 if __name__ == '__main__':
 
-	# cost_1 = np.array([[4, 5, 100],
-	# 					[7, 13, 100], 
-	# 					[3, 6, 100]])
-	# row_ind, col_ind = linear_sum_assignment(cost_1)
-	# print(row_ind)
-	# print(col_ind, "\n")
-
-	# cost_2 = np.array([[2, 0, 5], [4, 1, 3], [3, 2, 2]])
-	# row_ind, col_ind = linear_sum_assignment(cost_2)
-	# print(row_ind)
-	# print(col_ind, "\n")
-
-	# cost_3 = np.array([[3, 2, 2], [2, 0, 5], [4, 1, 3]])
-	# row_ind, col_ind = linear_sum_assignment(cost_3)
-	# print(row_ind)
-	# print(col_ind)
-
 	# Check for AtoT-1
 	'''
 	cost_matrix = [self.dist_to_cluster]

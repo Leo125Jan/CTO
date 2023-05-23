@@ -42,7 +42,7 @@ class PTZcon():
 		self.R = properties['range_limit']
 		self.lamb = properties['lambda']
 		self.color = properties['color']
-		self.R_max = (self.lamb + 1)/(self.lamb)*self.R
+		self.R_max = (self.lamb + 1)/(self.lamb)*self.R*np.cos(self.alpha)
 		self.r = 0
 		self.top = 0
 		self.ltop = 0
@@ -51,11 +51,12 @@ class PTZcon():
 
 		# Tracking Configuration
 		self.cluster_count = 0
-		self.dist_to_cluster = 0
-		self.dist_to_targets = 0
+		self.dist_to_cluster = np.array([0.0, 0.0, 0.0])
+		self.dist_to_targets = np.array([0.0, 0.0, 0.0])
 		self.Clsuter_Checklist = None
 		self.state_machine = {"self": None, "mode": None, "target": None}
 		self.attract_center = [3, None, 2, None, 1, None] # "0": 3, "1": 0, "2": 2, "3": 0, "4",: 1, "5": 0
+		self.incircle = []
 
 		# Relative Control Law
 		self.translation_force = 0  # dynamics of positional changes
@@ -666,6 +667,7 @@ class PTZcon():
 
 		print("id: " + str(self.id), "\n")
 
+	'''
 	def Gradient_Descent(self, targets, time_):
 
 		self.Cluster_Formation(targets, 30)
@@ -807,6 +809,8 @@ class PTZcon():
 
 				dist_to_targets[i] = np.linalg.norm(p1 - p2)
 
+		print(self.pos)
+
 		No_index = np.argmin(dist_to_targets)
 		
 		for neighbor in self.neighbors:
@@ -931,6 +935,200 @@ class PTZcon():
 
 		self.virtual_target += 1*dx
 		self.target = [[self.virtual_target, 1, 10]]
+	'''
+	
+	def Gradient_Descent(self, targets, time_):
+
+		self.Cluster_Formation(targets, 30)
+
+		count = 0
+		Cluster = []
+		Cluster_pair = []
+
+		if len(targets) == 3:
+
+			cluster_count_ref = 6
+			AtoT = 3
+
+		for i in range(np.shape(self.Clsuter_Checklist)[0]):
+
+			nonindex = np.nonzero(self.Clsuter_Checklist[i][:])[0]
+
+			if i > 0:
+
+				for j in nonindex:
+
+					if j < i and i in np.nonzero(self.Clsuter_Checklist[j][:])[0]:
+
+						if self.id == 0:
+
+							pass
+					else:
+
+						c_x = 0.5*(targets[i][0][0] + targets[j][0][0])
+						c_y = 0.5*(targets[i][0][1] + targets[j][0][1])
+
+						Cluster.append([(c_x, c_y), 1, 10])
+						Cluster_pair.append((i,j))
+			elif i == 0:
+
+				for j in nonindex:
+		        
+					c_x = 0.5*(targets[i][0][0] + targets[j][0][0])
+					c_y = 0.5*(targets[i][0][1] + targets[j][0][1])
+
+					Cluster.append([(c_x, c_y), 1, 10])
+					Cluster_pair.append((i,j))
+
+		# Decide Geometry Center
+		if (self.cluster_count == cluster_count_ref):
+
+			x, y = 0, 0
+			cert = 0
+			score = -np.inf
+
+			for mem in targets:
+
+				x += mem[0][0]
+				y += mem[0][1]
+
+			for mem in Cluster:
+
+				p1 = np.array([mem[0][0], mem[0][1]])
+				p2 = np.array([x/len(targets), y/len(targets)])
+
+				dist = np.linalg.norm(p1 - p2)
+
+				if dist > score and dist > 0:
+
+					cert = np.exp(-0.5*(dist/1.5))
+
+			Gc = [[(x/AtoT, y/AtoT), cert, 10]]
+			self.attract_center[1] = 0
+		else:
+
+			Gc = [[self.pos, 1, 10]]
+
+		# Decide Side Center
+		dist_to_cluster = np.array([100.0000, 100.0000, 100.0000], dtype = float)
+
+		for (mem, i) in zip(Cluster, range(len(Cluster))):
+
+			p1 = np.array([self.pos[0], self.pos[1]])
+			p2 = np.array([mem[0][0], mem[0][1]])
+
+			dist_to_cluster[i] = np.linalg.norm(p1 - p2)
+
+		if (len(Cluster) == AtoT):
+
+			Sc_index = np.argmin(dist_to_cluster)
+			self.attract_center[3] = Sc_index
+
+		# Decide One Target
+		pt = [self.pos, self.ltop, self.top, self.rtop, self.pos]
+		polygon = Polygon(pt)
+		
+		dist_to_targets = np.array([100.00, 100.00, 100.00], dtype = float)
+
+		for (mem, i) in zip(targets, range(len(targets))):
+
+			gemos = Point(mem[0])
+			# if polygon.is_valid and polygon.contains(gemos):
+			if polygon.is_valid:
+
+				p1 = np.array([self.pos[0], self.pos[1]])
+				p2 = np.array([mem[0][0], mem[0][1]])
+
+				dist_to_targets[i] = np.linalg.norm(p1 - p2)
+
+		self.dist_to_targets = dist_to_targets
+
+		cost_matrix = []; cost_matrix.append(self.dist_to_targets)
+
+		for neighbor in self.neighbors:
+
+			cost_matrix.append(neighbor.dist_to_targets)
+
+		cost_matrix = np.array(cost_matrix)
+		row_ind, col_ind = linear_sum_assignment(cost_matrix)
+
+		self.attract_center[5] = col_ind[0]
+
+		# Configuration of calculation cost function
+		Avg_distance = 0.0
+		k1, k2 = self.HW_IT, self.HW_BT
+		sweet_spot = self.pos + self.R*np.cos(self.alpha)*self.perspective
+
+
+		# Cost function 1-3
+
+		# Circumcircle of Target
+		circumcircle_x, circumcircle_y, circumcircle_r = self.circumcenter(targets)
+		circumcircle_A = np.pi*circumcircle_r**2
+
+		# Incircle of FOV
+		head_theta = np.arctan(abs(self.perspective[1]/self.perspective[0]))
+		incircle_r = (self.R_max*np.sin(self.alpha))/(1 + np.sin(self.alpha))
+		incircle_x = self.pos[0] + (self.R_max - incircle_r)*np.sign(self.perspective[0])*np.cos(head_theta)
+		incircle_y = self.pos[1] + (self.R_max - incircle_r)*np.sign(self.perspective[1])*np.sin(head_theta)
+
+		incircle_A = np.pi*incircle_r**2
+
+		self.incircle = [(incircle_x, incircle_y), incircle_r]
+
+		# Angle between tangent line
+		theta_cum = self.calculate_tangent_angle((circumcircle_x, circumcircle_y), circumcircle_r, self.pos)
+
+		d_3 = np.linalg.norm(self.virtual_target - Gc[0][0])
+		Coe_3 = np.exp( -( (circumcircle_A/(0.8*incircle_A))*(1/(2*0.5**2)) ) )*\
+				np.exp( -( ((theta_cum)/(1*self.alpha))*(1/(2*0.5**2)) ) )
+		Cost_3 = Coe_3*d_3
+
+		# Cost Function 1-2
+		p1 = np.array(targets[Cluster_pair[self.attract_center[3]][0]][0])
+		p2 = np.array(targets[Cluster_pair[self.attract_center[3]][1]][0])
+		sidecircle_center = np.array([0.5*(p1[0]+p2[0]), 0.5*(p1[1]+p2[1])])
+		sidecircle_r = 0.5*np.linalg.norm(p1-p2); sidecircle_A = np.pi*sidecircle_r**2
+		theta_s = self.calculate_tangent_angle(sidecircle_center, sidecircle_r, self.pos)
+
+		Sc = np.array([0.5*(p1[0]+p2[0]), 0.5*(p1[1]+p2[1])])
+		d_2 = np.linalg.norm(self.virtual_target - Sc)
+
+		# Coe_2 = np.exp( -( (abs(circumcircle_A-0.8*incircle_A)/incircle_A)*(1/(2*0.5**2)) ) )*\
+		# 		np.exp( -( (abs(theta_cum-0.5*self.alpha)/(self.alpha))*(1/(2*0.5**2)) ) )*\
+		# 		np.exp( -( (abs(sidecircle_A-0.8*incircle_A)/incircle_A)*(1/(2*0.5**2)) ) )
+		Coe_2 = np.exp( -( ((0.1*incircle_A)/circumcircle_A)*(1/(2*0.5**2)) ) )*\
+				np.exp( -( ((0.1*self.alpha)/(theta_cum))*(1/(2*0.5**2)) ) )*\
+				np.exp( -( ((1.0*sidecircle_A)/(incircle_A))*(1/(2*0.5**2)) ) )*\
+				np.exp( -( ((1.0*theta_s)/(self.alpha))*(1/(2*0.5**2)) ) )
+		Cost_2 = Coe_2*d_2
+
+		# Cost Function 1-1
+		Ot = np.array([targets[self.attract_center[5]][0]])
+		d_1 = np.linalg.norm(self.virtual_target - Ot)
+
+		# Coe_1 = np.exp( -( ((0.7*incircle_A)/circumcircle_A)*(1/(2*0.5**2)) ) )*\
+		# 		np.exp( -( (0.5*self.alpha/theta_cum)*(1/(2*0.5**2)) ) )*\
+		# 		np.exp( -( ((0.7*incircle_A)/sidecircle_A)*(1/(2*0.5**2)) ) )*\
+		# 		np.exp( -( (0.5*self.alpha/theta_s)*(1/(2*0.5**2)) ) )
+		Coe_1 = np.exp( -( ((0.1*incircle_A)/circumcircle_A)*(1/(2*0.5**2)) ) )*\
+				np.exp( -( (0.1*self.alpha/theta_cum)*(1/(2*0.5**2)) ) )*\
+				np.exp( -( ((0.7*incircle_A)/sidecircle_A)*(1/(2*0.5**2)) ) )*\
+				np.exp( -( (0.5*self.alpha/theta_s)*(1/(2*0.5**2)) ) )
+		Cost_1 = Coe_1*d_1
+
+		T_Cost = Cost_1 + Cost_2 + Cost_3
+		T_Cost = [T_Cost, time_]
+
+		# Gradient Desent
+		dx_3 = -Coe_3*(-2)*np.array([(Gc[0][0][0]-self.virtual_target[0]), (Gc[0][0][1]-self.virtual_target[1])])
+		dx_2 = -Coe_2*(-2)*np.array([(Sc[0]-self.virtual_target[0]), (Sc[1]-self.virtual_target[1])])
+		dx_1 = -Coe_1*(-2)*np.array([(Ot[0][0]-self.virtual_target[0]), (Ot[0][1]-self.virtual_target[1])])
+
+		dx = 1*dx_1 + 1*dx_2 + 1*dx_3
+
+		self.virtual_target += 1*dx
+		self.target = [[self.virtual_target, 1, 10]]
 
 		# # filename = "D:/上課資料/IME/實驗室研究/Paper/Coverage Control/Quality based switch mode/Data/"
 		# filename = "/home/leo/mts/src/QBSM/Data/"
@@ -947,7 +1145,30 @@ class PTZcon():
 		# print(self.virtual_target)
 		# print(Sc)
 		
-		# print("id: " + str(self.id), "\n")
+		print("id: " + str(self.id), "\n")
+	
+	def circumcenter(self, targets):
+
+		for i in range(0, len(targets)):
+
+			globals()["x" + str(i+1)] = targets[i][0][0]
+			globals()["y" + str(i+1)] = targets[i][0][1]
+
+		d = 2 * (x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2))
+		center_x = ((x1 * x1 + y1 * y1) * (y2 - y3) + (x2 * x2 + y2 * y2) * (y3 - y1) + (x3 * x3 + y3 * y3) * (y1 - y2)) / d
+		center_y = ((x1 * x1 + y1 * y1) * (x3 - x2) + (x2 * x2 + y2 * y2) * (x1 - x3) + (x3 * x3 + y3 * y3) * (x2 - x1)) / d
+
+		radius = ((center_x - x1) ** 2 + (center_y - y1) ** 2) ** 0.5
+
+		return center_x, center_y, radius
+
+	def calculate_tangent_angle(self, circle_center, circle_radius, point):
+
+		distance = np.sqrt((point[0] - circle_center[0])**2 + (point[1] - circle_center[1])**2)
+		adjcent = np.sqrt(distance**2 - circle_radius**2)
+		angle = 2*np.arctan(circle_radius/adjcent)
+
+		return angle
 
 	def StageAssignment(self):
 

@@ -1,7 +1,9 @@
+#!/usr/bin/python3
+
 from moviepy.editor import *
 
-filename = "D:/上課資料/IME/實驗室研究/Paper/Coverage Control/Quality based switch mode/Data/Boost_Gazebo.3.29.mp4"
-Exportname = "D:/上課資料/IME/實驗室研究/Paper/Coverage Control/Quality based switch mode/Data/Boost_Gazebo.3.29.gif"
+filename = "/home/leo/影片/Video/Plan_Video/5.16/Zoom_in_out.mp4"
+Exportname = "/home/leo/影片/Video/Plan_Video/5.16/Zoom_in_out.gif"
 
-video = VideoFileClip(filename).subclip(00,26)
+video = VideoFileClip(filename).subclip(00,27)
 video.write_gif(Exportname, fps = 30)

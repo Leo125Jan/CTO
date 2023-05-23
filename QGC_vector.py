@@ -57,7 +57,8 @@ class Visualize():
 
 		pygame.display.update()
 	
-	def Visualize2D(self, cameras, event_plt, targets):
+	def Visualize2D(self, cameras, event_plt, targets, circumcenter_center, circumcenter_radius, \
+					side_center, side_center_radius):
 
 		map_plt = np.zeros(np.shape(event_plt)[0]) - 1
 
@@ -137,6 +138,20 @@ class Visualize():
 			pygame.draw.circle(self.display, (0,0,0), np.asarray(target[0])/self.grid_size\
 			                    *self.blockSize, 6)
 
+		for (center, r) in zip(side_center, side_center_radius):
+
+			pygame.draw.circle(self.display, (129, 128, 157), center/self.grid_size\
+		                    *self.blockSize, r*(40), 2)
+
+		for camera in cameras:
+
+			color = (camera.color[0]*0.5, camera.color[1]*0.5, camera.color[2]*0.5)
+			pygame.draw.circle(self.display, color, camera.incircle[0]/self.grid_size\
+		                    *self.blockSize, camera.incircle[1]*(40), 5)
+
+		pygame.draw.circle(self.display, (183, 158, 158), circumcenter_center/self.grid_size\
+		                    *self.blockSize, circumcenter_radius*(40), 2)
+
 		for camera in cameras:
 
 			color = (camera.color[0]*0.7, camera.color[1]*0.7, camera.color[2]*0.7)
@@ -171,11 +186,43 @@ def event_density(event, targets, W):
 	return 0 + event
 
 def TargetDynamic(x, y):
-    dx = np.random.uniform(-0.5, 0.5, 1)
-    dy = np.random.uniform(-0.5, 0.5, 1)
 
-    return (x, y)
-    #(np.round(float(np.clip(dx/2 + x, 0, 24)),1), np.round(float(np.clip(dy/2 + y, 0, 24)),1))
+	dx = np.random.uniform(-0.5, 0.5, 1)
+	dy = np.random.uniform(-0.5, 0.5, 1)
+
+	return (x, y)
+	#(np.round(float(np.clip(dx/2 + x, 0, 24)),1), np.round(float(np.clip(dy/2 + y, 0, 24)),1))
+
+def circumcenter(targets):
+
+	for i in range(0, len(targets)):
+
+		globals()["x" + str(i+1)] = targets[i][0][0]
+		globals()["y" + str(i+1)] = targets[i][0][1]
+
+	d = 2 * (x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2))
+	center_x = ((x1 * x1 + y1 * y1) * (y2 - y3) + (x2 * x2 + y2 * y2) * (y3 - y1) + (x3 * x3 + y3 * y3) * (y1 - y2)) / d
+	center_y = ((x1 * x1 + y1 * y1) * (x3 - x2) + (x2 * x2 + y2 * y2) * (x1 - x3) + (x3 * x3 + y3 * y3) * (x2 - x1)) / d
+
+	radius = ((center_x - x1) ** 2 + (center_y - y1) ** 2) ** 0.5
+
+	return (center_x, center_y), radius
+
+def sidecenter(targets):
+
+	for i in range(0, len(targets)):
+
+		globals()["x" + str(i+1)] = targets[i][0][0]
+		globals()["y" + str(i+1)] = targets[i][0][1]
+
+	side_center_1 = np.array([0.5*(x1 + x2), 0.5*(y1 + y2)]); radius_1 = 0.5*np.sqrt( (x1-x2)**2 + (y1-y2)**2 )
+	side_center_2 = np.array([0.5*(x1 + x3), 0.5*(y1 + y3)]); radius_2 = 0.5*np.sqrt( (x1-x3)**2 + (y1-y3)**2 )
+	side_center_3 = np.array([0.5*(x2 + x3), 0.5*(y2 + y3)]); radius_3 = 0.5*np.sqrt( (x2-x3)**2 + (y2-y3)**2 )
+
+	side_center = [side_center_1, side_center_2, side_center_3]
+	side_center_radius = [radius_1, radius_2, radius_3]
+
+	return side_center, side_center_radius
 
 if __name__ == "__main__":
 
@@ -292,7 +339,11 @@ if __name__ == "__main__":
 		print("Simulation Time: " + str(time() - last))
 		print("Calculation Time: " + str(time() - past), "\n")
 
-		vis.Visualize2D(uav_team.members, event_plt1, targets)
+		circumcenter_center, circumcenter_radius = circumcenter(targets)
+		side_center, side_center_radius = sidecenter(targets)
+
+		vis.Visualize2D(uav_team.members, event_plt1, targets, circumcenter_center, circumcenter_radius, \
+						side_center, side_center_radius)
 
 		if np.round(time() - last, 2) > 120.00:
 
