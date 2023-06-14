@@ -395,8 +395,8 @@ class PTZcon():
 		# EMST
 		edges, weights = self.EMST(targets)
 
-		print("edges: " + str(edges) + "\n")
-		print("weights: " + str(weights) + "\n")
+		# print("edges: " + str(edges) + "\n")
+		# print("weights: " + str(weights) + "\n")
 
 		# Calculate the pariswise distance between targets
 		points = [self.pos]
@@ -416,15 +416,18 @@ class PTZcon():
 		points_len = len(points)
 
 		distances = distance.cdist(points, points)
+		# print("points: " + str(points) + "\n")
+		# print("distances: " + str(distances) + "\n")
 
 		# Hungarian Algorithm for 1-1
-		cost_matrix = [row[agents_len:points_len-1] for (row, i) in zip(distances, range(len(distances))) if i < agents_len]
+		cost_matrix = [row[agents_len:points_len] for (row, i) in zip(distances, range(len(distances))) if i < agents_len]
 		cost_matrix = np.array(cost_matrix)
+		# print("cost_matrix: " + str(cost_matrix) + "\n")
 		row_ind, col_ind = linear_sum_assignment(cost_matrix)
 
 		watch_1 = col_ind[0]
 
-		print("watch_1: " + str(watch_1) + "\n")
+		# print("watch_1: " + str(watch_1) + "\n")
 
 		# Pathfinder
 		trunk = []
@@ -433,40 +436,49 @@ class PTZcon():
 
 		while dead_end == False:
 
-			print("temp_root: " + str(temp_root) + "\n")
+			# print("temp_root: " + str(temp_root) + "\n")
 
 			if np.shape(trunk)[0] >= 1:
 
 				b = set([tuple(element) for element in trunk])
-				print("b: " + str(b) + "\n")
+				# print("b: " + str(b) + "\n")
 				edge = np.array([element for element in edges if element not in b])
-				print("edge: " + str(edge) + "\n")
+				# print("edge: " + str(edge) + "\n")
 				c = set(weight)
 				weights_ = np.array([element for element in weights if element not in c])
-				print("weights: " + str(weights_) + "\n")
+				# print("weights: " + str(weights_) + "\n")
 
-				if len(edge) == 0:
+				if len(edge) == 0 or len(weights_) == 0:
 
-					print("Path End" + "\n")
+					# print("Path End" + "\n")
 					dead_end = True
 					break
 			else:
 
 				edge = np.array(edges)
 				weights_ = np.array(weights)
-				print("edge: " + str(edge) + "\n")
-				print("weights: " + str(weights_) + "\n")
+				# print("edge: " + str(edge) + "\n")
+				# print("weights: " + str(weights_) + "\n")
 
 			logical_or = np.logical_or((temp_root == edge)[:,0], (temp_root == edge)[:,1])
-			print("logical_or: " + str(logical_or) + "\n")
-			path = edge[(logical_or == True)]; #weight = np.where(logical_or == True, weights, np.inf)
-			weight = weights_[(logical_or == True)]
-			print("path: " + str(path) + "\n")
-			print("weight: " + str(weight) + "\n")
-			right_branch = np.argmin(weight)
-			print("right_branch: " + str(right_branch) + "\n")
+			# print("logical_or: " + str(logical_or) + "\n")
+
+			if (logical_or == False).all():
+
+				# print("Path End" + "\n")
+				dead_end = True
+				break
+
+			path = edge[(logical_or == True)]; weight_hold = weights_[(logical_or == True)]
+			# path = edge[np.where(logical_or == True)]; weight_hold = weights[np.where(logical_or == True)]
+			# print("path: " + str(path) + "\n")
+			# print("weight_hold: " + str(weight_hold) + "\n")
+			right_branch = np.argmin(weight_hold)
+			# print("right_branch: " + str(right_branch) + "\n")
+			weight = [weight_hold[right_branch]]
+			# print("weight: " + str(weight) + "\n")
 			trunk.append(path[right_branch])
-			print("trunk: " + str(trunk) + "\n")
+			# print("trunk: " + str(trunk) + "\n")
 
 			if np.shape(trunk)[0] == 1:
 
@@ -492,8 +504,8 @@ class PTZcon():
 					start = targets[branch[0]][0]
 					end = targets[branch[1]][0]
 
-					print("start: " + str(start) + "\n")
-					print("end: " + str(end) + "\n")
+					# print("start: " + str(start) + "\n")
+					# print("end: " + str(end) + "\n")
 
 					if np.logical_and(np.isin(start, nodes)[0], np.isin(start, nodes)[1]) == False and len(nodes) > 0:
 
@@ -509,7 +521,7 @@ class PTZcon():
 
 						nodes.append(end)
 
-				print("nodes: " + str(nodes) + "\n")
+				# print("nodes: " + str(nodes) + "\n")
 
 				if np.shape(nodes)[0] <= 3:
 
@@ -559,8 +571,7 @@ class PTZcon():
 						b = set([temp_root])
 						temp_root = [element for element in path[right_branch] if element not in b][0]
 
-		print("Final trunk: " + str(trunk) + "\n")
-		print(halt)
+		# print("Final trunk: " + str(trunk) + "\n")
 
 		# Cost function layer
 		target_points = []
@@ -591,15 +602,16 @@ class PTZcon():
 
 					target_points.append(end)
 
-			x, y, dx = 0, 0, 0
+			x, y, = 0, 0
 			C = []
+			dx = np.zeros(2)
 			for element, i in zip(target_points, range(np.shape(target_points)[0])):
 
 				if np.shape(target_points)[0] - i > 3:
 
 					nodes = target_points[0:np.shape(target_points)[0]-i]
-					x = [element[0][0] for element in node]; avg_x = np.mean(x)
-					y = [element[0][1] for element in node]; avg_y = np.mean(y)
+					x = [element[0] for element in node]; avg_x = np.mean(x)
+					y = [element[1] for element in node]; avg_y = np.mean(y)
 					
 					geometric_center = np.array([(avg_x, avg_y)])
 					R, rangecircle_d = 0, 0
@@ -633,9 +645,10 @@ class PTZcon():
 				elif np.shape(target_points)[0] - i == 3:
 
 					nodes = target_points[0:np.shape(target_points)[0]-i]
-					x = [element[0][0] for element in node]; avg_x = np.mean(x)
-					y = [element[0][1] for element in node]; avg_y = np.mean(y)
-					geometric_center = np.array([(avg_x, avg_y)])
+
+					x = [element[0] for element in nodes]; avg_x = np.mean(x)
+					y = [element[1] for element in nodes]; avg_y = np.mean(y)
+					geometric_center = np.array([avg_x, avg_y])
 					
 					circumcircle_x, circumcircle_y, circumcircle_r = self.circumcenter(nodes)
 					circumcircle_A = np.pi*circumcircle_r**2
@@ -643,34 +656,57 @@ class PTZcon():
 
 					Cn = np.exp( -( (circumcircle_A/(0.8*incircle_A))*(1/(2*0.5**2)) ) )*\
 						np.exp( -( ((theta)/(1*self.alpha))*(1/(2*0.5**2)) ) )
-					Cn *= 1-C[-1]
-					C.append(Cn)
-					dx += (-Cn)*(-2)*np.array([(geometric_center[0]-self.virtual_target[0]), (geometric_center[0]-self.virtual_target[1])])
+
+					if len(C) == 0:
+
+						C.append(Cn)
+						dx += (-Cn)*(-2)*np.array([(geometric_center[0]-self.virtual_target[0]), (geometric_center[1]-self.virtual_target[1])])
+					else:
+
+						Cn *= 1-C[-1]
+						C.append(Cn)
+						dx += (-Cn)*(-2)*np.array([(geometric_center[0]-self.virtual_target[0]), (geometric_center[1]-self.virtual_target[1])])
+
+					# print("Cn_3: " + str(Cn) + "\n")
+					# print("dx_3: " + str(dx) + "\n")
 				elif np.shape(target_points)[0] - i == 2:
 
 					nodes = target_points[0:np.shape(target_points)[0]-i]
 
-					p1 = np.array(nodes[0][0])
-					p2 = np.array(nodes[1][0])
+					p1 = np.array(nodes[0])
+					p2 = np.array(nodes[1])
 					sidecircle_center = np.array([0.5*(p1[0]+p2[0]), 0.5*(p1[1]+p2[1])])
 					sidecircle_r = 0.5*np.linalg.norm(p1-p2); sidecircle_A = np.pi*sidecircle_r**2
 					theta = self.calculate_tangent_angle(sidecircle_center, sidecircle_r, self.pos)
 
 					Cn = np.exp( -( ((1.0*sidecircle_A)/(incircle_A))*(1/(2*0.5**2)) ) )*\
 						np.exp( -( ((1.0*theta)/(self.alpha))*(1/(2*0.5**2)) ) )
-					Cn *= 1-C[-1]
-					C.append(Cn)
-					dx += (-Cn)*(-2)*np.array([(sidecircle_center[0]-self.virtual_target[0]), (sidecircle_center[0]-self.virtual_target[1])])
-				elif np.shape(target_points)[0] - i == 1:
 
-					nodes = target_points[0:np.shape(target_points)[0]-i]
-					Cn = 1-C[-1]
-					dx += (-Cn)*(-2)*np.array([(nodes[0][0]-self.virtual_target[0]), (nodes[0][1]-self.virtual_target[1])])
+					if len(C) == 0:
 
-		self.virtual_target += 1*dx
+						dx += (-Cn)*(-2)*np.array([(sidecircle_center[0]-self.virtual_target[0]), (sidecircle_center[0]-self.virtual_target[1])])+\
+						(-(1-Cn))*(-2)*np.array([(nodes[0][0]-self.virtual_target[0]), (nodes[0][1]-self.virtual_target[1])])
+					else:
+
+						Cn *= 1-C[-1]
+						dx += (-Cn)*(-2)*np.array([(sidecircle_center[0]-self.virtual_target[0]), (sidecircle_center[0]-self.virtual_target[1])])+\
+						(-(1-Cn))*(-2)*np.array([(nodes[0][0]-self.virtual_target[0]), (nodes[0][1]-self.virtual_target[1])])
+
+					# print("Cn: " + str(Cn) + "\n")
+					print("dx: " + str(dx) + "\n")
+				# elif np.shape(target_points)[0] - i == 1:
+
+				# 	nodes = target_points[0:np.shape(target_points)[0]-i]
+				# 	Cn = 1-C[-1]
+				# 	dx += (-Cn)*(-2)*np.array([(nodes[0][0]-self.virtual_target[0]), (nodes[0][1]-self.virtual_target[1])])
+
+		self.virtual_target += 0.5*dx
+		print("virtual_target: " + str(self.virtual_target) + "\n")
 		self.target = [[self.virtual_target, 1, 10]]
 
-		print(halt)
+		# if self.id == 2:
+		
+		# 	print(halt)
 
 		# filename = "D:/上課資料/IME/實驗室研究/Paper/Coverage Control/Quality based switch mode/Data/"
 		# filename = "/home/leo/mts/src/QBSM/Data/Cost/"

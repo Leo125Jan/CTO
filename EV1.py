@@ -336,7 +336,8 @@ if __name__ == '__main__':
 
 	# print(a[b == True])
 
-	a = (1,0)
-	b = [(1,1), (1,2), (1,3)]
+	a = np.array([False, True])
+	b = np.where(a==True)
+	c = np.array([[1,1],[2,2]])
 
-	print(np.logical_and([True], [False]))
+	print(c[b])
