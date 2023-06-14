@@ -1,12 +1,21 @@
+import timeit
 import numpy as np
 import numexpr as ne
-import timeit
 from math import sqrt, acos, cos
 from matplotlib.path import Path
+from scipy.integrate import quad
 from shapely.geometry import Point
+from collections import namedtuple
+from scipy.optimize import linprog
 from scipy.stats import multivariate_normal
 from shapely.geometry.polygon import Polygon
 from scipy.optimize import linear_sum_assignment
+
+from scipy.spatial import distance
+from scipy.sparse import csr_matrix
+from scipy.sparse.csgraph import minimum_spanning_tree
+import matplotlib.pyplot as plt
+from collections import defaultdict
 
 a = np.arange(0, 30, 0.1)
 b = np.arange(0, 30, 0.1)
@@ -14,6 +23,14 @@ X, Y = np.meshgrid(a, b)
 
 W = np.vstack([X.ravel(), Y.ravel()])
 W = W.transpose()
+
+def hura():
+
+	cost = np.array([[4, 1, 3], [2, 0, 5], [3, 2, 2]])
+	row_ind, col_ind = linear_sum_assignment(cost)
+
+	print("row: " + str(row_ind))
+	print("col: " + str(col_ind))
 
 def npn():
 
@@ -23,6 +40,18 @@ def nen():
 
 	x = W[:,0]; y = W[:,1]
 	return ne.evaluate('sqrt(x**2 + y**2)')
+
+def para_opt():
+
+	number = 1
+
+	x = timeit.timeit(stmt = "npn()", number = number, globals = globals())
+
+	print(x)
+
+	x = timeit.timeit(stmt = "nen()", number = number, globals = globals())
+
+	print(x)
 
 def circumcenter(x1, y1, x2, y2, x3, y3):
 
@@ -76,28 +105,238 @@ def calculate_tangent_angle(circle_center, circle_radius, point):
 
 	return (angle*180)/np.pi
 
+def hurg():
+
+	cost_1 = np.array([[10, 10, 10], [10, 10, 10], [10, 10, 10]])
+	row_ind, col_ind = linear_sum_assignment(cost_1)
+
+	print(row_ind, col_ind)
+
+	for row, col in zip(row_ind, col_ind):
+
+		print(f"Agent {row+1} assigned to Task {col+1}")
+
+def name_tuple():
+
+	Point = namedtuple("Coordinat", ["x", "y", "z"])
+	point = Point(1, 2, 3)
+
+	print(point.x)
+
+def integrand():
+
+	a = 0
+	b = 1
+
+	X = lambda x: x**2
+
+	integral, error = quad(X, a, b)
+
+	print(f"The integral of x^2 from {a} to {b} is {integral:.4f} with an error of {error:.4f}")
+
+def linear_program():
+
+	c = [-1, 4]
+	A = [[-3, 1], [1, 2]]
+	b = [6, 4]
+	x0_bounds = (None, None)
+	x1_bounds = (-3, None)
+
+	res = linprog(c, A_ub=A, b_ub=b, bounds=[x0_bounds, x1_bounds])
+
+	print(f"Optimal value: {res.fun:.4f}")
+	print(f"Optimal solution: {res.x}")
+
+def MST():
+
+	targets = np.array([[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12], [13, 14]])
+
+	# Calculate the pairwise distances between targets
+	distances = distance.cdist(targets, targets)
+
+	print("distances: " + str(distances))
+
+	# Create a sparse adjacency matrix from the distances
+	adj_matrix = csr_matrix(distances)
+
+	print("adj_matrix: " + str(adj_matrix))
+
+	# Compute the minimum spanning tree using Kruskal's algorithm
+	mst = minimum_spanning_tree(adj_matrix)
+
+	print("mst: " + str(mst))
+
+	# Extract the edges from the MST
+	edges = np.array(mst.nonzero()).T
+
+	print("edges: " + str(edges))
+
+	# Plot the targets and MST edges
+	plt.scatter(targets[:, 0], targets[:, 1], color='red', label='Targets')
+
+	for edge in edges:
+
+		start = targets[edge[0]]
+		end = targets[edge[1]]
+		plt.plot([start[0], end[0]], [start[1], end[1]], color='blue')
+
+	plt.xlabel('X')
+	plt.ylabel('Y')
+	plt.title('Minimum Spanning Tree of Targets')
+	plt.legend()
+	plt.show()
+
+def MSF():
+
+	# Generate example target coordinates
+	targets = np.array([[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12], [30, 30]])
+
+	# Calculate the pairwise distances between targets
+	distances = distance.cdist(targets, targets)
+
+	# Create a sparse adjacency matrix from the distances
+	adj_matrix = csr_matrix(distances)
+
+	# Compute the minimum spanning tree using Kruskal's algorithm
+	mst = minimum_spanning_tree(adj_matrix)
+
+	# Convert the MST to a dense matrix
+	mst_dense = mst.toarray().astype(bool)
+
+	# Find the connected components in the MST
+	n_components, labels = np.unique(mst_dense, return_inverse=True, axis=0)
+
+	# Plot the targets and the minimum spanning forest
+	plt.scatter(targets[:, 0], targets[:, 1], color='red', label='Targets')
+
+	for i in range(n_components.shape[0]):
+
+		component_indices = np.where(labels == i)[0]
+		component_targets = targets[component_indices]
+		component_mst = mst_dense[component_indices][:, component_indices]
+
+		for edge in np.transpose(component_mst.nonzero()):
+
+			start = component_targets[edge[0]]
+			end = component_targets[edge[1]]
+			plt.plot([start[0], end[0]], [start[1], end[1]], color='blue')
+
+	plt.xlabel('X')
+	plt.ylabel('Y')
+	plt.title('Minimum Spanning Forest of Targets')
+	plt.legend()
+	plt.show()
+
+def MST2MSF():
+
+	targets = np.array([[1, 2], [3, 5], [5, 6], [7, 8], [9, 10], [31, 12], [30, 14]])
+
+	# Calculate the pairwise distances between targets
+	distances = distance.cdist(targets, targets)
+
+	print("distances: " + "\n" + str(distances) + "\n")
+
+	# Create a sparse adjacency matrix from the distances
+	adj_matrix = csr_matrix(distances)
+
+	print("adj_matrix: " + "\n" + str(adj_matrix) + "\n")
+
+	# Compute the minimum spanning tree using Kruskal's algorithm
+	mst = minimum_spanning_tree(adj_matrix)
+
+	print("mst: " + "\n" + str(mst) + "\n")
+
+	# Extract the edges from the MST
+	edges = np.array(mst.nonzero()).T
+
+	print("edges: " + "\n" + str(edges) + "\n")
+
+	# Define the edges of the minimum spanning tree
+	mst_edges = [tuple(edge) for edge in edges]
+
+	print("mst_edges: " + "\n" + str(mst_edges) + "\n")
+
+	# Define the weights of the edges in the minimum spanning tree
+	mst_weights = [mst.toarray().astype(float)[index[0], index[1]] for index in mst_edges]
+
+	print("mst_weights: " + "\n" + str(mst_weights) + "\n")
+
+	# Define the weight threshold for deleting edges
+	weight_threshold = 4
+
+	modified_edges, modified_weights = [], []
+
+	for edge, weight in zip(mst_edges, mst_weights):
+
+		# Check if the weight of the edge exceeds the threshold
+		if weight <= weight_threshold:
+
+			# Add the edge to the modified minimum spanning tree
+			modified_edges.append(edge)
+			modified_weights.append(weight)
+
+	# modified_edges = np.array(modified_edges)
+
+	print("Edges of the Modified Minimum Spanning Tree: " + str(modified_edges) + "\n")
+	print("modified_weights: " + str(modified_weights) + "\n")
+	
+	'''
+	print("Check_list: ", end = '')
+	print(1 == modified_edges)
+
+	b = np.logical_or((1 == modified_edges)[:,0], (1 == modified_edges)[:,1])
+	print("\n" + "Logical or: " + str(b) + "\n")
+	
+	c = np.where(b == True, modified_weights, np.inf)
+	print("Weight: " + str(c) + "\n")
+
+	d = modified_edges[(b == True)]
+	print("Path: " + str(d) + "\n")
+
+	e = d[np.argmin(c)]
+	print("Right Way: " + str(e) + "\n")
+	'''
+
+	# Plot the targets and MST edges
+	plt.scatter(targets[:, 0], targets[:, 1], color='red', label='Targets')
+
+	for edge in modified_edges:
+
+		start = targets[edge[0]]
+		end = targets[edge[1]]
+		plt.plot([start[0], end[0]], [start[1], end[1]], color='blue')
+
+	plt.xlabel('X')
+	plt.ylabel('Y')
+	plt.title('Minimum Spanning Tree of Targets')
+	plt.legend()
+	plt.show()
+
+# take second element for sort
+def takeOne(elem):
+
+	return elem[0]
+
 if __name__ == '__main__':
 
-	number = 1
+	# MST2MSF()
 
-	# x = timeit.timeit(stmt = "npn()", number = number, globals = globals())
-	# print(x)
-	# x = timeit.timeit(stmt = "nen()", number = number, globals = globals())
-	# print(x)
+	# a = [(1,1), (2,2), (3,3), (4,4)]
+	# b = set([(1,1), (2,2)])
+	# c = [x for x in a if x not in b]
 
+	# print(c)
 
-	# cost_1 = np.array([[4, 1, 3], [10, 10, 10], [10, 10, 10]])
-	# row_ind, col_ind = linear_sum_assignment(cost_1)
+	# a = [[0, 1], [2, 1], [2, 3], [4, 3], [6, 5]]
+	# a = [np.sort(element) for element in a]
+	# print(a[0:3])
 
-	# print(row_ind, col_ind)
+	# a = np.array([1, 2, 3])
+	# b = np.array([True, False, False])
 
-	# for row, col in zip(row_ind, col_ind):
+	# print(a[b == True])
 
-	# 	print(f"Agent {row+1} assigned to Task {col+1}")
+	a = (1,0)
+	b = [(1,1), (1,2), (1,3)]
 
-	circle_center = (0, 0)
-	circle_radius = 5
-	point = (8, 0)
-
-	tangent_angle = calculate_tangent_angle(circle_center, circle_radius, point)
-	print("Tangent angle:", tangent_angle)
+	print(np.logical_and([True], [False]))

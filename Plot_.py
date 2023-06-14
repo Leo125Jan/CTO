@@ -58,19 +58,19 @@ def Execute_read():
 
 	init()
 
-	ax0.plot(x_0, y_0, color = "#005AB5")
+	ax0.plot(x_0, y_0, color = "#FF0000")
 	ax0.set_title('Cost of Agent 0 (Red)', fontdict = {'fontsize': 20})
 	ax0.set_xlabel("Time (s)", fontdict = {'fontsize': 20})
 	ax0.set_ylabel("Cost", fontdict = {'fontsize': 20})
 	ax0.tick_params(axis='both', which='major', labelsize = 20)
 
-	ax1.plot(x_1, y_1, color = "#FF9224")
+	ax1.plot(x_1, y_1, color = "#00BB00")
 	ax1.set_title('Cost of Agent 1 (Green)', fontdict = {'fontsize': 20})
 	ax1.set_xlabel("Time (s)", fontdict = {'fontsize': 20})
 	ax1.set_ylabel("Cost", fontdict = {'fontsize': 20})
 	ax1.tick_params(axis='both', which='major', labelsize = 20)
 
-	ax2.plot(x_2, y_2, color = "#007500")
+	ax2.plot(x_2, y_2, color = "#0072E3")
 	ax2.set_title('Cost of Agent 2 (Blue)', fontdict = {'fontsize': 20})
 	ax2.set_xlabel("Time (s)", fontdict = {'fontsize': 20})
 	ax2.set_ylabel("Cost", fontdict = {'fontsize': 20})

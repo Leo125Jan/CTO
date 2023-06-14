@@ -9,13 +9,20 @@ import numexpr as ne
 from time import sleep, time
 import matplotlib.pyplot as plt
 from matplotlib.path import Path
+from scipy.integrate import quad
 from scipy import ndimage, sparse
 from shapely.geometry import Point
+from collections import namedtuple
+from scipy.optimize import linprog
+from scipy.spatial import distance
+from scipy.sparse import csr_matrix
+from collections import defaultdict
 from math import cos, acos, sqrt, exp, sin
 from scipy.stats import multivariate_normal
 from shapely.geometry.polygon import Polygon
 from scipy.optimize import linear_sum_assignment
 from shapely.plotting import plot_polygon, plot_points
+from scipy.sparse.csgraph import minimum_spanning_tree
 
 class PTZcon():
 
@@ -156,787 +163,8 @@ class PTZcon():
 		self.Clsuter_Checklist = checklist
 
 		return
-
-	def Cluster_Assignment(self, targets, time_):
-
-		self.Cluster_Formation(targets, 2.3)
-
-		count = 0
-		Cluster = []
-
-		if len(targets) == 3:
-
-			cluster_count_ref = 6
-			AtoT = 3
-
-		for i in range(np.shape(self.Clsuter_Checklist)[0]):
-
-			nonindex = np.nonzero(self.Clsuter_Checklist[i][:])[0]
-
-			if i > 0:
-
-				for j in nonindex:
-
-					if j < i and i in np.nonzero(self.Clsuter_Checklist[j][:])[0]:
-
-						if self.id == 0:
-
-							pass
-					else:
-
-						c_x = 0.5*(targets[i][0][0] + targets[j][0][0])
-						c_y = 0.5*(targets[i][0][1] + targets[j][0][1])
-
-						Cluster.append([(c_x, c_y), 1, 10])
-			elif i == 0:
-
-				for j in nonindex:
-		        
-					c_x = 0.5*(targets[i][0][0] + targets[j][0][0])
-					c_y = 0.5*(targets[i][0][1] + targets[j][0][1])
-
-					Cluster.append([(c_x, c_y), 1, 10])
-
-		# Calculate dist between each cluster for Hungarian Algorithm
-		dist_to_cluster = np.array([100.0000, 100.0000, 100.0000], dtype = float)
-
-		for (mem, i) in zip(Cluster, range(len(Cluster))):
-
-			p1 = np.array([self.pos[0], self.pos[1]])
-			p2 = np.array([mem[0][0], mem[0][1]])
-
-			dist_to_cluster[i] = np.linalg.norm(p1 - p2)
-
-		self.dist_to_cluster = dist_to_cluster
-
-		if (self.cluster_count == cluster_count_ref):
-
-			x, y = 0, 0
-			cert = 0
-			score = -np.inf
-
-			for mem in targets:
-
-				x += mem[0][0]
-				y += mem[0][1]
-
-			for mem in Cluster:
-
-				p1 = np.array([mem[0][0], mem[0][1]])
-				p2 = np.array([x/len(targets), y/len(targets)])
-
-				dist = np.linalg.norm(p1 - p2)
-
-				if dist > score and dist > 0:
-
-					cert = np.exp(-0.5*(dist/1.5))
-
-			self.target = [[(x/AtoT, y/AtoT), cert, 10]]
-
-		# Mode Switch Control
-		# cluster_quality = 0
-		# Best_quality_ref = 2200
-
-		# for (target, i) in zip(targets, range(0,len(targets))):
-
-		# 	F = multivariate_normal([target[0][0], target[0][1]],\
-		# 						[[target[1], 0.0], [0.0, target[0][1]]])
-
-		# 	# event = np.zeros((self.size[0], self.size[1]))
-		# 	# event1 = self.event_density(event, [target], self.grid_size)
-		# 	# event1 = np.transpose(event1)
-		# 	cluster_quality += np.sum(np.multiply(F.pdf(self.W), self.FoV))
-
-		# Calculate dist between each target for Hungarian Algorithm
-		pt = [self.pos, self.ltop, self.top, self.rtop, self.pos]
-		polygon = Polygon(pt)
-		
-		dist_to_targets = np.array([100.00, 100.00, 100.00], dtype = float)
-
-		for (mem, i) in zip(targets, range(len(targets))):
-
-			gemos = Point(mem[0])
-			# if polygon.is_valid and polygon.contains(gemos):
-			if polygon.is_valid:
-
-				p1 = np.array([self.pos[0], self.pos[1]])
-				p2 = np.array([mem[0][0], mem[0][1]])
-
-				dist_to_targets[i] = np.linalg.norm(p1 - p2)
-
-		self.dist_to_targets = dist_to_targets
-
-		# Configuration of calculation cost function
-		Avg_distance = 0.0
-		k1, k2 = self.HW_IT, self.HW_BT
-		sweet_spot = self.pos + self.R*np.cos(self.alpha)*self.perspective
-
-		t_index = [0,1,2]
-		t_index = np.delete(t_index, np.argmax(self.dist_to_targets))
-		p1 = np.array([targets[t_index[0]][0][0], targets[t_index[0]][0][1]])
-		p2 = np.array([targets[t_index[1]][0][0], targets[t_index[1]][0][1]])
-		mid_point = np.array([(p1[0]+p2[0])/2, (p1[1]+p2[1])/2])
-		decision_line = (mid_point - self.pos)/np.linalg.norm(mid_point - self.pos)
-		dl_1 = (p1 - self.pos)/np.linalg.norm(p1 - self.pos)
-		dl_2 = (p2 - self.pos)/np.linalg.norm(p2 - self.pos)
-
-		if np.cross(dl_1, decision_line) < 0:
-
-			p_l = np.array([targets[t_index[0]][0][0], targets[t_index[0]][0][1]])
-			p_r = np.array([targets[t_index[1]][0][0], targets[t_index[1]][0][1]])
-		else:
-
-			p_r = np.array([targets[t_index[0]][0][0], targets[t_index[0]][0][1]])
-			p_l = np.array([targets[t_index[1]][0][0], targets[t_index[1]][0][1]])
-
-		# fail_ = 0
-		# for i in range(0, 3):
-
-		# 	if i == 0:
-
-		# 		v_1 = np.array([targets[1][0][0], targets[1][0][1]])\
-		# 			- np.array([targets[0][0][0], targets[0][0][1]]); v_1 = v_1/np.linalg.norm(v_1)
-		# 		v_2 = np.array([targets[2][0][0], targets[2][0][1]])\
-		# 			- np.array([targets[0][0][0], targets[0][0][1]]); v_2 = v_2/np.linalg.norm(v_2)
-		# 		v_3 = np.array([self.pos[0], self.pos[1]])\
-		# 			- np.array([targets[0][0][0], targets[0][0][1]]); v_3 = v_3/np.linalg.norm(v_3)
-
-		# 		if (np.sign(np.cross(v_1, v_2)) == np.sign(np.cross(v_1, v_3))) and\
-		# 			(np.sign(np.cross(v_2, v_1)) == np.sign(np.cross(v_2, v_3))):
-
-		# 			p1 = np.array([targets[1][0][0], targets[1][0][1]])
-		# 			p2 = np.array([targets[2][0][0], targets[2][0][1]])
-		# 		else:
-
-		# 			fail_ += 1
-		# 	elif i == 1:
-
-		# 		v_1 = np.array([targets[0][0][0], targets[0][0][1]])\
-		# 			- np.array([targets[1][0][0], targets[1][0][1]]); v_1 = v_1/np.linalg.norm(v_1)
-		# 		v_2 = np.array([targets[2][0][0], targets[2][0][1]])\
-		# 			- np.array([targets[1][0][0], targets[1][0][1]]); v_2 = v_2/np.linalg.norm(v_2)
-		# 		v_3 = np.array([self.pos[0], self.pos[1]])\
-		# 			- np.array([targets[1][0][0], targets[1][0][1]]); v_3 = v_3/np.linalg.norm(v_3)
-
-		# 		if (np.sign(np.cross(v_1, v_2)) == np.sign(np.cross(v_1, v_3))) and\
-		# 			(np.sign(np.cross(v_2, v_1)) == np.sign(np.cross(v_2, v_3))):
-
-		# 			p1 = np.array([targets[0][0][0], targets[0][0][1]])
-		# 			p2 = np.array([targets[2][0][0], targets[2][0][1]])
-		# 		else:
-
-		# 			fail_ += 1
-		# 	elif i == 2:
-
-		# 		v_1 = np.array([targets[0][0][0], targets[0][0][1]])\
-		# 			- np.array([targets[2][0][0], targets[2][0][1]]); v_1 = v_1/np.linalg.norm(v_1)
-		# 		v_2 = np.array([targets[1][0][0], targets[1][0][1]])\
-		# 			- np.array([targets[2][0][0], targets[2][0][1]]); v_2 = v_2/np.linalg.norm(v_2)
-		# 		v_3 = np.array([self.pos[0], self.pos[1]])\
-		# 			- np.array([targets[2][0][0], targets[2][0][1]]); v_3 = v_3/np.linalg.norm(v_3)
-
-		# 		if (np.sign(np.cross(v_1, v_2)) == np.sign(np.cross(v_1, v_3))) and\
-		# 			(np.sign(np.cross(v_2, v_1)) == np.sign(np.cross(v_2, v_3))):
-
-		# 			p1 = np.array([targets[0][0][0], targets[0][0][1]])
-		# 			p2 = np.array([targets[1][0][0], targets[1][0][1]])
-		# 		else:
-
-		# 			fail_ += 1
-
-		# 	if fail_ == 3:
-
-		# 		t_index = np.argmin(self.dist_to_targets)
-
-		# 		if t_index == 0:
-
-		# 			v_1 = np.array([targets[0][0][0], targets[0][0][1]])\
-		# 				- np.array([targets[1][0][0], targets[1][0][1]]); v_1 = v_1/np.linalg.norm(v_1)
-		# 			v_2 = np.array([targets[0][0][0], targets[0][0][1]])\
-		# 				- np.array([targets[2][0][0], targets[2][0][1]]); v_2 = v_2/np.linalg.norm(v_2)
-		# 			v_3 = np.array([self.pos[0], self.pos[1]])\
-		# 				- np.array([targets[0][0][0], targets[0][0][1]]); v_3 = v_3/np.linalg.norm(v_3)
-
-		# 			if np.arccos(np.dot(v_1, v_3)) < np.arccos(np.dot(v_2, v_3)):
-
-		# 				p1 = np.array([targets[t_index][0][0], targets[t_index][0][1]])
-		# 				p2 = np.array([targets[2][0][0], targets[2][0][1]])
-		# 			else:
-
-		# 				p1 = np.array([targets[t_index][0][0], targets[t_index][0][1]])
-		# 				p2 = np.array([targets[1][0][0], targets[1][0][1]])
-		# 		elif t_index == 1:
-
-		# 			v_1 = np.array([targets[1][0][0], targets[1][0][1]])\
-		# 				- np.array([targets[0][0][0], targets[0][0][1]]); v_1 = v_1/np.linalg.norm(v_1)
-		# 			v_2 = np.array([targets[1][0][0], targets[1][0][1]])\
-		# 				- np.array([targets[2][0][0], targets[2][0][1]]); v_2 = v_2/np.linalg.norm(v_2)
-		# 			v_3 = np.array([self.pos[0], self.pos[1]])\
-		# 				- np.array([targets[1][0][0], targets[1][0][1]]); v_3 = v_3/np.linalg.norm(v_3)
-
-		# 			if np.arccos(np.dot(v_1, v_3)) < np.arccos(np.dot(v_2, v_3)):
-
-		# 				p1 = np.array([targets[t_index][0][0], targets[t_index][0][1]])
-		# 				p2 = np.array([targets[2][0][0], targets[2][0][1]])
-		# 			else:
-
-		# 				p1 = np.array([targets[t_index][0][0], targets[t_index][0][1]])
-		# 				p2 = np.array([targets[0][0][0], targets[0][0][1]])
-		# 		elif t_index == 2:
-
-		# 			v_1 = np.array([targets[2][0][0], targets[2][0][1]])\
-		# 				- np.array([targets[0][0][0], targets[0][0][1]]); v_1 = v_1/np.linalg.norm(v_1)
-		# 			v_2 = np.array([targets[2][0][0], targets[2][0][1]])\
-		# 				- np.array([targets[1][0][0], targets[1][0][1]]); v_2 = v_2/np.linalg.norm(v_2)
-		# 			v_3 = np.array([self.pos[0], self.pos[1]])\
-		# 				- np.array([targets[2][0][0], targets[2][0][1]]); v_3 = v_3/np.linalg.norm(v_3)
-
-		# 			if np.arccos(np.dot(v_1, v_3)) < np.arccos(np.dot(v_2, v_3)):
-
-		# 				p1 = np.array([targets[t_index][0][0], targets[t_index][0][1]])
-		# 				p2 = np.array([targets[1][0][0], targets[1][0][1]])
-		# 			else:
-
-		# 				p1 = np.array([targets[t_index][0][0], targets[t_index][0][1]])
-		# 				p2 = np.array([targets[0][0][0], targets[0][0][1]])
-
-		# mid_point = np.array([(p1[0]+p2[0])/2, (p1[1]+p2[1])/2])
-		# decision_line = (mid_point - self.pos)/np.linalg.norm(mid_point - self.pos)
-		# dl_1 = (p1 - self.pos)/np.linalg.norm(p1 - self.pos)
-		# dl_2 = (p2 - self.pos)/np.linalg.norm(p2 - self.pos)
-
-		# if np.sign(np.cross(dl_1, decision_line)) < 0:
-
-		# 	p_l = np.array([p1[0], p1[1]])
-		# 	p_r = np.array([p2[0], p2[1]])
-		# else:
-
-		# 	p_r = np.array([p1[0], p1[1]])
-		# 	p_l = np.array([p2[0], p2[1]])
-
-		# Angle Compensation
-		base_v = (p_r - p_l)/np.linalg.norm(p_l - p_r); base_v = np.array([base_v[0], base_v[1], 0])
-		v_p = (self.pos - p_l)/np.linalg.norm(self.pos - p_l); v_p = np.array([v_p[0], v_p[1], 0])
-		z_ = np.cross(base_v, v_p)
-		ct_line = np.cross(z_, base_v); ct_line = np.array([ct_line[0], ct_line[1]]); ct_line /= np.linalg.norm(ct_line)
-		theta = np.arccos(np.dot(-self.perspective, ct_line))
-		direction = np.cross(-self.perspective, ct_line)
-		R = np.array([[np.cos(direction*theta), -np.sin(direction*theta)],[np.sin(direction*theta), np.cos(direction*theta)]])
-
-		pos_v = self.pos - mid_point;
-		pos = mid_point + np.matmul(R, pos_v)
-		perspective = -np.matmul(R, -self.perspective)
-		# pos = self.pos
-		# perspective = self.perspective
-
-		# Cost function 1-3
-
-		# Calculation of height of trianlge
-		base_length = np.linalg.norm(p_l - p_r)
-
-		coords = [(targets[0][0][0], targets[0][0][1]),\
-					(targets[1][0][0], targets[1][0][1]),\
-					(targets[2][0][0], targets[2][0][1])]
-
-		polygon = Polygon(coords)
-		area = polygon.area
-		height = (2*area)/base_length
-		height_n = 0.5*abs(self.R_max - self.R*cos(self.alpha))
-
-		l_line_v = p_l - pos; l_line_v = l_line_v/np.linalg.norm(l_line_v)
-		r_line_v = p_r - pos; r_line_v = r_line_v/np.linalg.norm(r_line_v)
-		theta = np.arccos(np.dot(l_line_v, r_line_v))
-
-		Avg_distance = base_length*(height/height_n)*\
-						np.exp(1*(theta - 0.5*self.alpha)/0.5*self.alpha)
-		Avg_Sense = np.sum(self.HW_Sensing)/len(self.HW_Sensing)
-
-		if time_ >= 35:
-
-			C_3 = min((1/k1)*(1/Avg_Sense) + k2*Avg_distance*height, 20)
-		else:
-
-			C_3 = (1/k1)*(1/Avg_Sense) + k2*Avg_distance*height
-
-		# print("dist to target: ", end = "")
-		# print(self.dist_to_targets)
-
-		# Cost Function 1-2
-		Avg_distance = np.linalg.norm(p_l - p_r)
-		C_2 = (1/k1)*(1/Avg_Sense) + k2*Avg_distance*height
-
-		# print("L: " + str(Avg_distance))
-
-		# Cost Function 1-1
-		top_side_l_v = sweet_spot - p_l; top_side_l_v = top_side_l_v/np.linalg.norm(top_side_l_v)
-		top_side_r_v = sweet_spot - p_r; top_side_r_v = top_side_r_v/np.linalg.norm(top_side_r_v)
-		base_v = (p_l - p_r)/base_length
-		delta_l = np.dot(top_side_l_v, -base_v)
-		delta_r = np.dot(top_side_r_v, +base_v)
-
-		top_side_l = np.linalg.norm(sweet_spot - p_l)*delta_l
-		top_side_r = np.linalg.norm(sweet_spot - p_r)*delta_r
-		theta_l = np.arccos(np.dot(l_line_v, perspective))
-		theta_r = np.arccos(np.dot(r_line_v, perspective))
-
-		Avg_distance = top_side_l*np.exp(0.6*self.alpha - theta_l) + top_side_r*np.exp(0.6*self.alpha - theta_r)
-		C_1 = (1/k1)*(1/Avg_Sense) + k2*Avg_distance*height
-
-		# print("L1: " + str(top_side_l), "L2: " + str(top_side_r), end = "")
-		# print(" theta1: " + str(theta_l), "theta2: " + str(theta_r))
-		# print("alpha: " + str(self.alpha))
-		# print("l1 + l2: " + str(Avg_distance))
-
-		C_total = [C_1, C_2, C_3]
-		min_C = np.argmin(C_total)+1
-
-		# print("C1: " + str(C_1))
-		# print("C2: " + str(C_2))
-		# print("C3: " + str(C_3))
-
-		# C_total.append(time_)
-		# # filename = "D:/上課資料/IME/實驗室研究/Paper/Coverage Control/Quality based switch mode/Data/"
-		# filename = "/home/leo/mts/src/QBSM/Data/"
-		# filename += "Data_" + str(self.id) + ".csv"
-		# with open(filename, "a", encoding='UTF8', newline='') as f:
-
-		# 	row = C_total
-		# 	writer = csv.writer(f)
-		# 	writer.writerow(row)
-
-		# Mode Switch Control
-		if (len(Cluster) == AtoT):
-
-			if min_C == 3:
-
-				x, y = 0, 0
-
-				for target in targets:
-
-					x += target[0][0]
-					y += target[0][1]
-
-				self.target = [[(x/AtoT, y/AtoT), 1, 10]]
-				self.state_machine["self"] = self.id
-				self.state_machine["mode"] = min_C
-				self.state_machine["target"] = -1
-			elif min_C == 2:
-
-				switch_index = np.argmin(self.dist_to_cluster)
-
-				self.state_machine["self"] = self.id
-				self.state_machine["mode"] = 2.3
-				self.state_machine["target"] = int(switch_index)
-				
-				for neighbor in self.neighbors:
-
-					if (neighbor.state_machine["mode"] == self.state_machine["mode"]) and\
-						(neighbor.state_machine["target"] == self.state_machine["target"]):
-
-						self.dist_to_cluster[self.state_machine["target"]] == 100
-						self.state_machine["target"] = int(np.argmin(self.dist_to_cluster))
-
-				self.target = [Cluster[self.state_machine["target"]]]
-			elif min_C == 1:
-
-				switch_index = np.argmin(self.dist_to_targets)
-
-				self.state_machine["self"] = self.id
-				self.state_machine["mode"] = min_C
-				self.state_machine["target"] = int(switch_index)
-
-				for neighbor in self.neighbors:
-
-					if (neighbor.state_machine["mode"] == self.state_machine["mode"]) and\
-						(neighbor.state_machine["target"] == self.state_machine["target"]):
-
-						self.dist_to_targets[self.state_machine["target"]] == 100
-						self.state_machine["target"] = int(np.argmin(self.dist_to_targets))
-
-				self.target = [targets[self.state_machine["target"]]]
-
-		if (len(Cluster) < AtoT):
-
-			if min_C == 3:
-
-				x = 0
-			elif min_C == 2:
-
-				if (len(Cluster) == AtoT - 1):
-
-					switch_index = np.argmin(self.dist_to_cluster)
-
-					self.state_machine["self"] = self.id
-					self.state_machine["mode"] = 2.2
-					self.state_machine["target"] = int(switch_index)
-
-					registration_form = np.ones(len(Cluster))
-					sign_form = []
-
-					for neighbor in self.neighbors:
-
-						sign_form.append(neighbor.state_machine["target"])
-
-					sign_form = np.array(sign_form)
-					# print(sign_form)
-
-					if (sign_form == [1,2]).all() or (sign_form == [2,1]).all():
-
-						registration_form[0], registration_form[1] = 0, 0
-					elif (sign_form == [0,2]).all() or (sign_form == [2,0]).all():
-
-						registration_form[0], registration_form[1] = 0, 0
-					elif (sign_form == [0,1]).all() or (sign_form == [1,0]).all():
-
-						registration_form[0], registration_form[1] = 0, 0
-					elif (sign_form == [0,0]).all():
-
-						registration_form[0], registration_form[1] = 0, 0
-
-					if (registration_form == 0).all():
-
-						self.target = [Cluster[self.state_machine["target"]]]
-					else:
-
-						untracked_index = np.nonzero(registration_form)[0][0]
-						self.state_machine["target"] = int(untracked_index)
-						self.target = [Cluster[self.state_machine["target"]]]
-
-					# self.last_Cluster_pair = Cluster_pair
-				elif (len(Cluster) == AtoT - 2):
-
-					escape_index, num_count = 0, 0
-
-					for i in range(np.shape(self.Clsuter_Checklist)[0]):
-
-						if (self.Clsuter_Checklist[i,:] == 0).all():
-
-							escape_index = i
-
-							break
-					
-					if np.argmin(self.dist_to_targets) == escape_index:
-
-						self.state_machine["self"] = self.id
-						self.state_machine["mode"] = 2.1
-						self.state_machine["target"] = escape_index
-
-						for neighbor in self.neighbors:
-
-							if (neighbor.state_machine["mode"] == self.state_machine["mode"]) and\
-								(neighbor.state_machine["target"] == self.state_machine["target"]):
-
-								num_count += 1
-
-						if num_count == 0:
-
-							self.target = [targets[self.state_machine["target"]]]
-					else:
-						num_count += 1
-
-					if num_count != 0:
-
-						index = [0,1,2]
-						index = np.delete(index, np.argmax(self.dist_to_targets))
-						x = (targets[index[0]][0][0] + targets[index[1]][0][0])/2
-						y = (targets[index[0]][0][1] + targets[index[1]][0][1])/2
-
-						self.target = [[(x, y), 1, 10]]
-						self.state_machine["self"] = self.id
-						self.state_machine["mode"] = 2.1
-						self.state_machine["target"] = -1
-			elif min_C == 1:
-
-				# print(self.dist_to_targets)
-
-				switch_index = np.argmin(self.dist_to_targets)
-
-				self.state_machine["self"] = self.id
-				self.state_machine["mode"] = min_C
-				self.state_machine["target"] = int(switch_index)
-
-				for neighbor in self.neighbors:
-
-					if (neighbor.state_machine["mode"] == self.state_machine["mode"]) and\
-						(neighbor.state_machine["target"] == self.state_machine["target"]):
-
-						self.dist_to_targets[self.state_machine["target"]] = 100
-						self.state_machine["target"] = int(np.argmin(self.dist_to_targets))
-
-				self.target = [targets[self.state_machine["target"]]]
-
-		print("id: " + str(self.id), "\n")
-
-	'''
-	def Gradient_Descent(self, targets, time_):
-
-		self.Cluster_Formation(targets, 30)
-
-		count = 0
-		Cluster = []
-		Cluster_pair = []
-
-		if len(targets) == 3:
-
-			cluster_count_ref = 6
-			AtoT = 3
-
-		for i in range(np.shape(self.Clsuter_Checklist)[0]):
-
-			nonindex = np.nonzero(self.Clsuter_Checklist[i][:])[0]
-
-			if i > 0:
-
-				for j in nonindex:
-
-					if j < i and i in np.nonzero(self.Clsuter_Checklist[j][:])[0]:
-
-						if self.id == 0:
-
-							pass
-					else:
-
-						c_x = 0.5*(targets[i][0][0] + targets[j][0][0])
-						c_y = 0.5*(targets[i][0][1] + targets[j][0][1])
-
-						Cluster.append([(c_x, c_y), 1, 10])
-						Cluster_pair.append((i,j))
-			elif i == 0:
-
-				for j in nonindex:
-		        
-					c_x = 0.5*(targets[i][0][0] + targets[j][0][0])
-					c_y = 0.5*(targets[i][0][1] + targets[j][0][1])
-
-					Cluster.append([(c_x, c_y), 1, 10])
-					Cluster_pair.append((i,j))
-
-		# Decide Geometry Center
-		if (self.cluster_count == cluster_count_ref):
-
-			x, y = 0, 0
-			cert = 0
-			score = -np.inf
-
-			for mem in targets:
-
-				x += mem[0][0]
-				y += mem[0][1]
-
-			for mem in Cluster:
-
-				p1 = np.array([mem[0][0], mem[0][1]])
-				p2 = np.array([x/len(targets), y/len(targets)])
-
-				dist = np.linalg.norm(p1 - p2)
-
-				if dist > score and dist > 0:
-
-					cert = np.exp(-0.5*(dist/1.5))
-
-			Gc = [[(x/AtoT, y/AtoT), cert, 10]]
-			self.attract_center[1] = 0
-		else:
-
-			Gc = [[self.pos, 1, 10]]
-
-		# Decide Side Center
-		dist_to_cluster = np.array([100.0000, 100.0000, 100.0000], dtype = float)
-
-		for (mem, i) in zip(Cluster, range(len(Cluster))):
-
-			p1 = np.array([self.pos[0], self.pos[1]])
-			p2 = np.array([mem[0][0], mem[0][1]])
-
-			dist_to_cluster[i] = np.linalg.norm(p1 - p2)
-
-		if (len(Cluster) == AtoT):
-
-			Sc_index = np.argmin(dist_to_cluster)
-			
-			for neighbor in self.neighbors:
-
-				if neighbor.attract_center[3] == Sc_index:
-
-					dist_to_cluster[Sc_index] = 100
-					Sc_index = np.argmin(dist_to_cluster)
-
-			self.attract_center[3] = Sc_index
-			t_index = Cluster_pair[Sc_index]
-
-		# elif (len(Cluster) == AtoT-1):
-
-		# 	registration_form = np.ones(len(Cluster))
-
-		# 	Sc_index = np.argmin(dist_to_cluster)
-			
-		# 	for neighbor in self.neighbors:
-
-		# 		if neighbor.attract_center[3] == Sc_index:
-
-		# 			registration_form[neighbor.attract_center[3]] = 0
-
-		# 	if (registration_form == 0).all():
-
-		# 		Sc_index = np.argmin(dist_to_cluster)
-		# 	else:
-
-		# 		untracked_index = np.nonzero(registration_form)[0][0]
-		# 		Sc_index = int(untracked_index)
-
-		# 	self.attract_center[3] = Sc_index
-		# 	t_index = Cluster_pair[Sc_index]
-
-		# elif (len(Cluster) == AtoT-2):
-
-		# 	Sc_index = 0
-		# 	self.attract_center[3] = Sc_index
-
-		# Decide One Target
-		pt = [self.pos, self.ltop, self.top, self.rtop, self.pos]
-		polygon = Polygon(pt)
-		
-		dist_to_targets = np.array([100.00, 100.00, 100.00], dtype = float)
-
-		for (mem, i) in zip(targets, range(len(targets))):
-
-			gemos = Point(mem[0])
-			# if polygon.is_valid and polygon.contains(gemos):
-			if polygon.is_valid:
-
-				p1 = np.array([self.pos[0], self.pos[1]])
-				p2 = np.array([mem[0][0], mem[0][1]])
-
-				dist_to_targets[i] = np.linalg.norm(p1 - p2)
-
-		print(self.pos)
-
-		No_index = np.argmin(dist_to_targets)
-		
-		for neighbor in self.neighbors:
-
-			if neighbor.attract_center[5] == No_index:
-
-				dist_to_targets[No_index] == 100
-				No_index = np.argmin(dist_to_targets)
-
-		self.attract_center[5] = No_index
-
-		# Configuration of calculation cost function
-		Avg_distance = 0.0
-		k1, k2 = self.HW_IT, self.HW_BT
-		sweet_spot = self.pos + self.R*np.cos(self.alpha)*self.perspective
-
-		# t_index = [0,1,2]
-		# t_index = np.delete(t_index, np.argmax(self.dist_to_targets))
-		p1 = np.array([targets[t_index[0]][0][0], targets[t_index[0]][0][1]])
-		p2 = np.array([targets[t_index[1]][0][0], targets[t_index[1]][0][1]])
-		mid_point = np.array([(p1[0]+p2[0])/2, (p1[1]+p2[1])/2])
-		decision_line = (mid_point - self.pos)/np.linalg.norm(mid_point - self.pos)
-		dl_1 = (p1 - self.pos)/np.linalg.norm(p1 - self.pos)
-		dl_2 = (p2 - self.pos)/np.linalg.norm(p2 - self.pos)
-
-		if np.cross(dl_1, decision_line) < 0:
-
-			p_l = np.array([targets[t_index[0]][0][0], targets[t_index[0]][0][1]])
-			p_r = np.array([targets[t_index[1]][0][0], targets[t_index[1]][0][1]])
-		else:
-
-			p_r = np.array([targets[t_index[0]][0][0], targets[t_index[0]][0][1]])
-			p_l = np.array([targets[t_index[1]][0][0], targets[t_index[1]][0][1]])
-
-		# Angle Compensation
-		base_v = (p_r - p_l)/np.linalg.norm(p_l - p_r); base_v = np.array([base_v[0], base_v[1], 0])
-		v_p = (self.pos - p_l)/np.linalg.norm(self.pos - p_l); v_p = np.array([v_p[0], v_p[1], 0])
-		z_ = np.cross(base_v, v_p)
-		ct_line = np.cross(z_, base_v); ct_line = np.array([ct_line[0], ct_line[1]]); ct_line /= np.linalg.norm(ct_line)
-		theta = np.arccos(np.dot(-self.perspective, ct_line))
-		direction = np.cross(-self.perspective, ct_line)
-		R = np.array([[np.cos(direction*theta), -np.sin(direction*theta)],[np.sin(direction*theta), np.cos(direction*theta)]])
-
-		pos_v = self.pos - mid_point;
-		pos = mid_point + np.matmul(R, pos_v)
-		perspective = -np.matmul(R, -self.perspective)
-
-		# Cost function 1-3
-
-		# Calculation of height of trianlge
-		base_length = np.linalg.norm(p_l - p_r)
-
-		coords = [(targets[0][0][0], targets[0][0][1]),\
-					(targets[1][0][0], targets[1][0][1]),\
-					(targets[2][0][0], targets[2][0][1])]
-
-		polygon = Polygon(coords)
-		area = polygon.area
-		height = (2*area)/base_length
-		height_n = abs(self.R_max - self.R*cos(self.alpha))
-
-		l_line_v = p_l - pos; l_line_v = l_line_v/np.linalg.norm(l_line_v)
-		r_line_v = p_r - pos; r_line_v = r_line_v/np.linalg.norm(r_line_v)
-		theta = np.arccos(np.dot(l_line_v, r_line_v))
-
-		Avg_distance = base_length*(height/height_n)*\
-						np.exp(1*(theta - 0.5*self.alpha)/0.5*self.alpha)
-		Avg_Sense = np.sum(self.HW_Sensing)/len(self.HW_Sensing)
-
-		# p1 = np.array([self.pos[0], self.pos[1]])
-		# Gc = np.array([self.target[0][0][0], self.target[0][0][1]])
-		d_3 = np.linalg.norm(self.virtual_target - Gc[0][0])
-
-		Coe_3 = np.exp( -( (height/height_n)*(1/(2*0.5**2)) ) )*\
-				np.exp( -( ((theta - 0.0*self.alpha)/(1*self.alpha))*(1/(2*0.5**2)) ) )
-		Cost_3 = Coe_3*d_3
-
-		# Cost Function 1-2
-		l = np.linalg.norm(p_l - p_r)
-		top_side_l_v = sweet_spot - p_l; top_side_l_v = top_side_l_v/np.linalg.norm(top_side_l_v)
-		top_side_r_v = sweet_spot - p_r; top_side_r_v = top_side_r_v/np.linalg.norm(top_side_r_v)
-		base_v = (p_l - p_r)/base_length
-		delta_l = np.dot(top_side_l_v, -base_v)
-		delta_r = np.dot(top_side_r_v, +base_v)
-
-		top_side_l = np.linalg.norm(sweet_spot - p_l)*delta_l
-		top_side_r = np.linalg.norm(sweet_spot - p_r)*delta_r
-		theta_l = np.arccos(np.dot(l_line_v, perspective))
-		theta_r = np.arccos(np.dot(r_line_v, perspective))
-
-		Avg_distance = top_side_l*np.exp(0.6*self.alpha - theta_l) + top_side_r*np.exp(0.6*self.alpha - theta_r)
-
-		# p1 = np.array([self.pos[0], self.pos[1]])
-		Sc = mid_point
-		d_2 = np.linalg.norm(self.virtual_target - Sc)
-
-		Coe_2 = np.exp( -( (abs(height-1.5*height_n)/height_n)*(1/(2*0.5**2)) ) )*\
-				np.exp( -( (abs(theta-0.6*self.alpha)/(self.alpha))*(1/(2*0.5**2)) ) )*\
-				np.exp( -( ((l-Avg_distance)/l)*(1/(2*0.5**2)) ) )
-		Cost_2 = Coe_2*d_2
-
-		# Cost Function 1-1
-		# p1 = np.array([self.pos[0], self.pos[1]])
-		# switch_index = np.argmin(self.dist_to_targets)
-		Ot = np.array([targets[self.attract_center[5]][0]])
-		d_1 = np.linalg.norm(self.virtual_target - Ot)
-
-		Coe_1 = np.exp( -( ((1.2*height_n)/height)*(1/(2*0.5**2)) ) )*\
-				np.exp( -( (0.6*self.alpha/theta)*(1/(2*0.5**2)) ) )*\
-				np.exp( -( ((Avg_distance-l)/l)*(1/(2*0.5**2)) ) )
-		Cost_1 = Coe_1*d_1
-
-		T_Cost = Cost_1 + Cost_2 + Cost_3
-		T_Cost = [T_Cost, time_]
-
-		# Gradient Desent
-		dx_3 = -Coe_3*(-2)*np.array([(Gc[0][0][0]-self.virtual_target[0]), (Gc[0][0][1]-self.virtual_target[1])])
-		dx_2 = -Coe_2*(-2)*np.array([(Sc[0]-self.virtual_target[0]), (Sc[1]-self.virtual_target[1])])
-		dx_1 = -Coe_1*(-2)*np.array([(Ot[0][0]-self.virtual_target[0]), (Ot[0][1]-self.virtual_target[1])])
-
-		dx = 1*dx_1 + 1*dx_2 + 1*dx_3
-
-		self.virtual_target += 1*dx
-		self.target = [[self.virtual_target, 1, 10]]
-	'''
 	
+	'''
 	def Gradient_Descent(self, targets, time_):
 
 		self.Cluster_Formation(targets, 30)
@@ -1066,7 +294,7 @@ class PTZcon():
 		circumcircle_x, circumcircle_y, circumcircle_r = self.circumcenter(targets)
 		circumcircle_A = np.pi*circumcircle_r**2
 
-		# Incircle of FOV
+		# Inscribed circle of FOV
 		head_theta = np.arctan(abs(self.perspective[1]/self.perspective[0]))
 		incircle_r = (self.R_max*np.sin(self.alpha))/(1 + np.sin(self.alpha))
 		incircle_x = self.pos[0] + (self.R_max - incircle_r)*np.sign(self.perspective[0])*np.cos(head_theta)
@@ -1130,8 +358,322 @@ class PTZcon():
 		self.virtual_target += 1*dx
 		self.target = [[self.virtual_target, 1, 10]]
 
-		# # filename = "D:/上課資料/IME/實驗室研究/Paper/Coverage Control/Quality based switch mode/Data/"
-		# filename = "/home/leo/mts/src/QBSM/Data/"
+		# filename = "D:/上課資料/IME/實驗室研究/Paper/Coverage Control/Quality based switch mode/Data/"
+		filename = "/home/leo/mts/src/QBSM/Data/Cost/"
+		filename += "Cost_" + str(self.id) + ".csv"
+		with open(filename, "a", encoding='UTF8', newline='') as f:
+
+			row = T_Cost
+			writer = csv.writer(f)
+			writer.writerow(row)
+
+		# print("Cost 1: " + str(Cost_1), "Cost 2: " + str(Cost_2), "Cost 3: " + str(Cost_3))
+		# print("Total Cost: " + str(T_Cost))
+		# print("Virtual Target: ", end="")
+		# print(self.virtual_target)
+		# print(Sc)
+		
+		print("id: " + str(self.id), "\n")
+	'''
+
+	def Gradient_Descent(self, targets, time_):
+
+		# Configuration of calculation cost function
+		Avg_distance = 0.0
+		k1, k2 = self.HW_IT, self.HW_BT
+		sweet_spot = self.pos + self.R*np.cos(self.alpha)*self.perspective
+
+		# Inscribed circle of FOV
+		head_theta = np.arctan(abs(self.perspective[1]/self.perspective[0]))
+		incircle_r = (self.R_max*np.sin(self.alpha))/(1 + np.sin(self.alpha))
+		incircle_x = self.pos[0] + (self.R_max - incircle_r)*np.sign(self.perspective[0])*np.cos(head_theta)
+		incircle_y = self.pos[1] + (self.R_max - incircle_r)*np.sign(self.perspective[1])*np.sin(head_theta)
+		incircle_A = np.pi*incircle_r**2
+
+		self.incircle = [(incircle_x, incircle_y), incircle_r, incircle_A]
+
+		# EMST
+		edges, weights = self.EMST(targets)
+
+		print("edges: " + str(edges) + "\n")
+		print("weights: " + str(weights) + "\n")
+
+		# Calculate the pariswise distance between targets
+		points = [self.pos]
+
+		for neighbor in self.neighbors:
+
+			points.append(neighbor.pos)
+
+		agents_len = len(points)
+		
+		for target in targets:
+
+			points.append(target[0])
+
+		points = np.array(points)
+
+		points_len = len(points)
+
+		distances = distance.cdist(points, points)
+
+		# Hungarian Algorithm for 1-1
+		cost_matrix = [row[agents_len:points_len-1] for (row, i) in zip(distances, range(len(distances))) if i < agents_len]
+		cost_matrix = np.array(cost_matrix)
+		row_ind, col_ind = linear_sum_assignment(cost_matrix)
+
+		watch_1 = col_ind[0]
+
+		print("watch_1: " + str(watch_1) + "\n")
+
+		# Pathfinder
+		trunk = []
+		dead_end = False
+		temp_root = watch_1
+
+		while dead_end == False:
+
+			print("temp_root: " + str(temp_root) + "\n")
+
+			if np.shape(trunk)[0] >= 1:
+
+				b = set([tuple(element) for element in trunk])
+				print("b: " + str(b) + "\n")
+				edge = np.array([element for element in edges if element not in b])
+				print("edge: " + str(edge) + "\n")
+				c = set(weight)
+				weights_ = np.array([element for element in weights if element not in c])
+				print("weights: " + str(weights_) + "\n")
+
+				if len(edge) == 0:
+
+					print("Path End" + "\n")
+					dead_end = True
+					break
+			else:
+
+				edge = np.array(edges)
+				weights_ = np.array(weights)
+				print("edge: " + str(edge) + "\n")
+				print("weights: " + str(weights_) + "\n")
+
+			logical_or = np.logical_or((temp_root == edge)[:,0], (temp_root == edge)[:,1])
+			print("logical_or: " + str(logical_or) + "\n")
+			path = edge[(logical_or == True)]; #weight = np.where(logical_or == True, weights, np.inf)
+			weight = weights_[(logical_or == True)]
+			print("path: " + str(path) + "\n")
+			print("weight: " + str(weight) + "\n")
+			right_branch = np.argmin(weight)
+			print("right_branch: " + str(right_branch) + "\n")
+			trunk.append(path[right_branch])
+			print("trunk: " + str(trunk) + "\n")
+
+			if np.shape(trunk)[0] == 1:
+
+				p1 = np.array(targets[path[right_branch][0]][0])
+				p2 = np.array(targets[path[right_branch][1]][0])
+				sidecircle_center = np.array([0.5*(p1[0]+p2[0]), 0.5*(p1[1]+p2[1])])
+				sidecircle_r = 0.5*np.linalg.norm(p1-p2); sidecircle_A = np.pi*sidecircle_r**2
+
+				if sidecircle_A >= 0.8*self.incircle[2]:
+
+					dead_end = True
+					trunk = []
+				else:
+
+					b = set([temp_root])
+					temp_root = [element for element in path[right_branch] if element not in b][0]
+			elif np.shape(trunk)[0] > 1:
+
+				nodes = []
+
+				for branch in trunk:
+
+					start = targets[branch[0]][0]
+					end = targets[branch[1]][0]
+
+					print("start: " + str(start) + "\n")
+					print("end: " + str(end) + "\n")
+
+					if np.logical_and(np.isin(start, nodes)[0], np.isin(start, nodes)[1]) == False and len(nodes) > 0:
+
+						nodes.append(start)
+					elif len(nodes) == 0:
+
+						nodes.append(start)
+
+					if np.logical_and(np.isin(end, nodes)[0], np.isin(end, nodes)[1]) == False and len(nodes) > 0:
+
+						nodes.append(end)
+					elif len(nodes) == 0:
+
+						nodes.append(end)
+
+				print("nodes: " + str(nodes) + "\n")
+
+				if np.shape(nodes)[0] <= 3:
+
+					# Circumcircle of Target
+					circumcircle_x, circumcircle_y, circumcircle_r = self.circumcenter(nodes)
+					circumcircle_A = np.pi*circumcircle_r**2
+
+					if circumcircle_A >= 0.8*self.incircle[2]:
+
+						dead_end = True
+						trunk = np.array(trunk)
+						trunk = trunk[:-1]
+						trunk.tolist()
+					else:
+
+						b = set([temp_root])
+						temp_root = [element for element in path[right_branch] if element not in b][0]
+
+				elif np.shape(nodes)[0] > 3:
+
+					x = [element[0][0] for element in node]; avg_x = np.mean(x)
+					y = [element[0][1] for element in node]; avg_y = np.mean(y)
+					geometric_center = np.array([(avg_x, avg_y)])
+					rangecircle_d = 0
+
+					for (element, i) in zip(nodes, range(len(nodes))):
+
+						p1 = geometric_center
+						p2 = np.array([element[0][0], element[0][1]])
+
+						distance_ = np.linalg.norm(p1 - p2)
+
+						if distance_ >= R:
+
+							rangecircle_d = distance_
+
+					rangecircle_A = np.pi*(rangecircle_d*0.5)**2
+
+					if rangecircle_A >= 0.8*self.incircle[2]:
+
+						dead_end = True
+						trunk = np.array(trunk)
+						trunk = trunk[:-1]
+						trunk.tolist()
+					else:
+
+						b = set([temp_root])
+						temp_root = [element for element in path[right_branch] if element not in b][0]
+
+		print("Final trunk: " + str(trunk) + "\n")
+		print(halt)
+
+		# Cost function layer
+		target_points = []
+		trunk = [np.sort(element) for element in trunk]
+
+		if len(trunk) < 1:
+
+			dx = (-1)*(-2)*\
+				np.array([(targets[watch_1][0][0]-self.virtual_target[0]), (targets[watch_1][0][1]-self.virtual_target[1])])
+		else:
+
+			for branch in trunk:
+
+				start = targets[branch[0]][0]
+				end = targets[branch[1]][0]
+
+				if np.logical_and(np.isin(start, target_points)[0], np.isin(start, target_points)[1]) == False and len(target_points) > 0:
+
+					target_points.append(start)
+				elif len(target_points) == 0:
+
+					target_points.append(start)
+
+				if np.logical_and(np.isin(end, target_points)[0], np.isin(end, target_points)[1]) == False and len(target_points) > 0:
+
+					target_points.append(end)
+				elif len(target_points) == 0:
+
+					target_points.append(end)
+
+			x, y, dx = 0, 0, 0
+			C = []
+			for element, i in zip(target_points, range(np.shape(target_points)[0])):
+
+				if np.shape(target_points)[0] - i > 3:
+
+					nodes = target_points[0:np.shape(target_points)[0]-i]
+					x = [element[0][0] for element in node]; avg_x = np.mean(x)
+					y = [element[0][1] for element in node]; avg_y = np.mean(y)
+					
+					geometric_center = np.array([(avg_x, avg_y)])
+					R, rangecircle_d = 0, 0
+
+					for (element, i) in zip(nodes, range(len(nodes))):
+
+						p1 = geometric_center
+						p2 = np.array([element[0][0], element[0][1]])
+
+						distance_ = np.linalg.norm(p1 - p2)
+
+						if distance_ >= R:
+
+							rangecircle_d = distance_
+
+					rangecircle_A = np.pi*(rangecircle_d*0.5)**2
+					theta = self.calculate_tangent_angle((x, y), 0.5*rangecircle_d, self.pos)
+
+					Cn = np.exp( -( (rangecircle_A/(0.8*incircle_A))*(1/(2*0.5**2)) ) )*\
+						np.exp( -( ((theta)/(1*self.alpha))*(1/(2*0.5**2)) ) )
+
+					if len(C) == 0:
+
+						C.append(Cn)
+						dx += (-Cn)*(-2)*np.array([(x-self.virtual_target[0]), (y-self.virtual_target[1])])
+					else:
+
+						Cn *= 1-C[-1]
+						C.append(Cn)
+						dx += (-Cn)*(-2)*np.array([(x-self.virtual_target[0]), (y-self.virtual_target[1])])
+				elif np.shape(target_points)[0] - i == 3:
+
+					nodes = target_points[0:np.shape(target_points)[0]-i]
+					x = [element[0][0] for element in node]; avg_x = np.mean(x)
+					y = [element[0][1] for element in node]; avg_y = np.mean(y)
+					geometric_center = np.array([(avg_x, avg_y)])
+					
+					circumcircle_x, circumcircle_y, circumcircle_r = self.circumcenter(nodes)
+					circumcircle_A = np.pi*circumcircle_r**2
+					theta = self.calculate_tangent_angle((circumcircle_x, circumcircle_y), circumcircle_r, self.pos)
+
+					Cn = np.exp( -( (circumcircle_A/(0.8*incircle_A))*(1/(2*0.5**2)) ) )*\
+						np.exp( -( ((theta)/(1*self.alpha))*(1/(2*0.5**2)) ) )
+					Cn *= 1-C[-1]
+					C.append(Cn)
+					dx += (-Cn)*(-2)*np.array([(geometric_center[0]-self.virtual_target[0]), (geometric_center[0]-self.virtual_target[1])])
+				elif np.shape(target_points)[0] - i == 2:
+
+					nodes = target_points[0:np.shape(target_points)[0]-i]
+
+					p1 = np.array(nodes[0][0])
+					p2 = np.array(nodes[1][0])
+					sidecircle_center = np.array([0.5*(p1[0]+p2[0]), 0.5*(p1[1]+p2[1])])
+					sidecircle_r = 0.5*np.linalg.norm(p1-p2); sidecircle_A = np.pi*sidecircle_r**2
+					theta = self.calculate_tangent_angle(sidecircle_center, sidecircle_r, self.pos)
+
+					Cn = np.exp( -( ((1.0*sidecircle_A)/(incircle_A))*(1/(2*0.5**2)) ) )*\
+						np.exp( -( ((1.0*theta)/(self.alpha))*(1/(2*0.5**2)) ) )
+					Cn *= 1-C[-1]
+					C.append(Cn)
+					dx += (-Cn)*(-2)*np.array([(sidecircle_center[0]-self.virtual_target[0]), (sidecircle_center[0]-self.virtual_target[1])])
+				elif np.shape(target_points)[0] - i == 1:
+
+					nodes = target_points[0:np.shape(target_points)[0]-i]
+					Cn = 1-C[-1]
+					dx += (-Cn)*(-2)*np.array([(nodes[0][0]-self.virtual_target[0]), (nodes[0][1]-self.virtual_target[1])])
+
+		self.virtual_target += 1*dx
+		self.target = [[self.virtual_target, 1, 10]]
+
+		print(halt)
+
+		# filename = "D:/上課資料/IME/實驗室研究/Paper/Coverage Control/Quality based switch mode/Data/"
+		# filename = "/home/leo/mts/src/QBSM/Data/Cost/"
 		# filename += "Cost_" + str(self.id) + ".csv"
 		# with open(filename, "a", encoding='UTF8', newline='') as f:
 
@@ -1146,13 +688,55 @@ class PTZcon():
 		# print(Sc)
 		
 		print("id: " + str(self.id), "\n")
-	
+
+	def EMST(self, targets):
+
+		targets = [targets[i][0] for i in range(len(targets))]
+
+		# Calculate the pairwise distances between targets
+		distances = distance.cdist(targets, targets)
+
+		# Create a sparse adjacency matrix from the distances
+		adj_matrix = csr_matrix(distances)
+
+		# Compute the minimum spanning tree using Kruskal's algorithm
+		mst = minimum_spanning_tree(adj_matrix)
+
+		# Extract the edges from the MST
+		edges = np.array(mst.nonzero()).T
+
+		# Define the edges of the minimum spanning tree
+		mst_edges = [tuple(edge) for edge in edges]
+
+		# Define the weights(distance like EMST) of the edges in the minimum spanning tree
+		mst_weights = [mst.toarray().astype(float)[index[0], index[1]] for index in mst_edges]
+
+		# Define the weight threshold for deleting edges
+		weight_threshold = 2.0*self.incircle[2]
+
+		modified_edges, modified_weights = [], []
+
+		for edge, weight in zip(mst_edges, mst_weights):
+
+			# Check if the weight of the edge exceeds the threshold
+			if weight <= weight_threshold:
+
+				# Add the edge to the modified minimum spanning tree
+				modified_edges.append(edge)
+				modified_weights.append(weight)
+
+		modified_edges = [tuple(element) for element in modified_edges]
+
+		return modified_edges, modified_weights
+
 	def circumcenter(self, targets):
 
 		for i in range(0, len(targets)):
 
-			globals()["x" + str(i+1)] = targets[i][0][0]
-			globals()["y" + str(i+1)] = targets[i][0][1]
+			# globals()["x" + str(i+1)] = targets[i][0][0]
+			# globals()["y" + str(i+1)] = targets[i][0][1]
+			globals()["x" + str(i+1)] = targets[i][0]
+			globals()["y" + str(i+1)] = targets[i][1]
 
 		d = 2 * (x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2))
 		center_x = ((x1 * x1 + y1 * y1) * (y2 - y3) + (x2 * x2 + y2 * y2) * (y3 - y1) + (x3 * x3 + y3 * y3) * (y1 - y2)) / d

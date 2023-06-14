@@ -138,10 +138,10 @@ class Visualize():
 			pygame.draw.circle(self.display, (0,0,0), np.asarray(target[0])/self.grid_size\
 			                    *self.blockSize, 6)
 
-		for (center, r) in zip(side_center, side_center_radius):
+		# for (center, r) in zip(side_center, side_center_radius):
 
-			pygame.draw.circle(self.display, (129, 128, 157), center/self.grid_size\
-		                    *self.blockSize, r*(40), 2)
+		# 	pygame.draw.circle(self.display, (129, 128, 157), center/self.grid_size\
+		#                     *self.blockSize, r*(40), 2)
 
 		for camera in cameras:
 
@@ -260,15 +260,15 @@ if __name__ == "__main__":
 				'color'         : (0, 0, 200)}
 	cameras.append(camera2)
 
-	# for i in range(len(cameras)):
+	for i in range(len(cameras)):
 
-	# 	# filename = "D:/上課資料/IME/實驗室研究/Paper/Coverage Control/Quality based switch mode/Data/"
-	# 	filename = "/home/leo/mts/src/QBSM/Data/"
-	# 	# filename += "Data_" + str(i) + ".csv"
-	# 	filename += "Cost_" + str(i) + ".csv"
+		# filename = "D:/上課資料/IME/實驗室研究/Paper/Coverage Control/Quality based switch mode/Data/"
+		filename = "/home/leo/mts/src/QBSM/Data/Cost/"
+		# filename += "Data_" + str(i) + ".csv"
+		filename += "Cost_" + str(i) + ".csv"
 
-	# 	f = open(filename, "w+")
-	# 	f.close()
+		f = open(filename, "w+")
+		f.close()
 
 	# Initialize UAV team with PTZ cameras
 	uav_team = UAVs(map_size, grid_size)
