@@ -392,12 +392,6 @@ class PTZcon():
 
 		self.incircle = [(incircle_x, incircle_y), incircle_r, incircle_A]
 
-		# EMST
-		edges, weights = self.EMST(targets)
-
-		# print("edges: " + str(edges) + "\n")
-		# print("weights: " + str(weights) + "\n")
-
 		# Calculate the pariswise distance between targets
 		points = [self.pos]
 
@@ -429,8 +423,15 @@ class PTZcon():
 
 		# print("watch_1: " + str(watch_1) + "\n")
 
+		# SEMST
+		edges, weights = self.SEMST(targets, watch_1)
+
+		# print("edges: " + str(edges) + "\n")
+		# print("weights: " + str(weights) + "\n")
+
 		# Pathfinder
-		trunk = []
+		trunk, trunk_hold = [], []
+		weight_hold = None
 		dead_end = False
 		temp_root = watch_1
 
@@ -440,7 +441,7 @@ class PTZcon():
 
 			if np.shape(trunk)[0] >= 1:
 
-				b = set([tuple(element) for element in trunk])
+				b = set([tuple(element) for element in trunk_hold])
 				# print("b: " + str(b) + "\n")
 				edge = np.array([element for element in edges if element not in b])
 				# print("edge: " + str(edge) + "\n")
@@ -477,7 +478,14 @@ class PTZcon():
 			# print("right_branch: " + str(right_branch) + "\n")
 			weight = [weight_hold[right_branch]]
 			# print("weight: " + str(weight) + "\n")
-			trunk.append(path[right_branch])
+			trunk_hold.append(path[right_branch])
+			# print("trunk_hold: " + str(trunk_hold) + "\n")
+			if temp_root != trunk_hold[-1][0]:
+
+				trunk.append([trunk_hold[-1][1], trunk_hold[-1][0]])
+			else:
+
+				trunk.append(trunk_hold[-1])
 			# print("trunk: " + str(trunk) + "\n")
 
 			if np.shape(trunk)[0] == 1:
@@ -575,12 +583,14 @@ class PTZcon():
 
 		# Cost function layer
 		target_points = []
-		trunk = [np.sort(element) for element in trunk]
+		# trunk = [np.sort(element) for element in trunk]
 
 		if len(trunk) < 1:
 
-			dx = (-1)*(-2)*\
+			dx = (-0.5)*(-2)*\
 				np.array([(targets[watch_1][0][0]-self.virtual_target[0]), (targets[watch_1][0][1]-self.virtual_target[1])])
+
+			# print("target_1: " + str(targets[watch_1][0]) + "\n")
 		else:
 
 			for branch in trunk:
@@ -602,8 +612,10 @@ class PTZcon():
 
 					target_points.append(end)
 
+			# print("target_points: " + str(target_points) + "\n")
+
 			x, y, = 0, 0
-			C = []
+			C_descent = []; Cd = 0
 			dx = np.zeros(2)
 			for element, i in zip(target_points, range(np.shape(target_points)[0])):
 
@@ -633,15 +645,21 @@ class PTZcon():
 					Cn = np.exp( -( (rangecircle_A/(0.8*incircle_A))*(1/(2*0.5**2)) ) )*\
 						np.exp( -( ((theta)/(1*self.alpha))*(1/(2*0.5**2)) ) )
 
-					if len(C) == 0:
+					if len(C_descent) == 0:
 
-						C.append(Cn)
 						dx += (-Cn)*(-2)*np.array([(x-self.virtual_target[0]), (y-self.virtual_target[1])])
+
+						Cd = np.exp( -( ((0.1*incircle_A)/rangecircle_A)*(1/(2*0.5**2)) ) )*\
+							np.exp( -( ((0.1*self.alpha)/(theta))*(1/(2*0.5**2)) ) )
+						C_descent.append(Cd)
 					else:
 
-						Cn *= 1-C[-1]
-						C.append(Cn)
+						Cn *= C_descent[-1]
 						dx += (-Cn)*(-2)*np.array([(x-self.virtual_target[0]), (y-self.virtual_target[1])])
+
+						Cd = np.exp( -( ((0.1*incircle_A)/rangecircle_A)*(1/(2*0.5**2)) ) )*\
+							np.exp( -( ((0.1*self.alpha)/(theta))*(1/(2*0.5**2)) ) )
+						C_descent.append(Cd)
 				elif np.shape(target_points)[0] - i == 3:
 
 					nodes = target_points[0:np.shape(target_points)[0]-i]
@@ -657,15 +675,22 @@ class PTZcon():
 					Cn = np.exp( -( (circumcircle_A/(0.8*incircle_A))*(1/(2*0.5**2)) ) )*\
 						np.exp( -( ((theta)/(1*self.alpha))*(1/(2*0.5**2)) ) )
 
-					if len(C) == 0:
+					if len(C_descent) == 0:
 
-						C.append(Cn)
 						dx += (-Cn)*(-2)*np.array([(geometric_center[0]-self.virtual_target[0]), (geometric_center[1]-self.virtual_target[1])])
+						
+						Cd = np.exp( -( ((0.1*incircle_A)/circumcircle_A)*(1/(2*0.5**2)) ) )*\
+							np.exp( -( ((0.1*self.alpha)/(theta))*(1/(2*0.5**2)) ) )
+						C_descent.append(Cd)
+						
 					else:
 
-						Cn *= 1-C[-1]
-						C.append(Cn)
+						Cn *= C_descent[-1]
 						dx += (-Cn)*(-2)*np.array([(geometric_center[0]-self.virtual_target[0]), (geometric_center[1]-self.virtual_target[1])])
+
+						Cd = np.exp( -( ((0.1*incircle_A)/circumcircle_A)*(1/(2*0.5**2)) ) )*\
+							np.exp( -( ((0.1*self.alpha)/(theta))*(1/(2*0.5**2)) ) )
+						C_descent.append(Cd)
 
 					# print("Cn_3: " + str(Cn) + "\n")
 					# print("dx_3: " + str(dx) + "\n")
@@ -681,26 +706,31 @@ class PTZcon():
 
 					Cn = np.exp( -( ((1.0*sidecircle_A)/(incircle_A))*(1/(2*0.5**2)) ) )*\
 						np.exp( -( ((1.0*theta)/(self.alpha))*(1/(2*0.5**2)) ) )
+					# print("Cn_2: " + str(Cn) + "\n")
+					C1 = np.exp( -( ((0.5*incircle_A)/sidecircle_A)*(1/(2*0.5**2)) ) )*\
+						np.exp( -( (0.5*self.alpha/theta)*(1/(2*0.5**2)) ) )
+					# print("Cn_1: " + str(C1) + "\n")
 
-					if len(C) == 0:
+					if len(C_descent) == 0:
 
-						dx += (-Cn)*(-2)*np.array([(sidecircle_center[0]-self.virtual_target[0]), (sidecircle_center[0]-self.virtual_target[1])])+\
-						(-(1-Cn))*(-2)*np.array([(nodes[0][0]-self.virtual_target[0]), (nodes[0][1]-self.virtual_target[1])])
+						dx += (-Cn)*(-2)*np.array([(sidecircle_center[0]-self.virtual_target[0]), (sidecircle_center[1]-self.virtual_target[1])])+\
+						(-C1)*(-2)*np.array([(nodes[0][0]-self.virtual_target[0]), (nodes[0][1]-self.virtual_target[1])])
 					else:
 
-						Cn *= 1-C[-1]
-						dx += (-Cn)*(-2)*np.array([(sidecircle_center[0]-self.virtual_target[0]), (sidecircle_center[0]-self.virtual_target[1])])+\
-						(-(1-Cn))*(-2)*np.array([(nodes[0][0]-self.virtual_target[0]), (nodes[0][1]-self.virtual_target[1])])
+						Cn *= C_descent[-1]
+						# print("Cn_2_d: " + str(Cn) + "\n")
+						dx += (-Cn)*(-2)*np.array([(sidecircle_center[0]-self.virtual_target[0]), (sidecircle_center[1]-self.virtual_target[1])])+\
+						(-C1)*(-2)*np.array([(nodes[0][0]-self.virtual_target[0]), (nodes[0][1]-self.virtual_target[1])])
 
-					# print("Cn: " + str(Cn) + "\n")
-					print("dx: " + str(dx) + "\n")
+			# print("Cn: " + str(Cn) + "\n")
+			# print("dx: " + str(dx) + "\n")
 				# elif np.shape(target_points)[0] - i == 1:
 
 				# 	nodes = target_points[0:np.shape(target_points)[0]-i]
 				# 	Cn = 1-C[-1]
 				# 	dx += (-Cn)*(-2)*np.array([(nodes[0][0]-self.virtual_target[0]), (nodes[0][1]-self.virtual_target[1])])
 
-		self.virtual_target += 0.5*dx
+		self.virtual_target += 0.7*dx
 		print("virtual_target: " + str(self.virtual_target) + "\n")
 		self.target = [[self.virtual_target, 1, 10]]
 
@@ -725,27 +755,65 @@ class PTZcon():
 		
 		print("id: " + str(self.id), "\n")
 
-	def EMST(self, targets):
+	def SEMST(self, targets, sv):
+
+		start_vertex = sv
 
 		targets = [targets[i][0] for i in range(len(targets))]
+		# print("targets: " + str(targets) + "\n")
 
 		# Calculate the pairwise distances between targets
 		distances = distance.cdist(targets, targets)
+		# print("distances: " + str(distances) + "\n")
 
-		# Create a sparse adjacency matrix from the distances
-		adj_matrix = csr_matrix(distances)
+		# # Create a sparse adjacency matrix from the distances
+		# adj_matrix = csr_matrix(distances)
 
-		# Compute the minimum spanning tree using Kruskal's algorithm
-		mst = minimum_spanning_tree(adj_matrix)
+		# # Compute the minimum spanning tree using Kruskal's algorithm
+		# mst = minimum_spanning_tree(adj_matrix)
 
-		# Extract the edges from the MST
-		edges = np.array(mst.nonzero()).T
+		# # Extract the edges from the MST
+		# edges = np.array(mst.nonzero()).T
 
-		# Define the edges of the minimum spanning tree
-		mst_edges = [tuple(edge) for edge in edges]
+		# # Define the edges of the minimum spanning tree
+		# mst_edges = [tuple(edge) for edge in edges]
 
-		# Define the weights(distance like EMST) of the edges in the minimum spanning tree
-		mst_weights = [mst.toarray().astype(float)[index[0], index[1]] for index in mst_edges]
+		# # Define the weights(distance like EMST) of the edges in the minimum spanning tree
+		# mst_weights = [mst.toarray().astype(float)[index[0], index[1]] for index in mst_edges]
+
+		num_vertices = np.shape(distances[0])[0]
+
+		visited = [False]*np.ones(num_vertices)
+		visited[start_vertex] = True
+		temp_root = start_vertex
+
+		mst_edges, mst_weights = [], []
+
+		while len(mst_edges) < num_vertices - 1:
+
+			min_edge = None
+			min_weight = float('inf')
+
+			for i in range(num_vertices):
+				
+				# if visited[i]:
+				if i == temp_root:
+					
+					for j in range(num_vertices):
+
+						if not visited[j] and distances[i, j] < min_weight:
+							
+							min_edge = (i, j)
+							min_weight = distances[i, j]
+			if min_edge:
+
+				mst_edges.append(min_edge)
+				mst_weights.append(min_weight)
+				visited[min_edge[1]] = True
+				temp_root = min_edge[1]
+
+		# print("MST: " + str(mst_edges) + "\n")
+		# print("Weights: " + str(mst_weights) + "\n")
 
 		# Define the weight threshold for deleting edges
 		weight_threshold = 2.0*self.incircle[2]
@@ -762,6 +830,9 @@ class PTZcon():
 				modified_weights.append(weight)
 
 		modified_edges = [tuple(element) for element in modified_edges]
+
+		# print("Modified MST: " + str(modified_edges) + "\n")
+		# print("Modified Weights: " + str(modified_weights) + "\n")
 
 		return modified_edges, modified_weights
 

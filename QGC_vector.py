@@ -143,14 +143,14 @@ class Visualize():
 		# 	pygame.draw.circle(self.display, (129, 128, 157), center/self.grid_size\
 		#                     *self.blockSize, r*(40), 2)
 
-		for camera in cameras:
+		# for camera in cameras:
 
-			color = (camera.color[0]*0.5, camera.color[1]*0.5, camera.color[2]*0.5)
-			pygame.draw.circle(self.display, color, camera.incircle[0]/self.grid_size\
-		                    *self.blockSize, camera.incircle[1]*(40), 5)
+		# 	color = (camera.color[0]*0.5, camera.color[1]*0.5, camera.color[2]*0.5)
+		# 	pygame.draw.circle(self.display, color, camera.incircle[0]/self.grid_size\
+		#                     *self.blockSize, camera.incircle[1]*(40), 5)
 
-		pygame.draw.circle(self.display, (183, 158, 158), circumcenter_center/self.grid_size\
-		                    *self.blockSize, circumcenter_radius*(40), 2)
+		# pygame.draw.circle(self.display, (183, 158, 158), circumcenter_center/self.grid_size\
+		#                     *self.blockSize, circumcenter_radius*(40), 2)
 
 		for camera in cameras:
 

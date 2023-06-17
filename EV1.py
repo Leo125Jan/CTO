@@ -312,32 +312,118 @@ def MST2MSF():
 	plt.legend()
 	plt.show()
 
-# take second element for sort
-def takeOne(elem):
+def SEMST():
 
-	return elem[0]
+	start_vertex = 1
+	targets = np.array([[1, 2], [3, 5], [5, 6], [7, 8], [9, 10], [31, 12], [30, 14]])
+
+	# Calculate the pairwise distances between targets
+	distances = distance.cdist(targets, targets)
+	print("distances: " + "\n" + str(distances) + "\n")
+
+	num_vertices = np.shape(distances[0])[0]
+	print("num_vertices: " + str(num_vertices) + "\n")
+
+	# visited = [False]*np.ones(num_vertices)
+	# visited[start_vertex] = True
+
+	# mst_edges = []
+	# mst_weights = []
+	# while len(mst_edges) < num_vertices - 1:
+
+	# 	min_edge = None
+	# 	min_weight = float('inf')
+
+	# 	for i in range(num_vertices):
+			
+	# 		if visited[i]:
+				
+	# 			for j in range(num_vertices):
+
+	# 				if not visited[j] and distances[i, j] < min_weight:
+							
+	# 					min_edge = (i, j)
+	# 					min_weight = distances[i, j]
+	# 	if min_edge:
+
+	# 		mst_edges.append(min_edge)
+	# 		mst_weights.append(min_weight)
+	# 		visited[min_edge[1]] = True
+
+	visited = [False]*np.ones(num_vertices)
+	visited[start_vertex] = True
+	temp_root = start_vertex
+
+	mst_edges, mst_weights = [], []
+
+	while len(mst_edges) < num_vertices - 1:
+
+		min_edge = None
+		min_weight = float('inf')
+
+		for i in range(num_vertices):
+			
+			# if visited[i]:
+			if i == temp_root:
+				
+				for j in range(num_vertices):
+
+					if (not visited[j]) and (distances[i, j] < min_weight):
+							
+						min_edge = (i, j)
+						min_weight = distances[i, j]
+		if min_edge:
+
+			mst_edges.append(min_edge)
+			mst_weights.append(min_weight)
+			visited[min_edge[1]] = True
+			temp_root = min_edge[1]
+
+	print("MST: " + str(mst_edges) + "\n")
+	print("Weights: " + str(mst_weights) + "\n")
+
+	# Define the weight threshold for deleting edges
+	weight_threshold = 4
+
+	modified_edges, modified_weights = [], []
+
+	for edge, weight in zip(mst_edges, mst_weights):
+
+		# Check if the weight of the edge exceeds the threshold
+		if weight <= weight_threshold:
+
+			# Add the edge to the modified minimum spanning tree
+			modified_edges.append(edge)
+			modified_weights.append(weight)
+
+	print("Modified MST: " + str(modified_edges) + "\n")
+	print("Modified Weights: " + str(modified_weights) + "\n")
+
+	plt.scatter(targets[:, 0], targets[:, 1], color='red', label='Targets')
+
+	for edge in modified_edges:
+
+		start = targets[edge[0]]
+		end = targets[edge[1]]
+		plt.plot([start[0], end[0]], [start[1], end[1]], color='blue')
+
+	plt.xlabel('X')
+	plt.ylabel('Y')
+	plt.title('Minimum Spanning Tree of Targets')
+	plt.legend()
+	plt.show()
+
+def delete_element_in_matrix():
+
+	a = [(1,1), (2,2), (3,3), (4,4)]
+	b = set([(1,1), (2,2)])
+	c = [x for x in a if x not in b]
+
+	print(c)
+
 
 if __name__ == '__main__':
 
-	# MST2MSF()
-
-	# a = [(1,1), (2,2), (3,3), (4,4)]
-	# b = set([(1,1), (2,2)])
-	# c = [x for x in a if x not in b]
-
-	# print(c)
-
-	# a = [[0, 1], [2, 1], [2, 3], [4, 3], [6, 5]]
-	# a = [np.sort(element) for element in a]
-	# print(a[0:3])
-
-	# a = np.array([1, 2, 3])
-	# b = np.array([True, False, False])
-
-	# print(a[b == True])
-
-	a = np.array([False, True])
-	b = np.where(a==True)
-	c = np.array([[1,1],[2,2]])
-
-	print(c[b])
+	MST2MSF()
+	print("----------------------------")
+	SEMST()
