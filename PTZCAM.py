@@ -1084,6 +1084,36 @@ class PTZcon():
 
 		return
 
+	def Gradient_Ascent(self):
+
+		translational_force = np.array([0.,0.])
+
+		W = self.W[np.where(self.FoV > 0)]; pos = self.pos; lamb = self.lamb; R = self.R; R_ = R**lamb
+		alpha = self.alpha; perspective = self.perspective
+
+		# Bivariate Normal Distribution
+		F = multivariate_normal([self.target[0][0][0], self.target[0][0][1]],\
+								[[target[0][1], 0.0], [0.0, target[0][1]]])
+		
+		out = np.empty_like(W)
+		ne.evaluate("W - pos", out = out)
+		x = out[:,0]; y = out[:,1]
+		d = np.empty_like(x)
+		ne.evaluate("sqrt(x**2 + y**2)", out = d)
+
+		d = np.array([d]).transpose()
+		d[np.where(d == 0)] = 1
+
+		p_dot = ne.empty_like(translational_force)
+		out = np.empty_like(d)
+
+		ne.evaluate("sum((W - pos)*perspective, axis = 1)", out = out)
+		ne.evaluate("(out/d**3 - cos(alpha)) - perspective/d", out = out)
+		ne.evaluate("out*( cos(alpha) - (lamb/(R*lamb+R))*d )", out = out)
+		ne.evaluate("out*( (d**lamb)/(R**lamb) )", out = out)
+		ne.evaluate("out*( (lamb+1)/(1-cos(alpha)) )", out = out)
+
+
 	def FormationControl(self):
 
 		# Consider which neighbor is sharing the same target and only use them to obtain formation force

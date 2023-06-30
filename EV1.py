@@ -424,6 +424,11 @@ def delete_element_in_matrix():
 
 if __name__ == '__main__':
 
-	MST2MSF()
-	print("----------------------------")
-	SEMST()
+	# MST2MSF()
+	# print("----------------------------")
+	# SEMST()
+
+	a = np.array([1,1])
+	b = np.array([2,2])
+	c = ne.evaluate("a*b")
+	print(c)
