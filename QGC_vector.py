@@ -234,8 +234,8 @@ if __name__ == "__main__":
 	cameras = []
 
 	camera0 = { 'id'            :  0,
-				'position'      :  np.array([2.0, 0.0]),
-				'perspective'   :  np.array([1.0, 0.0]),
+				'position'      :  np.array([4.0, 1.0]),
+				'perspective'   :  np.array([0.5, 0.5]),
 				'AngleofView'   :  20,
 				'range_limit'   :  5,
 				'lambda'        :  2,
@@ -243,7 +243,7 @@ if __name__ == "__main__":
 	cameras.append(camera0)
 
 	camera1 = { 'id'            :  1,
-				'position'      :  np.array([0.0, 0.0]),
+				'position'      :  np.array([10.0, 7.0]),
 				'perspective'   :  np.array([1.0, 0.0]),
 				'AngleofView'   :  20,
 				'range_limit'   :  5,
@@ -252,7 +252,7 @@ if __name__ == "__main__":
 	cameras.append(camera1)
 
 	camera2 = { 'id'            :  2,
-				'position'      :  np.array([0.0, 2.0]),
+				'position'      :  np.array([11.0, 20.0]),
 				'perspective'   :  np.array([1.0, 0.0]),
 				'AngleofView'   :  20,
 				'range_limit'   :  5,

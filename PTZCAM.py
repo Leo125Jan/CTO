@@ -54,6 +54,7 @@ class PTZcon():
 		self.top = 0
 		self.ltop = 0
 		self.rtop = 0
+		self.H = 0
 		self.centroid = None
 
 		# Tracking Configuration
@@ -92,15 +93,16 @@ class PTZcon():
 		# self.Cluster_Formation(targets)
 		# self.Cluster_Assignment(targets, time_)
 		self.Gradient_Descent(targets, time_)
+		self.Gradient_Ascent()
 
 		# event = np.zeros((self.size[0], self.size[1]))
 		# self.event = self.event_density(event, self.target, self.grid_size)
 		
-		self.ComputeCentroidal(time_)
+		# self.ComputeCentroidal(time_)
 		self.StageAssignment()
 		self.FormationControl()
-		self.UpdateOrientation()
-		self.UpdateZoomLevel()
+		# self.UpdateOrientation()
+		# self.UpdateZoomLevel()
 		self.UpdatePosition()
 		
 	def norm(self, arr):
@@ -1077,9 +1079,9 @@ class PTZcon():
 									self.perspective[None,:]))  @  (v_V.reshape(2,1))
 			zoom_force += -self.Ka*(self.alpha - alpha_v)
 
-		self.translational_force = translational_force if self.stage != 2 else 0
-		self.perspective_force = np.asarray([rotational_force[0][0], rotational_force[1][0]])
-		self.zoom_force = zoom_force
+		# self.translational_force = translational_force if self.stage != 2 else 0
+		# self.perspective_force = np.asarray([rotational_force[0][0], rotational_force[1][0]])
+		# self.zoom_force = zoom_force
 		self.centroid = centroid
 
 		return
@@ -1087,13 +1089,16 @@ class PTZcon():
 	def Gradient_Ascent(self):
 
 		translational_force = np.array([0.,0.])
+		rotational_force = np.array([0.,0.])
+		zoom_force = 0.0
 
-		W = self.W[np.where(self.FoV > 0)]; pos = self.pos; lamb = self.lamb; R = self.R; R_ = R**lamb
+		W = self.W[np.where(self.FoV > 0)]; pos = self.pos; lamb = float(self.lamb); R = float(self.R); R_ = R**lamb
 		alpha = self.alpha; perspective = self.perspective
 
 		# Bivariate Normal Distribution
 		F = multivariate_normal([self.target[0][0][0], self.target[0][0][1]],\
-								[[target[0][1], 0.0], [0.0, target[0][1]]])
+								[[self.target[0][1], 0.0], [0.0, self.target[0][1]]])
+		F_ = np.array([F.pdf(W)])
 		
 		out = np.empty_like(W)
 		ne.evaluate("W - pos", out = out)
@@ -1102,17 +1107,79 @@ class PTZcon():
 		ne.evaluate("sqrt(x**2 + y**2)", out = d)
 
 		d = np.array([d]).transpose()
-		d[np.where(d == 0)] = 1
+		d[np.where(d == 0)] = 1 # (905, 1)
 
-		p_dot = ne.empty_like(translational_force)
-		out = np.empty_like(d)
+		# Position
+		p_dot = np.empty_like(translational_force)
 
-		ne.evaluate("sum((W - pos)*perspective, axis = 1)", out = out)
-		ne.evaluate("(out/d**3 - cos(alpha)) - perspective/d", out = out)
-		ne.evaluate("out*( cos(alpha) - (lamb/(R*lamb+R))*d )", out = out)
-		ne.evaluate("out*( (d**lamb)/(R**lamb) )", out = out)
-		ne.evaluate("out*( (lamb+1)/(1-cos(alpha)) )", out = out)
+		# Left Derivative
+		d_ = d.transpose()[0]; const = np.empty_like(d_)
+		ne.evaluate("( (lamb+1)/(1-cos(alpha)) )*( cos(alpha) - (lamb/(R*lamb+R))*d_ )*( d_**lamb/R_ )", out = const)
+		hold = np.empty_like(const); const = np.array([const]).transpose()
+		d_ = np.concatenate((d,d), axis = 1)
+		ne.evaluate("sum(((W - pos)/(d_**3))*perspective, axis = 1)", out = hold); hold = np.array([hold]).transpose()
+		der_1 = np.empty_like(d_)
+		ne.evaluate("const*( hold*(W - pos) - perspective/d )", out = der_1)
 
+		# Right Derivative
+		d_ = d.transpose()[0]; const = np.empty_like(d_)
+		ne.evaluate("sum(((W - pos)/d)*perspective, axis = 1)", out = const); const = np.array([const]).transpose()
+		d_ = np.concatenate((d,d), axis = 1); hold = np.empty_like(d_)
+		ne.evaluate("(cos(alpha)/R_)*(-lamb)*(d**(lamb-2))*(W - pos) + (lamb/(R**(lamb+1)))*(d**(lamb-1))*(W - pos)", out = hold);
+		der_2 = np.empty_like(d_)
+		ne.evaluate("(lamb+1)/(1-cos(alpha))*const*hold", out = der_2)
+
+		phi = F_.transpose()
+		ne.evaluate("sum((der_1 + der_2)*phi, axis = 0)", out = p_dot)
+		p_dot /= np.linalg.norm(p_dot)
+
+		# Perspective
+		v_dot = np.empty_like(rotational_force)
+
+		d_ = d.transpose()[0]; hold = np.empty_like(d_); F_ = np.array([F.pdf(W)]);
+		ne.evaluate("( (lamb+1)/(1-cos(alpha)) )*( cos(alpha) - (lamb/(R*lamb+R))*d_ )*( (d_**lamb)/R_ )", out = hold)
+		hold = np.array([hold]).transpose();
+		d_ = np.concatenate((d,d), axis = 1); out = np.empty_like(d_)
+		ne.evaluate("hold*( (W - pos)/d )", out = out)
+
+		phi = F_.transpose();
+		ne.evaluate("sum( out*phi, axis = 0)", out = v_dot)
+		v_dot = v_dot/np.linalg.norm(v_dot);
+
+		# Angle of View
+		a_dot = np.empty_like(zoom_force)
+
+		# Left Derivative
+		der_1 = np.empty_like(d)
+		ne.evaluate("(lamb+1)*(-sin(alpha))*((d**lamb)/R_)", out = der_1)
+
+		# Right Derivative
+		const = np.empty_like(d);
+		ne.evaluate("(lamb+1)*( sin(alpha)/((1-cos(alpha))**2) )*( 1 - (lamb/(R*lamb+R))*d )*( (d**lamb)/R_ )", out = const)
+		d_ = d.transpose()[0]; hold = np.empty_like(d_)
+		ne.evaluate("sum(((W - pos)/d)*perspective, axis = 1)", out = hold); hold = np.array([hold]).transpose()
+		der_2 = np.empty_like(d);
+		ne.evaluate("const*( 1 - hold )", out = der_2)
+
+		phi = F_.transpose()
+		ne.evaluate("sum( (der_1 + der_2)*phi)", out = a_dot)
+
+		phi = F_.transpose(); H = np.empty_like(zoom_force)
+		hold = self.FoV[np.where(self.FoV > 0)]; hold = np.array([hold]).transpose()
+		ne.evaluate("sum( hold*phi )", out = H)
+
+		if (H - self.H)/H < 0.05:
+
+			self.translational_force = 0.15*p_dot
+			self.perspective_force = 2*np.asarray([v_dot[0], v_dot[1]])
+			self.zoom_force = 0.01*a_dot
+		else:
+
+			self.translational_force = 5*p_dot
+			self.perspective_force = 2*np.asarray([v_dot[0], v_dot[1]])
+			self.zoom_force = 0.01*a_dot
+
+		self.H = H
 
 	def FormationControl(self):
 

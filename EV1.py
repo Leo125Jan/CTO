@@ -428,7 +428,7 @@ if __name__ == '__main__':
 	# print("----------------------------")
 	# SEMST()
 
-	a = np.array([1,1])
-	b = np.array([2,2])
+	a = np.array([2,2])
+	b = np.array([2,3])
 	c = ne.evaluate("a*b")
 	print(c)
