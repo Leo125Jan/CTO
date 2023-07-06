@@ -431,4 +431,16 @@ if __name__ == '__main__':
 	a = np.array([2,2])
 	b = np.array([2,3])
 	c = ne.evaluate("a*b")
-	print(c)
+
+	my_array = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+	element = np.array([4, 5, 6])
+
+	# Check if the element is present in the array
+	is_present = any(np.array_equal(element, arr) for arr in my_array)
+
+	v = np.array([(11.5, 11.5), (11.5, 13.5)], dtype = float)
+	d = np.array((13.5, 13.5), dtype = float)
+	print(any(np.array_equal(d, arr) for arr in v))
+
+	a = np.array([0.1,0.1])
+	print(3*a)

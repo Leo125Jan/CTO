@@ -232,33 +232,79 @@ if __name__ == "__main__":
 	grid_size = np.array([0.1, 0.1])
 
 	cameras = []
+	cameras_pos = []
 
 	camera0 = { 'id'            :  0,
-				'position'      :  np.array([4.0, 1.0]),
+				'position'      :  np.array([2.0, 2.0]),
 				'perspective'   :  np.array([0.5, 0.5]),
 				'AngleofView'   :  20,
-				'range_limit'   :  5,
+				'range_limit'   :  4,
 				'lambda'        :  2,
 				'color'         : (200, 0, 0)}
 	cameras.append(camera0)
 
 	camera1 = { 'id'            :  1,
-				'position'      :  np.array([10.0, 7.0]),
+				'position'      :  np.array([23.0, 2.0]),
 				'perspective'   :  np.array([1.0, 0.0]),
 				'AngleofView'   :  20,
-				'range_limit'   :  5,
+				'range_limit'   :  4,
 				'lambda'        :  2,
 				'color'         : (0, 200, 0)}
 	cameras.append(camera1)
 
 	camera2 = { 'id'            :  2,
-				'position'      :  np.array([11.0, 20.0]),
+				'position'      :  np.array([2.0, 23.0]),
 				'perspective'   :  np.array([1.0, 0.0]),
 				'AngleofView'   :  20,
-				'range_limit'   :  5,
+				'range_limit'   :  4,
 				'lambda'        :  2,
 				'color'         : (0, 0, 200)}
 	cameras.append(camera2)
+
+	camera3 = { 'id'            :  3,
+				'position'      :  np.array([23.0, 23.0]),
+				'perspective'   :  np.array([1.0, 0.0]),
+				'AngleofView'   :  20,
+				'range_limit'   :  4,
+				'lambda'        :  2,
+				'color'         : (255, 150, 0)}
+	cameras.append(camera3)
+
+	# camera4 = { 'id'            :  4,
+	# 			'position'      :  np.array([12.5, 2.0]),
+	# 			'perspective'   :  np.array([1.0, 0.0]),
+	# 			'AngleofView'   :  20,
+	# 			'range_limit'   :  4,
+	# 			'lambda'        :  2,
+	# 			'color'         : (255, 250, 0)}
+	# cameras.append(camera4)
+
+	# camera5 = { 'id'            :  5,
+	# 			'position'      :  np.array([23.0, 12.5]),
+	# 			'perspective'   :  np.array([0.5, 0.5]),
+	# 			'AngleofView'   :  20,
+	# 			'range_limit'   :  4,
+	# 			'lambda'        :  2,
+	# 			'color'         : (0, 240, 255)}
+	# cameras.append(camera5)
+
+	# camera6 = { 'id'            :  6,
+	# 			'position'      :  np.array([12.5, 23.0]),
+	# 			'perspective'   :  np.array([1.0, 0.0]),
+	# 			'AngleofView'   :  20,
+	# 			'range_limit'   :  4,
+	# 			'lambda'        :  2,
+	# 			'color'         : (150, 0, 255)}
+	# cameras.append(camera6)
+
+	# camera7 = { 'id'            :  7,
+	# 			'position'      :  np.array([2.0, 12.5]),
+	# 			'perspective'   :  np.array([1.0, 0.0]),
+	# 			'AngleofView'   :  20,
+	# 			'range_limit'   :  4,
+	# 			'lambda'        :  2,
+	# 			'color'         : (255, 0, 250)}
+	# cameras.append(camera7)
 
 	# for i in range(len(cameras)):
 
@@ -275,6 +321,7 @@ if __name__ == "__main__":
 
 	for camera in cameras:
 		uav_team.AddMember(camera)
+		cameras_pos.append(camera["position"])
 
 	# initialize environment with targets
 	size = (map_size/grid_size).astype(np.int64)
@@ -286,7 +333,11 @@ if __name__ == "__main__":
 	W = W.transpose()
 
 	# target's [position, certainty, weight, velocity]
-	targets = [[(6.5, 19), 1, 10], [(6.0, 18.0), 1, 10], [(7.0, 18.0), 1, 10]]
+	# targets = [[(6.5, 19), 1, 10], [(6.0, 18.0), 1, 10], [(7.0, 18.0), 1, 10]]
+	targets = [[(12.0, 12.0), 1, 10], [(12.0, 13.0), 1, 10], [(13.0, 12.0), 1, 10], [(13.0, 13.0), 1, 10]]
+	# targets = [[(12.0, 12.0), 1, 10], [(12.0, 13.0), 1, 10], [(13.0, 12.0), 1, 10], [(13.0, 13.0), 1, 10],
+				# [(10.5, 12.5), 1, 10], [(12.5, 9.5), 1, 10], [(16.5, 12.5), 1, 10], [(12.5, 17.5), 1, 10]]
+	velocities = np.random.rand(len(targets), 2) - 0.5  # Random initial velocities (-0.5 to 0.5)
 
 	# Start Simulation
 	Done = False
@@ -301,31 +352,90 @@ if __name__ == "__main__":
 
 				Done = True
 
-		if np.round(time() - last, 2) > 30.00 and np.round(time() - last, 2) < 50.00:
+		# if np.round(time() - last, 2) > 30.00 and np.round(time() - last, 2) < 50.00:
 
-			targets[0][0] = (targets[0][0][0] + 0.00, targets[0][0][1] + 0.005)
-			targets[1][0] = (targets[1][0][0] - 0.005, targets[1][0][1] - 0.02)
-			targets[2][0] = (targets[2][0][0] + 0.03, targets[2][0][1] - 0.04)
-			# targets[3][0] = (targets[3][0][0] + 0.02, targets[3][0][1] - 0.03)
+		# 	targets[0][0] = (targets[0][0][0] + 0.00, targets[0][0][1] + 0.005)
+		# 	targets[1][0] = (targets[1][0][0] - 0.005, targets[1][0][1] - 0.02)
+		# 	targets[2][0] = (targets[2][0][0] + 0.03, targets[2][0][1] - 0.04)
 
-			sleep(0.001)
-		elif np.round(time() - last, 2) > 50.00 and np.round(time() - last, 2) < 80.00:
+		# 	sleep(0.001)
+		# elif np.round(time() - last, 2) > 50.00 and np.round(time() - last, 2) < 80.00:
 
-			targets[0][0] = (targets[0][0][0] + 0.03, targets[0][0][1] - 0.01)
-			targets[1][0] = (targets[1][0][0] + 0.01, targets[1][0][1] - 0.025)
-			targets[2][0] = (targets[2][0][0] + 0.01, targets[2][0][1] - 0.01)
-			# targets[3][0] = (targets[3][0][0] + 0.05, targets[3][0][1] - 0.008)
+		# 	targets[0][0] = (targets[0][0][0] + 0.03, targets[0][0][1] - 0.01)
+		# 	targets[1][0] = (targets[1][0][0] + 0.01, targets[1][0][1] - 0.025)
+		# 	targets[2][0] = (targets[2][0][0] + 0.01, targets[2][0][1] - 0.01)
 
-			sleep(0.001)
+		# 	sleep(0.001)
 
-		elif np.round(time() - last, 2) > 80.00 and np.round(time() - last, 2) < 110.00:
+		# elif np.round(time() - last, 2) > 80.00 and np.round(time() - last, 2) < 110.00:
 
-			targets[0][0] = (targets[0][0][0] + 0.007, targets[0][0][1] - 0.035)
-			targets[1][0] = (targets[1][0][0] + 0.0292, targets[1][0][1] - 0.0022)
-			targets[2][0] = (targets[2][0][0] + 0.005, targets[2][0][1] - 0.005)
-			# targets[3][0] = (targets[3][0][0] + 0.004, targets[3][0][1] - 0.035)
+		# 	targets[0][0] = (targets[0][0][0] + 0.007, targets[0][0][1] - 0.035)
+		# 	targets[1][0] = (targets[1][0][0] + 0.0292, targets[1][0][1] - 0.0022)
+		# 	targets[2][0] = (targets[2][0][0] + 0.005, targets[2][0][1] - 0.005)
 
-			sleep(0.001)
+		# 	sleep(0.001)
+
+		if np.round(time() - last, 2) > 30.00 and np.round(time() - last, 2) < 110.00:
+
+			# Simulation parameters
+			time_step = 0.1  # Time step in seconds
+			min_distance = 0.7  # Minimum distance between points to avoid collision
+			boundary_margin = 3  # Minimum distance from the boundary
+			tracker_margin = 1  # Minimum distance from the boundary
+
+			# Initialize point positions and velocities
+			positions = [target[0] for target in targets]
+			# print("positions: " + str(positions))
+			# velocities = np.random.rand(4, 2) - 0.5  # Random initial velocities (-0.5 to 0.5)
+			# print("velocities: " + str(velocities))
+
+			positions += velocities * time_step
+			# print("positions: " + str(positions))
+
+			# Change direction of velocities every 3 seconds
+			if np.round(time()-last, 0)%5 == 0:
+
+				velocities = np.random.rand(len(targets), 2) - 0.5
+
+			# Check for collisions and adjust velocities if necessary
+			for i in range(len(positions)):
+
+				# for j in range(i + 1, 4):
+				for j in range(len(positions)):
+
+					if j != i:
+					
+						dist = np.linalg.norm(positions[i] - positions[j])
+
+						if dist < min_distance:
+
+							# Adjust velocities to avoid collision
+							direction = positions[i] - positions[j]
+							velocities[i] = +(direction/np.linalg.norm(direction))*0.8
+							velocities[j] = -(direction/np.linalg.norm(direction))*0.8
+
+				# for  in range(len(positions)):
+
+				if abs(positions[i, 0] - 0) <= boundary_margin or abs(positions[i, 0] - 25) <= boundary_margin:
+
+					velocities[i, 0] *= -1  # Reverse x-direction velocity
+				if abs(positions[i, 1] - 0) <= boundary_margin or abs(positions[i, 1] - 25) <= boundary_margin:
+
+					velocities[i, 1] *= -1  # Reverse y-direction velocity
+
+				for k in range(len(positions)):
+
+					dist = np.linalg.norm(positions[i] - cameras_pos[k])
+
+					if dist < tracker_margin:
+
+						# Adjust velocities to avoid collision
+						direction = positions[i] - cameras_pos[k]
+						velocities[i] = +(direction/np.linalg.norm(direction))*0.8
+
+			for (i, element) in zip(range(len(positions)), positions):
+
+				targets[i][0] = element
 
 		event = np.zeros(np.shape(W)[0])
 		event1 = event_density(event, targets, W)

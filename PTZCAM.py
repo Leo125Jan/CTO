@@ -82,12 +82,14 @@ class PTZcon():
 
 	def UpdateState(self, targets, neighbors, time_):
 
+		print("id: " + str(self.id))
+
 		self.neighbors = neighbors
 		self.time = time_
 
 		self.UpdateFoV()
 		self.polygon_FOV()
-		self.EscapeDensity(targets, time_)
+		# self.EscapeDensity(targets, time_)
 		self.UpdateLocalVoronoi()
 
 		# self.Cluster_Formation(targets)
@@ -99,11 +101,13 @@ class PTZcon():
 		# self.event = self.event_density(event, self.target, self.grid_size)
 		
 		# self.ComputeCentroidal(time_)
-		self.StageAssignment()
-		self.FormationControl()
-		# self.UpdateOrientation()
-		# self.UpdateZoomLevel()
+		# self.StageAssignment()
+		self.FormationControl(targets)
+		self.UpdateOrientation()
+		self.UpdateZoomLevel()
 		self.UpdatePosition()
+
+		print("id: " + str(self.id), "\n")
 		
 	def norm(self, arr):
 
@@ -382,7 +386,7 @@ class PTZcon():
 
 		# Configuration of calculation cost function
 		Avg_distance = 0.0
-		k1, k2 = self.HW_IT, self.HW_BT
+		# k1, k2 = self.HW_IT, self.HW_BT
 		sweet_spot = self.pos + self.R*np.cos(self.alpha)*self.perspective
 
 		# Inscribed circle of FOV
@@ -447,8 +451,9 @@ class PTZcon():
 				# print("b: " + str(b) + "\n")
 				edge = np.array([element for element in edges if element not in b])
 				# print("edge: " + str(edge) + "\n")
-				c = set(weight)
-				weights_ = np.array([element for element in weights if element not in c])
+				# c = set(weight)
+				# weights_ = np.array([element for element in weights if element not in c])
+				weights_ = np.delete(weights_, 0)
 				# print("weights: " + str(weights_) + "\n")
 
 				if len(edge) == 0 or len(weights_) == 0:
@@ -462,6 +467,12 @@ class PTZcon():
 				weights_ = np.array(weights)
 				# print("edge: " + str(edge) + "\n")
 				# print("weights: " + str(weights_) + "\n")
+
+			if len(edge) == 0 or len(weights_) == 0:
+
+				# print("Path End" + "\n")
+				dead_end = True
+				break
 
 			logical_or = np.logical_or((temp_root == edge)[:,0], (temp_root == edge)[:,1])
 			# print("logical_or: " + str(logical_or) + "\n")
@@ -516,15 +527,34 @@ class PTZcon():
 
 					# print("start: " + str(start) + "\n")
 					# print("end: " + str(end) + "\n")
+					# print("nodes: " + str(nodes) + "\n")
 
-					if np.logical_and(np.isin(start, nodes)[0], np.isin(start, nodes)[1]) == False and len(nodes) > 0:
+					# if np.logical_and(np.isin(start, nodes)[0], np.isin(start, nodes)[1]) == False and len(nodes) > 0:
+
+					# 	nodes.append(start)
+					# elif len(nodes) == 0:
+
+					# 	nodes.append(start)
+
+					# print(np.isin(end, nodes)[0])
+					# print(np.isin(end, nodes)[1])
+					# print(np.logical_and(np.isin(end, nodes)[0], np.isin(end, nodes)[1]))
+
+					# if np.logical_and(np.isin(end, nodes)[0], np.isin(end, nodes)[1]) == False and len(nodes) > 0:
+
+					# 	nodes.append(end)
+					# elif len(nodes) == 0:
+
+					# 	nodes.append(end)
+					
+					if any(np.array_equal(start, arr) for arr in nodes) == False and len(nodes) > 0:
 
 						nodes.append(start)
 					elif len(nodes) == 0:
 
 						nodes.append(start)
 
-					if np.logical_and(np.isin(end, nodes)[0], np.isin(end, nodes)[1]) == False and len(nodes) > 0:
+					if any(np.array_equal(end, arr) for arr in nodes) == False and len(nodes) > 0:
 
 						nodes.append(end)
 					elif len(nodes) == 0:
@@ -552,15 +582,15 @@ class PTZcon():
 
 				elif np.shape(nodes)[0] > 3:
 
-					x = [element[0][0] for element in node]; avg_x = np.mean(x)
-					y = [element[0][1] for element in node]; avg_y = np.mean(y)
+					x = [element[0] for element in nodes]; avg_x = np.mean(x)
+					y = [element[1] for element in nodes]; avg_y = np.mean(y)
 					geometric_center = np.array([(avg_x, avg_y)])
-					rangecircle_d = 0
+					rangecircle_d, R = 0, 0
 
 					for (element, i) in zip(nodes, range(len(nodes))):
 
 						p1 = geometric_center
-						p2 = np.array([element[0][0], element[0][1]])
+						p2 = np.array([element[0], element[1]])
 
 						distance_ = np.linalg.norm(p1 - p2)
 
@@ -600,14 +630,28 @@ class PTZcon():
 				start = targets[branch[0]][0]
 				end = targets[branch[1]][0]
 
-				if np.logical_and(np.isin(start, target_points)[0], np.isin(start, target_points)[1]) == False and len(target_points) > 0:
+				# if np.logical_and(np.isin(start, target_points)[0], np.isin(start, target_points)[1]) == False and len(target_points) > 0:
+
+				# 	target_points.append(start)
+				# elif len(target_points) == 0:
+
+				# 	target_points.append(start)
+
+				# if np.logical_and(np.isin(end, target_points)[0], np.isin(end, target_points)[1]) == False and len(target_points) > 0:
+
+				# 	target_points.append(end)
+				# elif len(target_points) == 0:
+
+				# 	target_points.append(end)
+
+				if any(np.array_equal(start, arr) for arr in target_points) == False and len(target_points) > 0:
 
 					target_points.append(start)
 				elif len(target_points) == 0:
 
 					target_points.append(start)
 
-				if np.logical_and(np.isin(end, target_points)[0], np.isin(end, target_points)[1]) == False and len(target_points) > 0:
+				if any(np.array_equal(end, arr) for arr in target_points) == False and len(target_points) > 0:
 
 					target_points.append(end)
 				elif len(target_points) == 0:
@@ -624,8 +668,8 @@ class PTZcon():
 				if np.shape(target_points)[0] - i > 3:
 
 					nodes = target_points[0:np.shape(target_points)[0]-i]
-					x = [element[0] for element in node]; avg_x = np.mean(x)
-					y = [element[1] for element in node]; avg_y = np.mean(y)
+					x = [element[0] for element in nodes]; avg_x = np.mean(x)
+					y = [element[1] for element in nodes]; avg_y = np.mean(y)
 					
 					geometric_center = np.array([(avg_x, avg_y)])
 					R, rangecircle_d = 0, 0
@@ -633,7 +677,7 @@ class PTZcon():
 					for (element, i) in zip(nodes, range(len(nodes))):
 
 						p1 = geometric_center
-						p2 = np.array([element[0][0], element[0][1]])
+						p2 = np.array([element[0], element[1]])
 
 						distance_ = np.linalg.norm(p1 - p2)
 
@@ -642,25 +686,29 @@ class PTZcon():
 							rangecircle_d = distance_
 
 					rangecircle_A = np.pi*(rangecircle_d*0.5)**2
-					theta = self.calculate_tangent_angle((x, y), 0.5*rangecircle_d, self.pos)
+					theta = self.calculate_tangent_angle((avg_x, avg_y), 0.5*rangecircle_d, self.pos)
 
 					Cn = np.exp( -( (rangecircle_A/(0.8*incircle_A))*(1/(2*0.5**2)) ) )*\
 						np.exp( -( ((theta)/(1*self.alpha))*(1/(2*0.5**2)) ) )
 
 					if len(C_descent) == 0:
 
-						dx += (-Cn)*(-2)*np.array([(x-self.virtual_target[0]), (y-self.virtual_target[1])])
+						dx += (-Cn)*(-2)*np.array([(avg_x-self.virtual_target[0]), (avg_y-self.virtual_target[1])])
 
-						Cd = np.exp( -( ((0.1*incircle_A)/rangecircle_A)*(1/(2*0.5**2)) ) )*\
-							np.exp( -( ((0.1*self.alpha)/(theta))*(1/(2*0.5**2)) ) )
+						# Cd = np.exp( -( ((0.1*incircle_A)/rangecircle_A)*(1/(2*0.5**2)) ) )*\
+						# 	np.exp( -( ((0.1*self.alpha)/(theta))*(1/(2*0.5**2)) ) )
+						Cd = 0.5*( 1+np.tanh(1.5*(rangecircle_A/(0.8*incircle_A)-2)) )*\
+							0.5*( 1+np.tanh(1.5*((theta)/(1*self.alpha)-0.5)) )
 						C_descent.append(Cd)
 					else:
 
 						Cn *= C_descent[-1]
-						dx += (-Cn)*(-2)*np.array([(x-self.virtual_target[0]), (y-self.virtual_target[1])])
+						dx += (-Cn)*(-2)*np.array([(avg_x-self.virtual_target[0]), (avg_y-self.virtual_target[1])])
 
-						Cd = np.exp( -( ((0.1*incircle_A)/rangecircle_A)*(1/(2*0.5**2)) ) )*\
-							np.exp( -( ((0.1*self.alpha)/(theta))*(1/(2*0.5**2)) ) )
+						# Cd = np.exp( -( ((0.1*incircle_A)/rangecircle_A)*(1/(2*0.5**2)) ) )*\
+						# 	np.exp( -( ((0.1*self.alpha)/(theta))*(1/(2*0.5**2)) ) )
+						Cd = 0.5*( 1 + np.tanh(1.5*(rangecircle_A/(0.8*incircle_A)-2)) )*\
+							0.5*( 1 + np.tanh(1.5*((theta)/(1*self.alpha)-0.5)) )
 						C_descent.append(Cd)
 				elif np.shape(target_points)[0] - i == 3:
 
@@ -681,8 +729,10 @@ class PTZcon():
 
 						dx += (-Cn)*(-2)*np.array([(geometric_center[0]-self.virtual_target[0]), (geometric_center[1]-self.virtual_target[1])])
 						
-						Cd = np.exp( -( ((0.1*incircle_A)/circumcircle_A)*(1/(2*0.5**2)) ) )*\
-							np.exp( -( ((0.1*self.alpha)/(theta))*(1/(2*0.5**2)) ) )
+						# Cd = np.exp( -( ((0.1*incircle_A)/circumcircle_A)*(1/(2*0.5**2)) ) )*\
+						# 	np.exp( -( ((0.1*self.alpha)/(theta))*(1/(2*0.5**2)) ) )
+						Cd = 0.5*( 1 + np.tanh(1.5*(circumcircle_A/(0.8*incircle_A)-2)) )*\
+							0.5*( 1 + np.tanh(1.5*((theta)/(1*self.alpha)-0.5)) )
 						C_descent.append(Cd)
 						
 					else:
@@ -690,8 +740,10 @@ class PTZcon():
 						Cn *= C_descent[-1]
 						dx += (-Cn)*(-2)*np.array([(geometric_center[0]-self.virtual_target[0]), (geometric_center[1]-self.virtual_target[1])])
 
-						Cd = np.exp( -( ((0.1*incircle_A)/circumcircle_A)*(1/(2*0.5**2)) ) )*\
-							np.exp( -( ((0.1*self.alpha)/(theta))*(1/(2*0.5**2)) ) )
+						# Cd = np.exp( -( ((0.1*incircle_A)/circumcircle_A)*(1/(2*0.5**2)) ) )*\
+						# 	np.exp( -( ((0.1*self.alpha)/(theta))*(1/(2*0.5**2)) ) )
+						Cd = 0.5*( 1 + np.tanh(1.5*(circumcircle_A/(0.8*incircle_A)-2)) )*\
+							0.5*( 1 + np.tanh(1.5*((theta)/(1*self.alpha)-0.5)) )
 						C_descent.append(Cd)
 
 					# print("Cn_3: " + str(Cn) + "\n")
@@ -734,7 +786,7 @@ class PTZcon():
 
 		self.virtual_target += 0.7*dx
 		print("virtual_target: " + str(self.virtual_target) + "\n")
-		self.target = [[self.virtual_target, 1, 10]]
+		self.target = [[self.virtual_target, 2.0, 10]]
 
 		# if self.id == 2:
 		
@@ -754,8 +806,6 @@ class PTZcon():
 		# print("Virtual Target: ", end="")
 		# print(self.virtual_target)
 		# print(Sc)
-		
-		print("id: " + str(self.id), "\n")
 
 	def SEMST(self, targets, sv):
 
@@ -818,7 +868,9 @@ class PTZcon():
 		# print("Weights: " + str(mst_weights) + "\n")
 
 		# Define the weight threshold for deleting edges
-		weight_threshold = 2.0*self.incircle[2]
+		weight_threshold = 2.0*self.incircle[1]
+
+		# print("weight_thershold: " + str(weight_threshold))
 
 		modified_edges, modified_weights = [], []
 
@@ -1127,11 +1179,20 @@ class PTZcon():
 		d_ = np.concatenate((d,d), axis = 1); hold = np.empty_like(d_)
 		ne.evaluate("(cos(alpha)/R_)*(-lamb)*(d**(lamb-2))*(W - pos) + (lamb/(R**(lamb+1)))*(d**(lamb-1))*(W - pos)", out = hold);
 		der_2 = np.empty_like(d_)
-		ne.evaluate("(lamb+1)/(1-cos(alpha))*const*hold", out = der_2)
+		ne.evaluate("(lamb+1)/(1-cos(alpha))*(const-cos(alpha))*hold", out = der_2)
 
 		phi = F_.transpose()
-		ne.evaluate("sum((der_1 + der_2)*phi, axis = 0)", out = p_dot)
-		p_dot /= np.linalg.norm(p_dot)
+		ne.evaluate("sum((der_1 + der_2)*phi*0.1, axis = 0)", out = p_dot)
+		print("p_dot: " + str(p_dot))
+		p_norm = np.linalg.norm(p_dot)
+		p_dot /= p_norm
+		# p_dot = np.array([np.sign(p_dot[0]), np.sign(p_dot[1])]) + np.tanh(p_dot)
+		print("p_dot: " + str(p_dot))
+
+		if (np.isnan(p_dot).any()):
+
+			p_dot = np.array([0.1, 0.1])
+			print("p_dot: " + str(p_dot))
 
 		# Perspective
 		v_dot = np.empty_like(rotational_force)
@@ -1145,6 +1206,8 @@ class PTZcon():
 		phi = F_.transpose();
 		ne.evaluate("sum( out*phi, axis = 0)", out = v_dot)
 		v_dot = v_dot/np.linalg.norm(v_dot);
+
+		print("v_dot: " + str(v_dot))
 
 		# Angle of View
 		a_dot = np.empty_like(zoom_force)
@@ -1164,30 +1227,79 @@ class PTZcon():
 		phi = F_.transpose()
 		ne.evaluate("sum( (der_1 + der_2)*phi)", out = a_dot)
 
+		print("a_dot: " + str(a_dot))
+
+		if a_dot <= 0.001:
+
+			a_dot = 0.13
+
 		phi = F_.transpose(); H = np.empty_like(zoom_force)
 		hold = self.FoV[np.where(self.FoV > 0)]; hold = np.array([hold]).transpose()
 		ne.evaluate("sum( hold*phi )", out = H)
 
-		if (H - self.H)/H < 0.05:
+		# print("H: " + str(H))
+		# print("self.H: " + str(self.H))
+		# print("rate: " + str((H - self.H)/self.H))
 
-			self.translational_force = 0.15*p_dot
-			self.perspective_force = 2*np.asarray([v_dot[0], v_dot[1]])
+		range_max = 0.85*(self.lamb + 1)/(self.lamb)*self.R*cos(self.alpha)
+		dist = np.linalg.norm(self.target[0][0]-self.pos)
+
+		# if (H - self.H)/self.H <= 0.025 and H > 1:
+		if dist <= range_max:
+
+			# self.translational_force = 0.1*np.tanh(p_norm)*p_dot
+			self.translational_force = 0.08*p_dot
+			self.perspective_force = 5*np.asarray([v_dot[0], v_dot[1]])
 			self.zoom_force = 0.01*a_dot
+			self.stage = 2
+			self.r = self.R*cos(self.alpha)
 		else:
 
-			self.translational_force = 5*p_dot
-			self.perspective_force = 2*np.asarray([v_dot[0], v_dot[1]])
+			self.translational_force = 3*p_dot
+			self.perspective_force = 5*np.asarray([v_dot[0], v_dot[1]])
 			self.zoom_force = 0.01*a_dot
+			self.stage = 1
+
+		print(self.translational_force)
 
 		self.H = H
 
-	def FormationControl(self):
+	def FormationControl(self, targets):
+
+		points = []; points.append(self.pos)
+		points = np.concatenate((points, [point[0] for point in targets]))
+
+		distances = distance.cdist(points, points)[0]
+		distances = np.delete(points, 0)
+		weight = 1 - 0.5*( 1 + np.tanh(2*(distances-1.7)) )
+
+		# print("weight: " + str(weight))
+
+		# Consider which neighbor is sharing the same target and only use them to obtain formation force
+		enemy_force = np.array([0.,0.])
+
+		for (i, point) in zip(range(len(distances)), targets):
+
+			enemy_force += weight[i]*((self.pos - point[0])/(np.linalg.norm(self.pos - point[0])))
+
+		# print("enemy_force: " + str(enemy_force))
+
+
+		neighbors_pos = []; neighbors_pos.append(self.pos)
+		neighbors_pos = np.concatenate((neighbors_pos, [neighbor.pos for neighbor in self.neighbors]))
+		# print("targets: " + str(targets) + "\n")
+
+		# Calculate the pairwise distances between targets
+		distances = distance.cdist(neighbors_pos, neighbors_pos)[0]
+		distances = np.delete(distances, 0)
+		weight = 1 - 0.5*( 1 + np.tanh(2*(distances-5)) )
 
 		# Consider which neighbor is sharing the same target and only use them to obtain formation force
 		neighbor_force = np.array([0.,0.])
 
-		for neighbor in self.neighbors:
-			neighbor_force += (self.pos - neighbor.pos)/(np.linalg.norm(self.pos - neighbor.pos))
+		for (i, neighbor) in zip(range(len(distances)), self.neighbors):
+
+			neighbor_force += weight[i]*((self.pos - neighbor.pos)/(np.linalg.norm(self.pos - neighbor.pos)))
 
 		neighbor_norm = np.linalg.norm(neighbor_force)
 
@@ -1197,6 +1309,8 @@ class PTZcon():
 				/(np.linalg.norm(np.asarray(self.target[0][0])- self.pos))
 
 			target_norm = np.linalg.norm(target_force)
+			# target_force = self.translational_force
+			# target_norm = np.linalg.norm(self.translational_force)
 
 			center_force = (np.asarray(self.target[0][0]) - self.pos)\
 				/(np.linalg.norm(np.asarray(self.target[0][0]) - self.pos))
@@ -1207,16 +1321,17 @@ class PTZcon():
 			formation_force -= (center_force/np.linalg.norm(center_force))*(self.r - self.norm\
 							(self.pos - np.asarray(self.target[0][0])))
 
-			self.translational_force += formation_force 
+			self.translational_force += (formation_force + enemy_force)
+			# self.translational_force = formation_force
 
 			return
 
 		else:
 
-			formation_force = neighbor_force
-			self.translational_force += formation_force 
+			formation_force = neighbor_force + enemy_force
+			self.translational_force += formation_force
 
-			return
+		return
 
 	def P(self, d, a, In_polygon, P0_I, R, alpha):
 
@@ -1393,7 +1508,9 @@ class PTZcon():
 
 	def UpdateZoomLevel(self):
 
-		self.alpha += self.zoom_force*self.step
+		if (self.alpha + self.zoom_force*self.step)  <= 20*(np.pi/180):
+
+			self.alpha += self.zoom_force*self.step
 
 		return
 
