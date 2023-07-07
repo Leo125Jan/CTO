@@ -261,15 +261,15 @@ if __name__ == "__main__":
 				'color'         : (0, 0, 200)}
 	cameras.append(camera2)
 
-	camera3 = { 'id'            :  3,
-				'position'      :  np.array([23.0, 23.0]),
-				'perspective'   :  np.array([1.0, 0.0]),
-				'AngleofView'   :  20,
-				'range_limit'   :  4,
-				'lambda'        :  2,
-				'color'         : (255, 150, 0)}
-	cameras.append(camera3)
-
+	# camera3 = { 'id'            :  3,
+	# 			'position'      :  np.array([23.0, 23.0]),
+	# 			'perspective'   :  np.array([1.0, 0.0]),
+	# 			'AngleofView'   :  20,
+	# 			'range_limit'   :  4,
+	# 			'lambda'        :  2,
+	# 			'color'         : (255, 150, 0)}
+	# cameras.append(camera3)
+	#
 	# camera4 = { 'id'            :  4,
 	# 			'position'      :  np.array([12.5, 2.0]),
 	# 			'perspective'   :  np.array([1.0, 0.0]),
@@ -333,8 +333,8 @@ if __name__ == "__main__":
 	W = W.transpose()
 
 	# target's [position, certainty, weight, velocity]
-	# targets = [[(6.5, 19), 1, 10], [(6.0, 18.0), 1, 10], [(7.0, 18.0), 1, 10]]
-	targets = [[(12.0, 12.0), 1, 10], [(12.0, 13.0), 1, 10], [(13.0, 12.0), 1, 10], [(13.0, 13.0), 1, 10]]
+	targets = [[(6.5, 19), 1, 10], [(6.0, 18.0), 1, 10], [(7.0, 18.0), 1, 10]]
+	# targets = [[(12.0, 12.0), 1, 10], [(12.0, 13.0), 1, 10], [(13.0, 12.0), 1, 10], [(13.0, 13.0), 1, 10]]
 	# targets = [[(12.0, 12.0), 1, 10], [(12.0, 13.0), 1, 10], [(13.0, 12.0), 1, 10], [(13.0, 13.0), 1, 10],
 				# [(10.5, 12.5), 1, 10], [(12.5, 9.5), 1, 10], [(16.5, 12.5), 1, 10], [(12.5, 17.5), 1, 10]]
 	velocities = np.random.rand(len(targets), 2) - 0.5  # Random initial velocities (-0.5 to 0.5)
@@ -375,7 +375,7 @@ if __name__ == "__main__":
 
 		# 	sleep(0.001)
 
-		if np.round(time() - last, 2) > 30.00 and np.round(time() - last, 2) < 110.00:
+		if np.round(time() - last, 2) > 20.00 and np.round(time() - last, 2) < 110.00:
 
 			# Simulation parameters
 			time_step = 0.1  # Time step in seconds
@@ -455,7 +455,7 @@ if __name__ == "__main__":
 		vis.Visualize2D(uav_team.members, event_plt1, targets, circumcenter_center, circumcenter_radius, \
 						side_center, side_center_radius)
 
-		if np.round(time() - last, 2) > 120.00:
+		if np.round(time() - last, 2) > 50.00:
 
 			sys.exit()
 

@@ -630,6 +630,10 @@ class PTZcon():
 				start = targets[branch[0]][0]
 				end = targets[branch[1]][0]
 
+				# print("start: " + str(start) + "\n")
+				# print("end: " + str(end) + "\n")
+				# print("target_points: " + str(target_points) + "\n")
+
 				# if np.logical_and(np.isin(start, target_points)[0], np.isin(start, target_points)[1]) == False and len(target_points) > 0:
 
 				# 	target_points.append(start)
@@ -688,8 +692,14 @@ class PTZcon():
 					rangecircle_A = np.pi*(rangecircle_d*0.5)**2
 					theta = self.calculate_tangent_angle((avg_x, avg_y), 0.5*rangecircle_d, self.pos)
 
+					# print("rangecircle_A: " + str(rangecircle_A))
+					# print("theta: " + str(theta))
+
 					Cn = np.exp( -( (rangecircle_A/(0.8*incircle_A))*(1/(2*0.5**2)) ) )*\
 						np.exp( -( ((theta)/(1*self.alpha))*(1/(2*0.5**2)) ) )
+
+					# print("incircle_A: " + str(incircle_A))
+					# print("Cn_4: " + str(Cn))
 
 					if len(C_descent) == 0:
 
@@ -710,6 +720,10 @@ class PTZcon():
 						Cd = 0.5*( 1 + np.tanh(1.5*(rangecircle_A/(0.8*incircle_A)-2)) )*\
 							0.5*( 1 + np.tanh(1.5*((theta)/(1*self.alpha)-0.5)) )
 						C_descent.append(Cd)
+
+					# print("Cd_4: " + str(Cd))
+					# print("Cn_4: " + str(Cn))
+					# print("dx_4: " + str(dx) + "\n")
 				elif np.shape(target_points)[0] - i == 3:
 
 					nodes = target_points[0:np.shape(target_points)[0]-i]
@@ -725,6 +739,13 @@ class PTZcon():
 					Cn = np.exp( -( (circumcircle_A/(0.8*incircle_A))*(1/(2*0.5**2)) ) )*\
 						np.exp( -( ((theta)/(1*self.alpha))*(1/(2*0.5**2)) ) )
 
+					# print("circumcircle_x, circumcircle_y, circumcircle_r, circumcircle_A: ", end='')
+					# print(str(circumcircle_x), str(circumcircle_y), str(circumcircle_r), str(circumcircle_A))
+					# print("incircle_A: " + str(incircle_A))
+					# print("theta: " + str(theta))
+					# print("self.alpha: " + str(self.alpha))
+					# print("Cn_3: " + str(Cn))
+
 					if len(C_descent) == 0:
 
 						dx += (-Cn)*(-2)*np.array([(geometric_center[0]-self.virtual_target[0]), (geometric_center[1]-self.virtual_target[1])])
@@ -746,7 +767,8 @@ class PTZcon():
 							0.5*( 1 + np.tanh(1.5*((theta)/(1*self.alpha)-0.5)) )
 						C_descent.append(Cd)
 
-					# print("Cn_3: " + str(Cn) + "\n")
+					# print("Cd_3: " + str(Cd))
+					# print("Cn_3: " + str(Cn))
 					# print("dx_3: " + str(dx) + "\n")
 				elif np.shape(target_points)[0] - i == 2:
 
@@ -758,12 +780,16 @@ class PTZcon():
 					sidecircle_r = 0.5*np.linalg.norm(p1-p2); sidecircle_A = np.pi*sidecircle_r**2
 					theta = self.calculate_tangent_angle(sidecircle_center, sidecircle_r, self.pos)
 
+					# print("sidecircle_center, sidecircle_r, sidecircle_A: ", end="")
+					print(str(sidecircle_center), str(sidecircle_r), str(sidecircle_A))
+					# print("theta: " + str(theta))
+
 					Cn = np.exp( -( ((1.0*sidecircle_A)/(incircle_A))*(1/(2*0.5**2)) ) )*\
 						np.exp( -( ((1.0*theta)/(self.alpha))*(1/(2*0.5**2)) ) )
-					# print("Cn_2: " + str(Cn) + "\n")
+					# print("Cn_2: " + str(Cn))
 					C1 = np.exp( -( ((0.5*incircle_A)/sidecircle_A)*(1/(2*0.5**2)) ) )*\
 						np.exp( -( (0.5*self.alpha/theta)*(1/(2*0.5**2)) ) )
-					# print("Cn_1: " + str(C1) + "\n")
+					# print("Cn_1: " + str(C1))
 
 					if len(C_descent) == 0:
 
@@ -772,11 +798,11 @@ class PTZcon():
 					else:
 
 						Cn *= C_descent[-1]
-						# print("Cn_2_d: " + str(Cn) + "\n")
 						dx += (-Cn)*(-2)*np.array([(sidecircle_center[0]-self.virtual_target[0]), (sidecircle_center[1]-self.virtual_target[1])])+\
 						(-C1)*(-2)*np.array([(nodes[0][0]-self.virtual_target[0]), (nodes[0][1]-self.virtual_target[1])])
 
-			# print("Cn: " + str(Cn) + "\n")
+					# print("dx_21: " + str(dx) + "\n")
+			# print("Cn: " + str(Cn))
 			# print("dx: " + str(dx) + "\n")
 				# elif np.shape(target_points)[0] - i == 1:
 
@@ -899,19 +925,47 @@ class PTZcon():
 			globals()["x" + str(i+1)] = targets[i][0]
 			globals()["y" + str(i+1)] = targets[i][1]
 
-		d = 2 * (x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2))
-		center_x = ((x1 * x1 + y1 * y1) * (y2 - y3) + (x2 * x2 + y2 * y2) * (y3 - y1) + (x3 * x3 + y3 * y3) * (y1 - y2)) / d
-		center_y = ((x1 * x1 + y1 * y1) * (x3 - x2) + (x2 * x2 + y2 * y2) * (x1 - x3) + (x3 * x3 + y3 * y3) * (x2 - x1)) / d
+		if (x2 - x1)*(y3 - y1) == (y2 - y1)*(x3 - x1):
 
-		radius = ((center_x - x1) ** 2 + (center_y - y1) ** 2) ** 0.5
+			avg_x = (x1 + x2 + x3)/3
+			avg_y = (y1 + y2 + y3)/3
+			geometric_center = np.array([avg_x, avg_y])
+			
+			r = 0.0
+			points = np.array([(x1, y1), (x2, y2), (x3, y3)])
+
+			for i in range(len(points)):
+
+				dist = np.linalg.norm(geometric_center - points[i])
+
+				if dist >= r:
+
+					r = dist
+
+			center_x = avg_x
+			center_y = avg_y
+			radius = r
+		else:
+			
+			d = 2 * (x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2))
+			center_x = ((x1 * x1 + y1 * y1) * (y2 - y3) + (x2 * x2 + y2 * y2) * (y3 - y1) + (x3 * x3 + y3 * y3) * (y1 - y2)) / d
+			center_y = ((x1 * x1 + y1 * y1) * (x3 - x2) + (x2 * x2 + y2 * y2) * (x1 - x3) + (x3 * x3 + y3 * y3) * (x2 - x1)) / d
+
+			radius = ((center_x - x1) ** 2 + (center_y - y1) ** 2) ** 0.5
 
 		return center_x, center_y, radius
 
 	def calculate_tangent_angle(self, circle_center, circle_radius, point):
 
 		distance = np.sqrt((point[0] - circle_center[0])**2 + (point[1] - circle_center[1])**2)
-		adjcent = np.sqrt(distance**2 - circle_radius**2)
-		angle = 2*np.arctan(circle_radius/adjcent)
+
+		if (distance - circle_radius) <= 0.5 or distance <= circle_radius:
+
+			angle = 30*(np.pi/180)
+		else:
+
+			adjcent = np.sqrt(distance**2 - circle_radius**2)
+			angle = 2*np.arctan(circle_radius/adjcent)
 
 		return angle
 
@@ -1191,8 +1245,10 @@ class PTZcon():
 
 		if (np.isnan(p_dot).any()):
 
-			p_dot = np.array([0.1, 0.1])
-			print("p_dot: " + str(p_dot))
+			print(halt)
+
+		# 	p_dot = np.array([0.1, 0.1])
+		# 	print("p_dot: " + str(p_dot))
 
 		# Perspective
 		v_dot = np.empty_like(rotational_force)
@@ -1229,9 +1285,9 @@ class PTZcon():
 
 		print("a_dot: " + str(a_dot))
 
-		if a_dot <= 0.001:
+		# if abs(a_dot) <= 0.001:
 
-			a_dot = 0.13
+		# 	a_dot = 0.13
 
 		phi = F_.transpose(); H = np.empty_like(zoom_force)
 		hold = self.FoV[np.where(self.FoV > 0)]; hold = np.array([hold]).transpose()
@@ -1249,14 +1305,14 @@ class PTZcon():
 
 			# self.translational_force = 0.1*np.tanh(p_norm)*p_dot
 			self.translational_force = 0.08*p_dot
-			self.perspective_force = 5*np.asarray([v_dot[0], v_dot[1]])
+			self.perspective_force = 15*np.asarray([v_dot[0], v_dot[1]])
 			self.zoom_force = 0.01*a_dot
 			self.stage = 2
 			self.r = self.R*cos(self.alpha)
 		else:
 
 			self.translational_force = 3*p_dot
-			self.perspective_force = 5*np.asarray([v_dot[0], v_dot[1]])
+			self.perspective_force = 15*np.asarray([v_dot[0], v_dot[1]])
 			self.zoom_force = 0.01*a_dot
 			self.stage = 1
 
@@ -1271,7 +1327,7 @@ class PTZcon():
 
 		distances = distance.cdist(points, points)[0]
 		distances = np.delete(points, 0)
-		weight = 1 - 0.5*( 1 + np.tanh(2*(distances-1.7)) )
+		weight = 1 - 0.5*( 1 + np.tanh(2*(distances-1.5)) )
 
 		# print("weight: " + str(weight))
 
@@ -1280,10 +1336,24 @@ class PTZcon():
 
 		for (i, point) in zip(range(len(distances)), targets):
 
-			enemy_force += weight[i]*((self.pos - point[0])/(np.linalg.norm(self.pos - point[0])))
+			enemy_force += weight[i]*2.5*((self.pos - point[0])/(np.linalg.norm(self.pos - point[0])))
 
-		# print("enemy_force: " + str(enemy_force))
+		enemy_norm = np.linalg.norm(enemy_force)
 
+		# # print("enemy_force: " + str(enemy_force))
+
+		# tracker_margin = 1
+		# enemy_force = 0.0
+
+		# for k in range(len(targets)):
+
+		# 	dist = np.linalg.norm(self.pos - targets[k][0])
+
+		# 	if dist < tracker_margin:
+
+		# 		# Adjust velocities to avoid collision
+		# 		direction = self.pos - targets[k][0]
+		# 		enemy_force = +(direction/np.linalg.norm(direction))*0.8
 
 		neighbors_pos = []; neighbors_pos.append(self.pos)
 		neighbors_pos = np.concatenate((neighbors_pos, [neighbor.pos for neighbor in self.neighbors]))
@@ -1328,7 +1398,7 @@ class PTZcon():
 
 		else:
 
-			formation_force = neighbor_force + enemy_force
+			formation_force = (neighbor_force + enemy_force)
 			self.translational_force += formation_force
 
 		return

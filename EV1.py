@@ -55,38 +55,60 @@ def para_opt():
 
 def circumcenter(x1, y1, x2, y2, x3, y3):
 
-	# d = 2 * (x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2))
-	# ux = ((x1 * x1 + y1 * y1) * (y2 - y3) + (x2 * x2 + y2 * y2) * (y3 - y1) + (x3 * x3 + y3 * y3) * (y1 - y2)) / d
-	# uy = ((x1 * x1 + y1 * y1) * (x3 - x2) + (x2 * x2 + y2 * y2) * (x1 - x3) + (x3 * x3 + y3 * y3) * (x2 - x1)) / d
+	d = 2 * (x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2))
+	ux = ((x1 * x1 + y1 * y1) * (y2 - y3) + (x2 * x2 + y2 * y2) * (y3 - y1) + (x3 * x3 + y3 * y3) * (y1 - y2)) / d
+	uy = ((x1 * x1 + y1 * y1) * (x3 - x2) + (x2 * x2 + y2 * y2) * (x1 - x3) + (x3 * x3 + y3 * y3) * (x2 - x1)) / d
 
-	# return ux, uy
+	return ux, uy, d
 
-	mid_ab_x = (x1 + x2) / 2
-	mid_ab_y = (y1 + y2) / 2
+	# if (x2 - x1)*(y3 - y1) == (y2 - y1)*(x3 - x1):
 
-	mid_bc_x = (x2 + x3) / 2
-	mid_bc_y = (y2 + y3) / 2
+	# 	avg_x = (x1 + x2 + x3)/3
+	# 	avg_y = (y1 + y2 + y3)/3
+	# 	geometric_center = np.array([avg_x, avg_y])
+		
+	# 	r = 0.0
+	# 	points = np.array([(x1, y1), (x2, y2), (x3, y3)])
 
-	slope_ab = (y2 - y1) / (x2 - x1) if x2 != x1 else float('inf')
-	slope_bc = (y3 - y2) / (x3 - x2) if x3 != x2 else float('inf')
+	# 	for i in range(len(points)):
 
-	if slope_ab == 0:
+	# 		dist = np.linalg.norm(geometric_center - points[i])
 
-		slope_bc = -float('inf')
-	elif slope_bc == 0:
+	# 		if dist >= r:
 
-		slope_ab = -float('inf')
-	else:
+	# 			r = dist
 
-		slope_ab = -1 / slope_ab
-		slope_bc = -1 / slope_bc
+	# 	center_x = avg_x
+	# 	center_y = avg_y
+	# 	radius = r
+	# else:
 
-	center_x = (mid_bc_y - mid_ab_y + slope_ab * mid_ab_x - slope_bc * mid_bc_x) / (slope_ab - slope_bc)
-	center_y = mid_ab_y + slope_ab * (center_x - mid_ab_x)
+	# 	mid_ab_x = (x1 + x2) / 2
+	# 	mid_ab_y = (y1 + y2) / 2
 
-	radius = ((center_x - x1) ** 2 + (center_y - y1) ** 2) ** 0.5
+	# 	mid_bc_x = (x2 + x3) / 2
+	# 	mid_bc_y = (y2 + y3) / 2
 
-	return center_x, center_y, radius
+	# 	slope_ab = (y2 - y1) / (x2 - x1) if x2 != x1 else float('inf')
+	# 	slope_bc = (y3 - y2) / (x3 - x2) if x3 != x2 else float('inf')
+
+	# 	if slope_ab == 0:
+
+	# 		slope_bc = -float('inf')
+	# 	elif slope_bc == 0:
+
+	# 		slope_ab = -float('inf')
+	# 	else:
+
+	# 		slope_ab = -1 / slope_ab
+	# 		slope_bc = -1 / slope_bc
+
+	# 	center_x = (mid_bc_y - mid_ab_y + slope_ab * mid_ab_x - slope_bc * mid_bc_x) / (slope_ab - slope_bc)
+	# 	center_y = mid_ab_y + slope_ab * (center_x - mid_ab_x)
+
+	# 	radius = ((center_x - x1) ** 2 + (center_y - y1) ** 2) ** 0.5
+
+	# return center_x, center_y, radius
 
 def calculate_tangent_angle(circle_center, circle_radius, point):
 
@@ -424,6 +446,9 @@ def delete_element_in_matrix():
 
 if __name__ == '__main__':
 
+	center_x, center_y, radius = circumcenter(1,0,2,4,3,0)
+	print(center_x, center_y, radius)
+
 	# MST2MSF()
 	# print("----------------------------")
 	# SEMST()
@@ -442,5 +467,7 @@ if __name__ == '__main__':
 	d = np.array((13.5, 13.5), dtype = float)
 	print(any(np.array_equal(d, arr) for arr in v))
 
-	a = np.array([0.1,0.1])
-	print(3*a)
+	a = np.array([(1,5), (1,5), (1,5), (4,8), (5,9)])
+	b = np.concatenate((a, a))
+	distances = distance.cdist(b, b)
+	print("distances: " + str(distances))
