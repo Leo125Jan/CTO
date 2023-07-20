@@ -17,6 +17,11 @@ from scipy.sparse.csgraph import minimum_spanning_tree
 import matplotlib.pyplot as plt
 from collections import defaultdict
 
+from alphashape import alphashape
+from sklearn.cluster import KMeans
+from scipy.spatial import ConvexHull, Delaunay
+from gudhi import AlphaComplex
+
 a = np.arange(0, 30, 0.1)
 b = np.arange(0, 30, 0.1)
 X, Y = np.meshgrid(a, b)
@@ -443,19 +448,7 @@ def delete_element_in_matrix():
 
 	print(c)
 
-
-if __name__ == '__main__':
-
-	center_x, center_y, radius = circumcenter(1,0,2,4,3,0)
-	print(center_x, center_y, radius)
-
-	# MST2MSF()
-	# print("----------------------------")
-	# SEMST()
-
-	a = np.array([2,2])
-	b = np.array([2,3])
-	c = ne.evaluate("a*b")
+def test():
 
 	my_array = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
 	element = np.array([4, 5, 6])
@@ -471,3 +464,124 @@ if __name__ == '__main__':
 	b = np.concatenate((a, a))
 	distances = distance.cdist(b, b)
 	print("distances: " + str(distances))
+
+def concavehull():
+
+	# Define the input points (x, y coordinates)
+	points = [(1, 1), (2, 3), (4, 2), (15, 14), (16, 15), (17, 3)]
+
+	# Compute the concave hull
+	alpha = 0.5  # Alpha parameter (controls the concavity)
+	concave_hull = alphashape(points, alpha)
+	print("concave hull: " + str(concave_hull))
+
+	# Plot the input points and the concave hull
+	fig, ax = plt.subplots()
+	ax.scatter(*zip(*points), color='red', label='Points')
+	ax.plot(*zip(*concave_hull.exterior.coords), color='blue', label='Concave Hull')
+	ax.set_aspect('equal', 'box')
+	ax.legend()
+	plt.show()
+
+def del_tri():
+
+	# Define the input points (x, y coordinates)
+	# points = [(1, 1), (2, 3), (4, 2), (5, 4), (6, 1), (7, 3)]
+	points = [(1, 1), (2, 3), (4, 2), (5, 4), (8, 8), (8, 3)]
+
+	# Compute the concave hull
+	alpha = 0.4 # Alpha parameter (controls the concavity)
+	concave_hull = alphashape(points, alpha)
+
+	print(type(concave_hull))
+
+	if concave_hull.geom_type == 'MultiPolygon':
+
+		mycoordslist = [list(x.exterior.coords) for x in concave_hull.geoms]
+		print(mycoordslist)
+
+		# Plot the input points and the concave hull
+		fig, ax = plt.subplots()
+		ax.scatter(*zip(*points), color='red', label='Points')
+		ax.plot(*zip(*mycoordslist[0]), color='blue', label='Concave Hull')
+		ax.plot(*zip(*mycoordslist[1]), color='blue')
+		ax.set_aspect('equal', 'box')
+		ax.legend()
+		plt.show()
+	elif concave_hull.geom_type == "Polygon":
+
+		print([*concave_hull.exterior.coords])
+
+		# Plot the input points and the concave hull
+		fig, ax = plt.subplots()
+		ax.scatter(*zip(*points), color='red', label='Points')
+		ax.plot(*zip(*concave_hull.exterior.coords), color='blue', label='Concave Hull')
+		ax.set_aspect('equal', 'box')
+		ax.legend()
+		plt.show()
+	else:
+
+		fig, ax = plt.subplots()
+		ax.scatter(*zip(*points), color='red', label='Points')
+		ax.set_aspect('equal', 'box')
+		ax.legend()
+		plt.show()
+
+def alpha_complex():
+
+	points = np.array([(1, 1), (2, 3), (4, 2), (5, 4), (8, 8), (8, 3)])
+	alpha_complex = AlphaComplex(points = points)
+	simplex_tree = alpha_complex.create_simplex_tree(max_alpha_square = 4.0)
+
+	print("0: ", end = '')
+	print(*simplex_tree.get_skeleton(0))
+	print("1: ", end = "")
+	print(*simplex_tree.get_skeleton(1))
+	print("2: ", end = "")
+	print(*simplex_tree.get_skeleton(2))
+
+	# Plot the points
+	plt.scatter(points[:, 0], points[:, 1])
+
+	# Plot the edges of the alpha complex
+	for simplex in simplex_tree.get_skeleton(1):
+
+		if len(simplex[0]) == 2:
+
+			i, j = simplex[0]
+			plt.plot([points[i, 0], points[j, 0]], [points[i, 1], points[j, 1]], 'k-')
+
+	plt.show()
+
+	# Find the agent's voronoi neighbors
+	# def ComputeNeighbors(self):
+
+	# points = np.array([(1, 1), (2, 3), (4, 2), (5, 4), (8, 8), (8, 3)])
+	# tri = Delaunay(points)
+
+	# ids = []
+	# for simplex in tri.simplices:
+
+	# 	if idx_map[self.id] in simplex:
+
+	# 		for id_ in simplex:
+
+	# 			ids.append(id_)
+
+	# neighbors = []
+	# for member in self.neighbors.keys():
+
+	# 	if idx_map[member] in ids:
+
+	# 		neighbors.append(member)
+
+	# return neighbors
+
+if __name__ == '__main__':
+
+	# MST2MSF()
+	# print("----------------------------")
+	# SEMST()
+
+	# concavehull()
+	alpha_complex()

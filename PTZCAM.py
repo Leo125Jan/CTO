@@ -7,6 +7,7 @@ import random
 import numpy as np
 import numexpr as ne
 from time import sleep, time
+from gudhi import AlphaComplex
 import matplotlib.pyplot as plt
 from matplotlib.path import Path
 from scipy.integrate import quad
@@ -56,6 +57,7 @@ class PTZcon():
 		self.rtop = 0
 		self.H = 0
 		self.centroid = None
+		self.sweet_spot = self.pos + self.perspective*self.R*np.cos(self.alpha)
 
 		# Tracking Configuration
 		self.cluster_count = 0
@@ -80,7 +82,9 @@ class PTZcon():
 		self.Kp = Kp                # control gain for positional change toward voronoi cell 
 		self.event = np.zeros((self.size[0], self.size[1]))
 
-	def UpdateState(self, targets, neighbors, time_):
+	def UpdateState(self, targets, neighbors, time_, cp):
+
+		self.cp = cp
 
 		print("id: " + str(self.id))
 
@@ -94,18 +98,27 @@ class PTZcon():
 
 		# self.Cluster_Formation(targets)
 		# self.Cluster_Assignment(targets, time_)
-		self.Gradient_Descent(targets, time_)
-		self.Gradient_Ascent()
+		
+		if not self.cp:
 
+			self.Gradient_Descent(targets, time_)
+		else:
+
+			self.comparsion(targets)
+
+		self.Gradient_Ascent(targets, time_)
+		
 		# event = np.zeros((self.size[0], self.size[1]))
 		# self.event = self.event_density(event, self.target, self.grid_size)
 		
 		# self.ComputeCentroidal(time_)
 		# self.StageAssignment()
+		self.JointProbability(targets, time_)
 		self.FormationControl(targets)
 		self.UpdateOrientation()
 		self.UpdateZoomLevel()
 		self.UpdatePosition()
+		self.UpdateSweetSpot()
 
 		print("id: " + str(self.id), "\n")
 		
@@ -400,10 +413,12 @@ class PTZcon():
 
 		# Calculate the pariswise distance between targets
 		points = [self.pos]
+		# points = [self.sweet_spot]
 
 		for neighbor in self.neighbors:
 
 			points.append(neighbor.pos)
+			# points.append(neighbor.sweet_spot)
 
 		agents_len = len(points)
 		
@@ -508,7 +523,7 @@ class PTZcon():
 				sidecircle_center = np.array([0.5*(p1[0]+p2[0]), 0.5*(p1[1]+p2[1])])
 				sidecircle_r = 0.5*np.linalg.norm(p1-p2); sidecircle_A = np.pi*sidecircle_r**2
 
-				if sidecircle_A >= 0.8*self.incircle[2]:
+				if sidecircle_A >= 0.7*self.incircle[2]:
 
 					dead_end = True
 					trunk = []
@@ -569,7 +584,7 @@ class PTZcon():
 					circumcircle_x, circumcircle_y, circumcircle_r = self.circumcenter(nodes)
 					circumcircle_A = np.pi*circumcircle_r**2
 
-					if circumcircle_A >= 0.8*self.incircle[2]:
+					if circumcircle_A >= 0.7*self.incircle[2]:
 
 						dead_end = True
 						trunk = np.array(trunk)
@@ -600,7 +615,7 @@ class PTZcon():
 
 					rangecircle_A = np.pi*(rangecircle_d*0.5)**2
 
-					if rangecircle_A >= 0.8*self.incircle[2]:
+					if rangecircle_A >= 0.7*self.incircle[2]:
 
 						dead_end = True
 						trunk = np.array(trunk)
@@ -621,8 +636,9 @@ class PTZcon():
 
 			dx = (-0.5)*(-2)*\
 				np.array([(targets[watch_1][0][0]-self.virtual_target[0]), (targets[watch_1][0][1]-self.virtual_target[1])])
+			# self.target = [[targets[watch_1][0], 2.0, 10]]
 
-			# print("target_1: " + str(targets[watch_1][0]) + "\n")
+			# print("target_1: " + str(self.target))
 		else:
 
 			for branch in trunk:
@@ -662,7 +678,35 @@ class PTZcon():
 
 					target_points.append(end)
 
-			# print("target_points: " + str(target_points) + "\n")
+			print("target_points: " + str(target_points) + "\n")
+
+			# if np.shape(target_points)[0] > 3:
+
+			# 	nodes = target_points[0:np.shape(target_points)[0]]
+			# 	x = [element[0] for element in nodes]; avg_x = np.mean(x)
+			# 	y = [element[1] for element in nodes]; avg_y = np.mean(y)
+				
+			# 	geometric_center = np.array((avg_x, avg_y))
+			# 	self.target = [[geometric_center, 2.0, 10]]
+			# 	print("target_n: " + str(self.target))
+			# elif np.shape(target_points)[0] == 3:
+
+			# 	nodes = target_points[0:np.shape(target_points)[0]]
+
+			# 	x = [element[0] for element in nodes]; avg_x = np.mean(x)
+			# 	y = [element[1] for element in nodes]; avg_y = np.mean(y)
+			# 	geometric_center = np.array((avg_x, avg_y))
+			# 	self.target = [[geometric_center, 2.0, 10]]
+			# 	print("target_3: " + str(self.target))
+			# elif np.shape(target_points)[0] == 2:
+
+			# 	nodes = target_points[0:np.shape(target_points)[0]]
+
+			# 	p1 = np.array(nodes[0])
+			# 	p2 = np.array(nodes[1])
+			# 	sidecircle_center = np.array([0.5*(p1[0]+p2[0]), 0.5*(p1[1]+p2[1])])
+			# 	self.target = [[sidecircle_center, 2.0, 10]]
+			# 	print("target_2: " + str(self.target))
 
 			x, y, = 0, 0
 			C_descent = []; Cd = 0
@@ -697,6 +741,9 @@ class PTZcon():
 
 					Cn = np.exp( -( (rangecircle_A/(0.8*incircle_A))*(1/(2*0.5**2)) ) )*\
 						np.exp( -( ((theta)/(1*self.alpha))*(1/(2*0.5**2)) ) )
+					# Cn = 0.5*( 1 - np.tanh( 3.0*(rangecircle_A/(1.0*incircle_A)-0.5) ) )*\
+					# 	0.5*( 1 - np.tanh( 3.0*((theta)/(1*self.alpha)-0.5) ) )
+					# Cn = 0.5*( 1 - np.tanh( 5.0*( (rangecircle_A/(1.0*incircle_A))*((theta)/(1*self.alpha))-0.5 ) ) )
 
 					# print("incircle_A: " + str(incircle_A))
 					# print("Cn_4: " + str(Cn))
@@ -705,20 +752,22 @@ class PTZcon():
 
 						dx += (-Cn)*(-2)*np.array([(avg_x-self.virtual_target[0]), (avg_y-self.virtual_target[1])])
 
-						# Cd = np.exp( -( ((0.1*incircle_A)/rangecircle_A)*(1/(2*0.5**2)) ) )*\
-						# 	np.exp( -( ((0.1*self.alpha)/(theta))*(1/(2*0.5**2)) ) )
-						Cd = 0.5*( 1+np.tanh(1.5*(rangecircle_A/(0.8*incircle_A)-2)) )*\
-							0.5*( 1+np.tanh(1.5*((theta)/(1*self.alpha)-0.5)) )
+						Cd = np.exp( -( ((0.25*incircle_A)/rangecircle_A)*(1/(2*0.5**2)) ) )*\
+							np.exp( -( ((0.25*self.alpha)/(theta))*(1/(2*0.5**2)) ) )
+						# Cd = 0.5*( 1 + np.tanh( 3.0*(rangecircle_A/(1.0*incircle_A)-0.5) ) )*\
+						# 	0.5*( 1 + np.tanh( 3.0*((theta)/(1*self.alpha)-0.5) ) )
+						# Cd = 0.5*( 1 + np.tanh( 5.0*( (rangecircle_A/(1.0*incircle_A))*((theta)/(1*self.alpha)) -0.5) ) )
 						C_descent.append(Cd)
 					else:
 
 						Cn *= C_descent[-1]
 						dx += (-Cn)*(-2)*np.array([(avg_x-self.virtual_target[0]), (avg_y-self.virtual_target[1])])
 
-						# Cd = np.exp( -( ((0.1*incircle_A)/rangecircle_A)*(1/(2*0.5**2)) ) )*\
-						# 	np.exp( -( ((0.1*self.alpha)/(theta))*(1/(2*0.5**2)) ) )
-						Cd = 0.5*( 1 + np.tanh(1.5*(rangecircle_A/(0.8*incircle_A)-2)) )*\
-							0.5*( 1 + np.tanh(1.5*((theta)/(1*self.alpha)-0.5)) )
+						Cd = np.exp( -( ((0.25*incircle_A)/rangecircle_A)*(1/(2*0.5**2)) ) )*\
+							np.exp( -( ((0.25*self.alpha)/(theta))*(1/(2*0.5**2)) ) )
+						# Cd = 0.5*( 1 + np.tanh( 3.0*(rangecircle_A/(1.0*incircle_A)-0.5) ) )*\
+						# 	0.5*( 1 + np.tanh( 3.0*((theta)/(1*self.alpha)-0.5) ) )
+						# Cd = 0.5*( 1 + np.tanh( 5.0*( (rangecircle_A/(1.0*incircle_A))*((theta)/(1*self.alpha)) -0.5) ) )
 						C_descent.append(Cd)
 
 					# print("Cd_4: " + str(Cd))
@@ -738,6 +787,9 @@ class PTZcon():
 
 					Cn = np.exp( -( (circumcircle_A/(0.8*incircle_A))*(1/(2*0.5**2)) ) )*\
 						np.exp( -( ((theta)/(1*self.alpha))*(1/(2*0.5**2)) ) )
+					# Cn = 0.5*( 1 - np.tanh( 3.0*(circumcircle_A/(1.0*incircle_A)-0.5) ) )*\
+					# 	0.5*( 1 - np.tanh( 3.0*((theta)/(1*self.alpha)-0.5) ) )
+					# Cn = 0.5*( 1 - np.tanh( 5.0*( (circumcircle_A/(1.0*incircle_A))*((theta)/(1*self.alpha)) -0.5) ) )
 
 					# print("circumcircle_x, circumcircle_y, circumcircle_r, circumcircle_A: ", end='')
 					# print(str(circumcircle_x), str(circumcircle_y), str(circumcircle_r), str(circumcircle_A))
@@ -750,10 +802,11 @@ class PTZcon():
 
 						dx += (-Cn)*(-2)*np.array([(geometric_center[0]-self.virtual_target[0]), (geometric_center[1]-self.virtual_target[1])])
 						
-						# Cd = np.exp( -( ((0.1*incircle_A)/circumcircle_A)*(1/(2*0.5**2)) ) )*\
-						# 	np.exp( -( ((0.1*self.alpha)/(theta))*(1/(2*0.5**2)) ) )
-						Cd = 0.5*( 1 + np.tanh(1.5*(circumcircle_A/(0.8*incircle_A)-2)) )*\
-							0.5*( 1 + np.tanh(1.5*((theta)/(1*self.alpha)-0.5)) )
+						Cd = np.exp( -( ((0.25*incircle_A)/circumcircle_A)*(1/(2*0.5**2)) ) )*\
+							np.exp( -( ((0.25*self.alpha)/(theta))*(1/(2*0.5**2)) ) )
+						# Cd = 0.5*( 1 + np.tanh( 3.0*(circumcircle_A/(1.0*incircle_A)-0.5) ) )*\
+						# 	0.5*( 1 + np.tanh( 3.0*((theta)/(1*self.alpha)-0.5) ) )
+						# Cd = 0.5*( 1 + np.tanh( 5.0*( (circumcircle_A/(1.0*incircle_A))*((theta)/(1*self.alpha)) -0.5) ) )
 						C_descent.append(Cd)
 						
 					else:
@@ -761,10 +814,11 @@ class PTZcon():
 						Cn *= C_descent[-1]
 						dx += (-Cn)*(-2)*np.array([(geometric_center[0]-self.virtual_target[0]), (geometric_center[1]-self.virtual_target[1])])
 
-						# Cd = np.exp( -( ((0.1*incircle_A)/circumcircle_A)*(1/(2*0.5**2)) ) )*\
-						# 	np.exp( -( ((0.1*self.alpha)/(theta))*(1/(2*0.5**2)) ) )
-						Cd = 0.5*( 1 + np.tanh(1.5*(circumcircle_A/(0.8*incircle_A)-2)) )*\
-							0.5*( 1 + np.tanh(1.5*((theta)/(1*self.alpha)-0.5)) )
+						Cd = np.exp( -( ((0.25*incircle_A)/circumcircle_A)*(1/(2*0.5**2)) ) )*\
+							np.exp( -( ((0.25*self.alpha)/(theta))*(1/(2*0.5**2)) ) )
+						# Cd = 0.5*( 1 + np.tanh( 3.0*(circumcircle_A/(1.0*incircle_A)-0.5) ) )*\
+						# 	0.5*( 1 + np.tanh( 3.0*((theta)/(1*self.alpha)-0.5) ) )
+						# Cd = 0.5*( 1 + np.tanh( 5.0*( (circumcircle_A/(1.0*incircle_A))*((theta)/(1*self.alpha)) -0.5) ) )
 						C_descent.append(Cd)
 
 					# print("Cd_3: " + str(Cd))
@@ -786,9 +840,15 @@ class PTZcon():
 
 					Cn = np.exp( -( ((1.0*sidecircle_A)/(incircle_A))*(1/(2*0.5**2)) ) )*\
 						np.exp( -( ((1.0*theta)/(self.alpha))*(1/(2*0.5**2)) ) )
+					# Cn = 0.5*( 1 - np.tanh( 3.0*((1.0*sidecircle_A)/(1.0*incircle_A)-0.5) ) )*\
+					# 	0.5*( 1 - np.tanh( 3.0*((theta)/(1*self.alpha)-0.5) ) )
+					# Cn = 0.5*( 1 - np.tanh( 5.0*( ((1.0*sidecircle_A)/(1.0*incircle_A))*((theta)/(1*self.alpha)) -0.5) ) )
 					# print("Cn_2: " + str(Cn))
-					C1 = np.exp( -( ((0.5*incircle_A)/sidecircle_A)*(1/(2*0.5**2)) ) )*\
-						np.exp( -( (0.5*self.alpha/theta)*(1/(2*0.5**2)) ) )
+					C1 = np.exp( -( ((0.25*incircle_A)/sidecircle_A)*(1/(2*0.5**2)) ) )*\
+						np.exp( -( (0.25*self.alpha/theta)*(1/(2*0.5**2)) ) )
+					# C1 = 0.5*( 1 + np.tanh( 3.0*((1.0*sidecircle_A)/(1.0*incircle_A)-0.5) ) )*\
+					# 	0.5*( 1 + np.tanh( 3.0*((theta)/(1*self.alpha)-0.5) ) )
+					# C1 = 0.5*( 1 + np.tanh( 5.0*( ((1.0*sidecircle_A)/(1.0*incircle_A))*((theta)/(1*self.alpha)) -0.5) ) )
 					# print("Cn_1: " + str(C1))
 
 					if len(C_descent) == 0:
@@ -813,8 +873,9 @@ class PTZcon():
 		self.virtual_target += 0.7*dx
 		print("virtual_target: " + str(self.virtual_target) + "\n")
 		self.target = [[self.virtual_target, 2.0, 10]]
+		print("self.target: " + str(self.target))
 
-		# if self.id == 2:
+		# if self.id == 3:
 		
 		# 	print(halt)
 
@@ -832,6 +893,102 @@ class PTZcon():
 		# print("Virtual Target: ", end="")
 		# print(self.virtual_target)
 		# print(Sc)
+
+	def comparsion(self, targets):
+
+		# points = [self.pos]
+		points = [self.sweet_spot]
+
+		for neighbor in self.neighbors:
+
+			# points.append(neighbor.pos)
+			points.append(neighbor.sweet_spot)
+
+		agents_len = len(points)
+		
+		for target in targets:
+
+			points.append(target[0])
+
+		points = np.array(points)
+
+		points_len = len(points)
+
+		distances = distance.cdist(points, points)
+
+		# print("distances: " + str(distances))
+
+		# Hungarian Algorithm for 1-1
+		cost_matrix = [row[agents_len:points_len] for (row, i) in zip(distances, range(len(distances))) if i < agents_len]
+		cost_matrix = np.array(cost_matrix)
+		row_ind, col_ind = linear_sum_assignment(cost_matrix)
+
+		watch_1 = col_ind[0]
+
+		self.target = [targets[watch_1]]
+
+	def JointProbability(self, targets, time_):
+
+		W = [element[0] for element in targets]
+
+		pos = self.pos; perspective = self.perspective; alpha = self.alpha; R = self.R
+		lamb = self.lamb; R_ = R**(lamb+1)
+
+		out = np.empty_like(W)
+		ne.evaluate("W - pos", out = out)
+
+		x = out[:,0]; y = out[:,1]
+		d = np.empty_like(x)
+		ne.evaluate("sqrt(x**2 + y**2)", out = d)
+
+		# d = np.linalg.norm(np.subtract(self.W, self.pos), axis = 1)
+		d = np.array([d]).transpose()
+		d = d.transpose()[0]
+
+		q_per = self.PerspectiveQuality(d, W, pos, perspective, alpha)
+
+		for (i, element) in zip(range(len(q_per)), q_per):
+
+			if element >= 0.0:
+
+				q_per[i] = element
+			else:
+
+				q_per[i] = 0.0
+
+		q_res = self.ResolutionQuality(d, W, pos, perspective, alpha, R, lamb)
+
+		for (i, element) in zip(range(len(q_res)), q_res):
+
+			if element >= 0.0:
+
+				q_res[i] = element
+			else:
+
+				q_res[i] = 0.0
+
+		Q = np.multiply(q_per, q_res)
+		T_Joint = np.append(Q, time_)
+
+		print("Perspective: " + str(q_per))
+		print("Resolution: " + str(q_res))
+		print("Quality: " + str(Q))
+
+		# filename = "D:/上課資料/IME/實驗室研究/Paper/Coverage Control/Quality based switch mode/Data/"
+
+		if self.cp:
+
+			filename = "/home/leo/mts/src/QBSM/Data/Joint/Comparison/"
+		else:
+
+			filename = "/home/leo/mts/src/QBSM/Data/Joint/Test/"
+		filename += "Joint_" + str(self.id) + ".csv"
+
+		with open(filename, "a", encoding='UTF8', newline='') as f:
+
+			row = T_Joint
+			writer = csv.writer(f)
+			writer.writerow(row)
 
 	def SEMST(self, targets, sv):
 
@@ -1017,6 +1174,10 @@ class PTZcon():
 		q_res = self.ResolutionQuality(d, W, pos, perspective, alpha, R, lamb)
 		Q = np.multiply(q_per, q_res)
 
+		# print("Perspective: " + str(q_per))
+		# print("Resolution: " + str(q_res))
+		# print(halt)
+
 		quality_map = ne.evaluate("where((q_per > 0) & (q_res > 0), Q, 0)")
 		self.FoV = quality_map
 		
@@ -1192,7 +1353,7 @@ class PTZcon():
 
 		return
 
-	def Gradient_Ascent(self):
+	def Gradient_Ascent(self, targets, time_):
 
 		translational_force = np.array([0.,0.])
 		rotational_force = np.array([0.,0.])
@@ -1289,9 +1450,18 @@ class PTZcon():
 
 		# 	a_dot = 0.13
 
-		phi = F_.transpose(); H = np.empty_like(zoom_force)
-		hold = self.FoV[np.where(self.FoV > 0)]; hold = np.array([hold]).transpose()
-		ne.evaluate("sum( hold*phi )", out = H)
+		# Utiltiy Function
+		H = np.empty_like(zoom_force)
+		for t in targets:
+
+			F = multivariate_normal([t[0][0], t[0][1]],\
+								[[0.1, 0.0], [0.0, 0.1]])
+			F_ = np.array([F.pdf(W)])
+			phi = F_.transpose()
+
+			hold = self.FoV[np.where(self.FoV > 0)]; hold = np.array([hold]).transpose()
+			# ne.evaluate("sum( hold*phi )", out = H)
+			H += ne.evaluate("sum( hold*phi )")
 
 		# print("H: " + str(H))
 		# print("self.H: " + str(self.H))
@@ -1305,7 +1475,7 @@ class PTZcon():
 
 			# self.translational_force = 0.1*np.tanh(p_norm)*p_dot
 			self.translational_force = 0.08*p_dot
-			self.perspective_force = 15*np.asarray([v_dot[0], v_dot[1]])
+			self.perspective_force = 20*np.asarray([v_dot[0], v_dot[1]])
 			self.zoom_force = 0.01*a_dot
 			self.stage = 2
 			self.r = self.R*cos(self.alpha)
@@ -1319,6 +1489,57 @@ class PTZcon():
 		print(self.translational_force)
 
 		self.H = H
+		T_Utility = [self.H, time_]
+		# print("Quality: " + str(self.FoV))
+		print("Utility: " + str(self.H))
+		# print(halt)
+
+		# filename = "D:/上課資料/IME/實驗室研究/Paper/Coverage Control/Quality based switch mode/Data/"
+		filename = "/home/leo/mts/src/QBSM/Data/Utility/"
+		filename += "Utility_" + str(self.id) + ".csv"
+		with open(filename, "a", encoding='UTF8', newline='') as f:
+
+			row = T_Utility
+			writer = csv.writer(f)
+			writer.writerow(row)
+
+	def alpha_complex(self, targets):
+
+		points = [target[0] for target in targets]
+		points = np.array(points)
+		alpha_complex = AlphaComplex(points = points)
+		simplex_tree = alpha_complex.create_simplex_tree(max_alpha_square = 2.5)
+
+		# print(*simplex_tree.get_skeleton(1))
+
+		Risky_margin = 3.0
+		Risky_force = np.array([0., 0.])
+		for simplex in simplex_tree.get_skeleton(1):
+
+			if len(simplex[0]) == 2:
+
+				gain = simplex[1]
+				i, j = simplex[0]
+				mid = np.array([0.5*(points[i][0] + points[j][0]), 0.5*(points[i][1] + points[j][1])])
+
+				dist = np.linalg.norm(mid - self.pos)
+
+				if dist < Risky_margin:
+
+					# Adjust velocities to avoid collision
+					# direction = mid - self.pos
+					# Risky_force += +gain*(Risky_margin - dist)*(direction/np.linalg.norm(direction))
+
+					direction = np.array((self.pos - mid)/np.linalg.norm(self.pos - mid))
+					heading = np.array((self.pos - self.target[0][0])/np.linalg.norm(self.pos - self.target[0][0]))
+					theta = np.arccos(np.dot(direction, heading)); trun = (direction*np.sin(theta))/np.linalg.norm(direction*np.sin(theta))
+					Risky_force += +(Risky_margin - dist)*trun
+
+		# if self.cp:
+
+		Risky_force = np.array([0., 0.])
+
+		return Risky_force
 
 	def FormationControl(self, targets):
 
@@ -1327,33 +1548,39 @@ class PTZcon():
 
 		distances = distance.cdist(points, points)[0]
 		distances = np.delete(points, 0)
-		weight = 1 - 0.5*( 1 + np.tanh(2*(distances-1.5)) )
+		weight = 1 - 0.5*( 1 + np.tanh(2*(distances-5.0)) )
+
+		Risky_force = self.alpha_complex(targets)
 
 		# print("weight: " + str(weight))
 
 		# Consider which neighbor is sharing the same target and only use them to obtain formation force
-		enemy_force = np.array([0.,0.])
+		# enemy_force = np.array([0.,0.])
 
-		for (i, point) in zip(range(len(distances)), targets):
+		# for (i, point) in zip(range(len(distances)), targets):
 
-			enemy_force += weight[i]*2.5*((self.pos - point[0])/(np.linalg.norm(self.pos - point[0])))
+		# 	enemy_force += weight[i]*1*((self.pos - point[0])/(np.linalg.norm(self.pos - point[0])))
 
-		enemy_norm = np.linalg.norm(enemy_force)
+		# enemy_norm = np.linalg.norm(enemy_force)
 
 		# # print("enemy_force: " + str(enemy_force))
 
-		# tracker_margin = 1
-		# enemy_force = 0.0
+		tracker_margin = 1.2
+		enemy_force = 0.0
 
-		# for k in range(len(targets)):
+		for k in range(len(targets)):
 
-		# 	dist = np.linalg.norm(self.pos - targets[k][0])
+			dist = np.linalg.norm(self.pos - targets[k][0])
 
-		# 	if dist < tracker_margin:
+			if dist < tracker_margin:
 
-		# 		# Adjust velocities to avoid collision
-		# 		direction = self.pos - targets[k][0]
-		# 		enemy_force = +(direction/np.linalg.norm(direction))*0.8
+				# Adjust velocities to avoid collision
+				direction = np.array((self.pos - targets[k][0])/np.linalg.norm(self.pos - targets[k][0]))
+				heading = np.array((self.pos - self.target[0][0])/np.linalg.norm(self.pos - self.target[0][0]))
+				theta = np.arccos(np.dot(direction, heading)); trun = (direction*np.sin(theta))/np.linalg.norm(direction*np.sin(theta))
+				enemy_force += +1.5*(tracker_margin - dist)*trun
+				# direction = (self.pos - targets[k][0])
+				# enemy_force += +(tracker_margin - dist)*(direction/np.linalg.norm(direction))
 
 		neighbors_pos = []; neighbors_pos.append(self.pos)
 		neighbors_pos = np.concatenate((neighbors_pos, [neighbor.pos for neighbor in self.neighbors]))
@@ -1391,14 +1618,14 @@ class PTZcon():
 			formation_force -= (center_force/np.linalg.norm(center_force))*(self.r - self.norm\
 							(self.pos - np.asarray(self.target[0][0])))
 
-			self.translational_force += (formation_force + enemy_force)
+			self.translational_force += (formation_force + enemy_force + Risky_force)
 			# self.translational_force = formation_force
 
 			return
 
 		else:
 
-			formation_force = (neighbor_force + enemy_force)
+			formation_force = (neighbor_force + enemy_force + Risky_force)
 			self.translational_force += formation_force
 
 		return
@@ -1587,6 +1814,12 @@ class PTZcon():
 	def UpdatePosition(self):
 
 		self.pos += self.translational_force*self.step
+
+		return
+
+	def UpdateSweetSpot(self):
+
+		self.sweet_spot = self.pos + self.perspective*self.R*np.cos(self.alpha)
 
 		return
 

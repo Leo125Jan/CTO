@@ -261,60 +261,86 @@ if __name__ == "__main__":
 				'color'         : (0, 0, 200)}
 	cameras.append(camera2)
 
-	# camera3 = { 'id'            :  3,
-	# 			'position'      :  np.array([23.0, 23.0]),
-	# 			'perspective'   :  np.array([1.0, 0.0]),
-	# 			'AngleofView'   :  20,
-	# 			'range_limit'   :  4,
-	# 			'lambda'        :  2,
-	# 			'color'         : (255, 150, 0)}
-	# cameras.append(camera3)
-	#
-	# camera4 = { 'id'            :  4,
-	# 			'position'      :  np.array([12.5, 2.0]),
-	# 			'perspective'   :  np.array([1.0, 0.0]),
-	# 			'AngleofView'   :  20,
-	# 			'range_limit'   :  4,
-	# 			'lambda'        :  2,
-	# 			'color'         : (255, 250, 0)}
-	# cameras.append(camera4)
+	camera3 = { 'id'            :  3,
+				'position'      :  np.array([23.0, 23.0]),
+				'perspective'   :  np.array([1.0, 0.0]),
+				'AngleofView'   :  20,
+				'range_limit'   :  4,
+				'lambda'        :  2,
+				'color'         : (255, 150, 0)}
+	cameras.append(camera3)
+	
+	camera4 = { 'id'            :  4,
+				'position'      :  np.array([12.5, 2.0]),
+				'perspective'   :  np.array([1.0, 0.0]),
+				'AngleofView'   :  20,
+				'range_limit'   :  4,
+				'lambda'        :  2,
+				'color'         : (255, 250, 0)}
+	cameras.append(camera4)
 
-	# camera5 = { 'id'            :  5,
-	# 			'position'      :  np.array([23.0, 12.5]),
-	# 			'perspective'   :  np.array([0.5, 0.5]),
-	# 			'AngleofView'   :  20,
-	# 			'range_limit'   :  4,
-	# 			'lambda'        :  2,
-	# 			'color'         : (0, 240, 255)}
-	# cameras.append(camera5)
+	camera5 = { 'id'            :  5,
+				'position'      :  np.array([23.0, 12.5]),
+				'perspective'   :  np.array([0.5, 0.5]),
+				'AngleofView'   :  20,
+				'range_limit'   :  4,
+				'lambda'        :  2,
+				'color'         : (0, 240, 255)}
+	cameras.append(camera5)
 
-	# camera6 = { 'id'            :  6,
-	# 			'position'      :  np.array([12.5, 23.0]),
-	# 			'perspective'   :  np.array([1.0, 0.0]),
-	# 			'AngleofView'   :  20,
-	# 			'range_limit'   :  4,
-	# 			'lambda'        :  2,
-	# 			'color'         : (150, 0, 255)}
-	# cameras.append(camera6)
+	camera6 = { 'id'            :  6,
+				'position'      :  np.array([12.5, 23.0]),
+				'perspective'   :  np.array([1.0, 0.0]),
+				'AngleofView'   :  20,
+				'range_limit'   :  4,
+				'lambda'        :  2,
+				'color'         : (150, 0, 255)}
+	cameras.append(camera6)
 
-	# camera7 = { 'id'            :  7,
-	# 			'position'      :  np.array([2.0, 12.5]),
-	# 			'perspective'   :  np.array([1.0, 0.0]),
-	# 			'AngleofView'   :  20,
-	# 			'range_limit'   :  4,
-	# 			'lambda'        :  2,
-	# 			'color'         : (255, 0, 250)}
-	# cameras.append(camera7)
+	camera7 = { 'id'            :  7,
+				'position'      :  np.array([2.0, 12.5]),
+				'perspective'   :  np.array([1.0, 0.0]),
+				'AngleofView'   :  20,
+				'range_limit'   :  4,
+				'lambda'        :  2,
+				'color'         : (255, 0, 250)}
+	cameras.append(camera7)
 
 	# for i in range(len(cameras)):
 
 	# 	# filename = "D:/上課資料/IME/實驗室研究/Paper/Coverage Control/Quality based switch mode/Data/"
-	# 	filename = "/home/leo/mts/src/QBSM/Data/Cost/"
+	# 	filename = "/home/leo/mts/src/QBSM/Data/Utility/"
 	# 	# filename += "Data_" + str(i) + ".csv"
-	# 	filename += "Cost_" + str(i) + ".csv"
+	# 	filename += "Utility_" + str(i) + ".csv"
 
 	# 	f = open(filename, "w+")
 	# 	f.close()
+
+	# for i in range(len(cameras)):
+
+	# 	# filename = "D:/上課資料/IME/實驗室研究/Paper/Coverage Control/Quality based switch mode/Data/"
+	# 	filename = "/home/leo/mts/src/QBSM/Data/Joint/"
+	# 	# filename += "Data_" + str(i) + ".csv"
+	# 	filename += "Joint_" + str(i) + ".csv"
+
+	# 	f = open(filename, "w+")
+	# 	f.close()
+
+	cp = False
+
+	for i in range(len(cameras)):
+
+		if cp:
+
+			filename = "/home/leo/mts/src/QBSM/Data/Joint/Comparison/"
+		else:
+
+			filename = "/home/leo/mts/src/QBSM/Data/Joint/Test/"
+
+		filename += "Joint_" + str(i) + ".csv"
+
+		f = open(filename, "w+")
+		f.close()
 
 	# Initialize UAV team with PTZ cameras
 	uav_team = UAVs(map_size, grid_size)
@@ -333,16 +359,23 @@ if __name__ == "__main__":
 	W = W.transpose()
 
 	# target's [position, certainty, weight, velocity]
-	targets = [[(6.5, 19), 1, 10], [(6.0, 18.0), 1, 10], [(7.0, 18.0), 1, 10]]
+	# targets = [[(6.5, 19), 1, 10], [(6.0, 18.0), 1, 10], [(7.0, 18.0), 1, 10]]
 	# targets = [[(12.0, 12.0), 1, 10], [(12.0, 13.0), 1, 10], [(13.0, 12.0), 1, 10], [(13.0, 13.0), 1, 10]]
-	# targets = [[(12.0, 12.0), 1, 10], [(12.0, 13.0), 1, 10], [(13.0, 12.0), 1, 10], [(13.0, 13.0), 1, 10],
-				# [(10.5, 12.5), 1, 10], [(12.5, 9.5), 1, 10], [(16.5, 12.5), 1, 10], [(12.5, 17.5), 1, 10]]
-	velocities = np.random.rand(len(targets), 2) - 0.5  # Random initial velocities (-0.5 to 0.5)
+	targets = [[(12.0, 12.0), 1, 10], [(12.0, 13.0), 1, 10], [(13.0, 12.0), 1, 10], [(13.0, 13.0), 1, 10],
+				[(10.5, 12.5), 1, 10], [(12.5, 9.5), 1, 10], [(16.5, 12.5), 1, 10], [(12.5, 17.5), 1, 10]]
+	velocities = 0.5*(np.random.rand(len(targets), 2) - 0.5)  # Random initial velocities (-0.5 to 0.5)
 
 	# Start Simulation
 	Done = False
 	vis = Visualize(map_size, grid_size)
 	last = time()
+
+	# seed = 279
+	seed = 555
+	# seed = 143 k
+	# seed = 5214 k
+	# seed = 5232
+	# seed = 5532
 
 	while not Done:
 
@@ -375,7 +408,7 @@ if __name__ == "__main__":
 
 		# 	sleep(0.001)
 
-		if np.round(time() - last, 2) > 20.00 and np.round(time() - last, 2) < 110.00:
+		if np.round(time() - last, 2) > 20.00 and np.round(time() - last, 2) < 50.00:
 
 			# Simulation parameters
 			time_step = 0.1  # Time step in seconds
@@ -393,9 +426,9 @@ if __name__ == "__main__":
 			# print("positions: " + str(positions))
 
 			# Change direction of velocities every 3 seconds
-			if np.round(time()-last, 0)%5 == 0:
-
-				velocities = np.random.rand(len(targets), 2) - 0.5
+			if np.round(time()-last, 0)%10 == 0:
+				np.random.seed(seed)
+				velocities = 0.5*(np.random.rand(len(targets), 2) - 0.5)
 
 			# Check for collisions and adjust velocities if necessary
 			for i in range(len(positions)):
@@ -411,27 +444,27 @@ if __name__ == "__main__":
 
 							# Adjust velocities to avoid collision
 							direction = positions[i] - positions[j]
-							velocities[i] = +(direction/np.linalg.norm(direction))*0.8
-							velocities[j] = -(direction/np.linalg.norm(direction))*0.8
+							velocities[i] = +(direction/np.linalg.norm(direction))*0.5
+							velocities[j] = -(direction/np.linalg.norm(direction))*0.5
 
 				# for  in range(len(positions)):
 
 				if abs(positions[i, 0] - 0) <= boundary_margin or abs(positions[i, 0] - 25) <= boundary_margin:
 
-					velocities[i, 0] *= -1  # Reverse x-direction velocity
+					velocities[i, 0] *= -0.5  # Reverse x-direction velocity
 				if abs(positions[i, 1] - 0) <= boundary_margin or abs(positions[i, 1] - 25) <= boundary_margin:
 
-					velocities[i, 1] *= -1  # Reverse y-direction velocity
+					velocities[i, 1] *= -0.5  # Reverse y-direction velocity
 
-				for k in range(len(positions)):
+				# for k in range(len(positions)):
 
-					dist = np.linalg.norm(positions[i] - cameras_pos[k])
+				# 	dist = np.linalg.norm(positions[i] - cameras_pos[k])
 
-					if dist < tracker_margin:
+				# 	if dist < tracker_margin:
 
-						# Adjust velocities to avoid collision
-						direction = positions[i] - cameras_pos[k]
-						velocities[i] = +(direction/np.linalg.norm(direction))*0.8
+				# 		# Adjust velocities to avoid collision
+				# 		direction = positions[i] - cameras_pos[k]
+				# 		velocities[i] = +(direction/np.linalg.norm(direction))*0.8
 
 			for (i, element) in zip(range(len(positions)), positions):
 
@@ -445,7 +478,7 @@ if __name__ == "__main__":
 		for i in range(len(uav_team.members)):
 
 			neighbors = [uav_team.members[j] for j in range(len(uav_team.members)) if j != i]
-			uav_team.members[i].UpdateState(targets, neighbors, np.round(time() - last, 2))
+			uav_team.members[i].UpdateState(targets, neighbors, np.round(time() - last, 2), cp)
 		print("Simulation Time: " + str(time() - last))
 		print("Calculation Time: " + str(time() - past), "\n")
 
@@ -455,7 +488,7 @@ if __name__ == "__main__":
 		vis.Visualize2D(uav_team.members, event_plt1, targets, circumcenter_center, circumcenter_radius, \
 						side_center, side_center_radius)
 
-		if np.round(time() - last, 2) > 50.00:
+		if np.round(time() - last, 2) > 60.00:
 
 			sys.exit()
 
