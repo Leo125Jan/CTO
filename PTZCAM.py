@@ -59,6 +59,7 @@ class PTZcon():
 		self.centroid = None
 		self.sweet_spot = self.pos + self.perspective*self.R*np.cos(self.alpha)
 		self.child = np.array([None, None])
+		self.parent_INT = False
 
 		# Tracking Configuration
 		self.cluster_count = 0
@@ -958,7 +959,7 @@ class PTZcon():
 
 			count_curr, H_curr, G_curr = 0, 0, 0
 
-			p_pre = np.array([x,y])
+			p_pre = self.virtual_target
 
 			for target in targets:
 
@@ -1086,11 +1087,9 @@ class PTZcon():
 					# points.append(neighbor.pos)
 					points.append(neighbor.child)
 
-				print(np.any(np.array(points) == None))
-				print(halt)
 				if np.any(np.array(points) == None):
 
-					cost_matrix = np.zeros(len(self.neighbors), len(targets))
+					cost_matrix = np.zeros([len(points), len(targets)])
 				else:
 
 					agents_len = len(points)
@@ -1142,18 +1141,18 @@ class PTZcon():
 
 					G_curr += d
 
-				print("observer_no_target: " + str(observer_no_target))
-				print("target_not_observed: " + str(target_not_observed))
+				# print("observer_no_target: " + str(observer_no_target))
+				# print("target_not_observed: " + str(target_not_observed))
 
-				print("x, y: ", end='')
-				print(x, y)
-				print("count_curr: " + str(count_curr))
-				print("count_pre: " + str(count_pre))
-				print("H_curr: " + str(H_curr))
-				print("H_pre: " + str(H_curr))
-				print("G_curr: " + str(G_curr))
-				print("G_pre: " + str(G_curr))
-				print("\n")
+				# print("x, y: ", end='')
+				# print(x, y)
+				# print("count_curr: " + str(count_curr))
+				# print("count_pre: " + str(count_pre))
+				# print("H_curr: " + str(H_curr))
+				# print("H_pre: " + str(H_curr))
+				# print("G_curr: " + str(G_curr))
+				# print("G_pre: " + str(G_curr))
+				# print("\n")
 
 				# Heuristic Step
 				if count_curr > count_pre:
@@ -1167,9 +1166,9 @@ class PTZcon():
 
 					if H_pre > H_curr:
 
-						print("H_pre: " + str(H_pre))
-						print("H_curr: " + str(H_curr))
-						print(halt)
+						# print("H_pre: " + str(H_pre))
+						# print("H_curr: " + str(H_curr))
+						# print(halt)
 
 						p = p_curr
 						p_pre = p_curr
@@ -1180,9 +1179,9 @@ class PTZcon():
 
 						if G_pre > G_curr:
 
-							print("G_pre: " + str(G_pre))
-							print("G_curr: " + str(G_curr))
-							print(halt)
+							# print("G_pre: " + str(G_pre))
+							# print("G_curr: " + str(G_curr))
+							# print(halt)
 
 							p = p_curr
 							p_pre = p_curr
@@ -1220,10 +1219,11 @@ class PTZcon():
 				# box_width = max(box_width - max(initial_box_width/100, min_box_width), min_box_width)
 				# box_height = max(box_height - max(initial_box_height/100, min_box_height), min_box_height)
 
-		print("sweet spot: " + str(self.sweet_spot))
-		print("p: " + str(p))
+		self.virtual_target = p
+		# print("sweet spot: " + str(self.sweet_spot))
+		# print("self.virtual_target: " + str(self.virtual_target))
 		# print(halt)
-		self.target = [[p, 2, 10]]
+		self.target = [[self.virtual_target, 2, 10]]
 
 	def Kmeans(self, targets, time_):
 
@@ -1321,19 +1321,19 @@ class PTZcon():
 
 		# filename = "D:/上課資料/IME/實驗室研究/Paper/Coverage Control/Quality based switch mode/Data/"
 
-		if self.cp:
+		# if self.cp:
 
-			filename = "/home/leo/mts/src/QBSM/Data/Joint/Comparison/"
-		else:
+		# 	filename = "/home/leo/mts/src/QBSM/Data/Joint/Comparison/"
+		# else:
 
-			filename = "/home/leo/mts/src/QBSM/Data/Joint/Test/"
-		filename += "Joint_" + str(self.id) + ".csv"
+		# 	filename = "/home/leo/mts/src/QBSM/Data/Joint/Test/"
+		# filename += "Joint_" + str(self.id) + ".csv"
 
-		with open(filename, "a", encoding='UTF8', newline='') as f:
+		# with open(filename, "a", encoding='UTF8', newline='') as f:
 
-			row = T_Joint
-			writer = csv.writer(f)
-			writer.writerow(row)
+		# 	row = T_Joint
+		# 	writer = csv.writer(f)
+		# 	writer.writerow(row)
 
 	def SEMST(self, targets, sv):
 
@@ -1840,13 +1840,13 @@ class PTZcon():
 		# print(halt)
 
 		# filename = "D:/上課資料/IME/實驗室研究/Paper/Coverage Control/Quality based switch mode/Data/"
-		filename = "/home/leo/mts/src/QBSM/Data/Utility/"
-		filename += "Utility_" + str(self.id) + ".csv"
-		with open(filename, "a", encoding='UTF8', newline='') as f:
+		# filename = "/home/leo/mts/src/QBSM/Data/Utility/"
+		# filename += "Utility_" + str(self.id) + ".csv"
+		# with open(filename, "a", encoding='UTF8', newline='') as f:
 
-			row = T_Utility
-			writer = csv.writer(f)
-			writer.writerow(row)
+		# 	row = T_Utility
+		# 	writer = csv.writer(f)
+		# 	writer.writerow(row)
 
 	def alpha_complex(self, targets):
 

@@ -252,14 +252,14 @@ if __name__ == "__main__":
 				'color'         : (0, 200, 0)}
 	cameras.append(camera1)
 
-	# camera2 = { 'id'            :  2,
-	# 			'position'      :  np.array([2.0, 23.0]),
-	# 			'perspective'   :  np.array([0.5, -0.5]),
-	# 			'AngleofView'   :  20,
-	# 			'range_limit'   :  4,
-	# 			'lambda'        :  2,
-	# 			'color'         : (0, 0, 200)}
-	# cameras.append(camera2)
+	camera2 = { 'id'            :  2,
+				'position'      :  np.array([2.0, 23.0]),
+				'perspective'   :  np.array([0.5, -0.5]),
+				'AngleofView'   :  20,
+				'range_limit'   :  4,
+				'lambda'        :  2,
+				'color'         : (0, 0, 200)}
+	cameras.append(camera2)
 
 	# camera3 = { 'id'            :  3,
 	# 			'position'      :  np.array([23.0, 23.0]),
@@ -328,19 +328,19 @@ if __name__ == "__main__":
 
 	cp = True
 
-	for i in range(len(cameras)):
+	# for i in range(len(cameras)):
 
-		if cp:
+	# 	if cp:
 
-			filename = "/home/leo/mts/src/QBSM/Data/Joint/Comparison/"
-		else:
+	# 		filename = "/home/leo/mts/src/QBSM/Data/Joint/Comparison/"
+	# 	else:
 
-			filename = "/home/leo/mts/src/QBSM/Data/Joint/Test/"
+	# 		filename = "/home/leo/mts/src/QBSM/Data/Joint/Test/"
 
-		filename += "Joint_" + str(i) + ".csv"
+	# 	filename += "Joint_" + str(i) + ".csv"
 
-		f = open(filename, "w+")
-		f.close()
+	# 	f = open(filename, "w+")
+	# 	f.close()
 
 	# Initialize UAV team with PTZ cameras
 	uav_team = UAVs(map_size, grid_size)
