@@ -58,6 +58,7 @@ class PTZcon():
 		self.H = 0
 		self.centroid = None
 		self.sweet_spot = self.pos + self.perspective*self.R*np.cos(self.alpha)
+		self.child = np.array([None, None])
 
 		# Tracking Configuration
 		self.cluster_count = 0
@@ -952,49 +953,160 @@ class PTZcon():
 		x, y = incircle_x, incircle_y
 		count_pre, H_pre, G_pre = 0, 0, 0
 
-		if int(np.round(time_, 0))/2 == 0.0:
+		# Initialization
+		for i in range(1):
 
-			# Initialization
-			for i in range(1):
+			count_curr, H_curr, G_curr = 0, 0, 0
 
-				count_curr, H_curr, G_curr = 0, 0, 0
+			p_pre = np.array([x,y])
 
-				p_pre = np.array([x,y])
+			for target in targets:
 
+				d = np.linalg.norm(p_pre - target[0])
+
+				if d < incircle_r:
+
+					count_curr += 1
+
+			count_pre = count_curr
+			# print("count_pre: " + str(count_pre))
+
+			# points = [self.pos]
+			points = [self.sweet_spot]
+
+			for neighbor in self.neighbors:
+
+				# points.append(neighbor.pos)
+				points.append(neighbor.sweet_spot)
+
+			agents_len = len(points)
+			
+			for target in targets:
+
+				points.append(target[0])
+
+			points = np.array(points)
+
+			points_len = len(points)
+
+			distances = distance.cdist(points, points)
+
+			# Hungarian Algorithm for 1-1
+			cost_matrix = [row[agents_len:points_len] for (row, i) in zip(distances, range(len(distances))) if i < agents_len]
+			cost_matrix = np.array(cost_matrix)
+
+			for i in range(np.shape(cost_matrix)[0]):
+
+				for j in range(np.shape(cost_matrix)[1]):
+
+					if cost_matrix[i][j] > 0.5*self.R_max and cost_matrix[i][j] < self.R_max:
+
+						H_curr += cost_matrix[i][j]
+
+			H_pre = H_curr
+
+			observer_no_target, target_not_observed = [], []
+
+			for i in range(np.shape(cost_matrix)[0]):
+
+				if np.all((cost_matrix[i] < incircle_r) == False):
+
+					observer_no_target.append(i)
+
+			for j in range(np.shape(cost_matrix)[1]):
+
+				if np.all((cost_matrix[:,j] < incircle_r) == False):
+
+					target_not_observed.append(j)
+
+			for i in observer_no_target:
+
+				d = np.inf
+
+				for j in target_not_observed:
+
+					if cost_matrix[i,j] < d:
+
+						d = cost_matrix[i,j]
+
+				G_curr += d
+
+			G_pre = G_curr
+
+			# print("cost_matrix: " + str(cost_matrix))
+			# print("H_pre: " + str(H_pre))
+			# print("G_pre: " + str(G_pre))
+			# print(halt)
+
+		# data = np.array([element[0] for element in targets])
+		# label_low = np.argmin(np.linalg.norm(data[:, np.newaxis] - np.array([0,0]), axis=2), axis=0)
+		# label_high = np.argmax(np.linalg.norm(data[:, np.newaxis] - np.array([0,0]), axis=2), axis=0)
+
+		# x = (data[label_low][0][0] + data[label_high][0][0])/2
+		# y = (data[label_low][0][1] + data[label_high][0][1])/2
+
+		# box_width = abs(data[label_low][0][0] - data[label_high][0][0])/2
+		# box_width = abs(data[label_low][0][1] - data[label_high][0][1])/2
+
+		# Run
+		for i in range(1, 500):
+
+			count_curr, H_curr, G_curr = 0, 0, 0
+
+			# Generate a random position within the box
+			x, y = p_pre[0], p_pre[1]
+			new_x = np.random.uniform(max(x - box_width, 1), min(x + box_width,25))
+			new_y = np.random.uniform(max(y - box_width, 1), min(y + box_width,25))
+
+			# Check if the new position exceeds the environment boundary
+			if 1 <= new_x <= env_width and 1 <= new_y <= env_height:
+
+				# Update the position of the point
+				x = new_x
+				y = new_y
+
+				p_curr = np.array([x, y])
+
+				# Count
 				for target in targets:
 
-					d = np.linalg.norm(p_pre - target[0])
+					d = np.linalg.norm(p_curr - target[0])
 
 					if d < incircle_r:
 
 						count_curr += 1
 
-				count_pre = count_curr
-				# print("count_pre: " + str(count_pre))
-
+				self.child = p_curr
+				# H
 				# points = [self.pos]
-				points = [self.sweet_spot]
+				points = [self.child]
 
 				for neighbor in self.neighbors:
 
 					# points.append(neighbor.pos)
-					points.append(neighbor.sweet_spot)
+					points.append(neighbor.child)
 
-				agents_len = len(points)
-				
-				for target in targets:
+				print(np.any(np.array(points) == None))
+				print(halt)
+				if np.any(np.array(points) == None):
 
-					points.append(target[0])
+					cost_matrix = np.zeros(len(self.neighbors), len(targets))
+				else:
 
-				points = np.array(points)
+					agents_len = len(points)
+					
+					for target in targets:
 
-				points_len = len(points)
+						points.append(target[0])
 
-				distances = distance.cdist(points, points)
+					points = np.array(points)
 
-				# Hungarian Algorithm for 1-1
-				cost_matrix = [row[agents_len:points_len] for (row, i) in zip(distances, range(len(distances))) if i < agents_len]
-				cost_matrix = np.array(cost_matrix)
+					points_len = len(points)
+
+					distances = distance.cdist(points, points)
+
+					cost_matrix = [row[agents_len:points_len] for (row, i) in zip(distances, range(len(distances))) if i < agents_len]
+					cost_matrix = np.array(cost_matrix)
 
 				for i in range(np.shape(cost_matrix)[0]):
 
@@ -1003,9 +1115,7 @@ class PTZcon():
 						if cost_matrix[i][j] > 0.5*self.R_max and cost_matrix[i][j] < self.R_max:
 
 							H_curr += cost_matrix[i][j]
-
-				H_pre = H_curr
-
+				# G
 				observer_no_target, target_not_observed = [], []
 
 				for i in range(np.shape(cost_matrix)[0]):
@@ -1032,169 +1142,88 @@ class PTZcon():
 
 					G_curr += d
 
-				G_pre = G_curr
+				print("observer_no_target: " + str(observer_no_target))
+				print("target_not_observed: " + str(target_not_observed))
 
-				# print("cost_matrix: " + str(cost_matrix))
-				# print("H_pre: " + str(H_pre))
-				# print("G_pre: " + str(G_pre))
-				# print(halt)
+				print("x, y: ", end='')
+				print(x, y)
+				print("count_curr: " + str(count_curr))
+				print("count_pre: " + str(count_pre))
+				print("H_curr: " + str(H_curr))
+				print("H_pre: " + str(H_curr))
+				print("G_curr: " + str(G_curr))
+				print("G_pre: " + str(G_curr))
+				print("\n")
 
-			# data = np.array([element[0] for element in targets])
-			# label_low = np.argmin(np.linalg.norm(data[:, np.newaxis] - np.array([0,0]), axis=2), axis=0)
-			# label_high = np.argmax(np.linalg.norm(data[:, np.newaxis] - np.array([0,0]), axis=2), axis=0)
+				# Heuristic Step
+				if count_curr > count_pre:
 
-			# x = (data[label_low][0][0] + data[label_high][0][0])/2
-			# y = (data[label_low][0][1] + data[label_high][0][1])/2
+					p = p_curr
+					p_pre = p_curr
+					count_pre = count_curr
+					H_pre = H_curr
+					G_pre = G_curr
+				elif count_curr == count_pre:
 
-			# box_width = abs(data[label_low][0][0] - data[label_high][0][0])/2
-			# box_width = abs(data[label_low][0][1] - data[label_high][0][1])/2
+					if H_pre > H_curr:
 
-			# Run
-			for i in range(1, 100):
-
-				count_curr, H_curr, G_curr = 0, 0, 0
-
-				# Generate a random position within the box
-				x, y = p_pre[0], p_pre[1]
-				new_x = np.random.uniform(max(x - box_width, 1), min(x + box_width,25))
-				new_y = np.random.uniform(max(y - box_width, 1), min(y + box_width,25))
-
-				# Check if the new position exceeds the environment boundary
-				if 1 <= new_x <= env_width and 1 <= new_y <= env_height:
-
-					# Update the position of the point
-					x = new_x
-					y = new_y
-
-					p_curr = np.array([x, y])
-
-					# Count
-					for target in targets:
-
-						d = np.linalg.norm(p_curr - target[0])
-
-						if d < incircle_r:
-
-							count_curr += 1
-
-					# H
-					# points = [self.pos]
-					points = [self.sweet_spot]
-
-					for neighbor in self.neighbors:
-
-						# points.append(neighbor.pos)
-						points.append(neighbor.sweet_spot)
-
-					agents_len = len(points)
-					
-					for target in targets:
-
-						points.append(target[0])
-
-					points = np.array(points)
-
-					points_len = len(points)
-
-					distances = distance.cdist(points, points)
-
-					cost_matrix = [row[agents_len:points_len] for (row, i) in zip(distances, range(len(distances))) if i < agents_len]
-					cost_matrix = np.array(cost_matrix)
-
-					for i in range(np.shape(cost_matrix)[0]):
-
-						for j in range(np.shape(cost_matrix)[1]):
-
-							if cost_matrix[i][j] > 0.5*self.R_max and cost_matrix[i][j] < self.R_max:
-
-								H_curr += cost_matrix[i][j]
-					# G
-					observer_no_target, target_not_observed = [], []
-
-					for i in range(np.shape(cost_matrix)[0]):
-
-						if np.all((cost_matrix[i] < incircle_r) == False):
-
-							observer_no_target.append(i)
-
-					for j in range(np.shape(cost_matrix)[1]):
-
-						if np.all((cost_matrix[:,j] < incircle_r) == False):
-
-							target_not_observed.append(j)
-
-					for i in observer_no_target:
-
-						d = np.inf
-
-						for j in target_not_observed:
-
-							if cost_matrix[i,j] < d:
-
-								d = cost_matrix[i,j]
-
-						G_curr += d
-
-					# Heuristic Step
-					if count_curr > count_pre:
+						print("H_pre: " + str(H_pre))
+						print("H_curr: " + str(H_curr))
+						print(halt)
 
 						p = p_curr
 						p_pre = p_curr
 						count_pre = count_curr
 						H_pre = H_curr
 						G_pre = G_curr
-					elif count_curr == count_pre:
+					elif H_curr == H_pre:
 
-						if H_pre > H_curr:
+						if G_pre > G_curr:
+
+							print("G_pre: " + str(G_pre))
+							print("G_curr: " + str(G_curr))
+							print(halt)
 
 							p = p_curr
 							p_pre = p_curr
 							count_pre = count_curr
 							H_pre = H_curr
 							G_pre = G_curr
-						elif H_curr == H_pre:
-
-							if G_pre > G_curr:
-
-								p = p_curr
-								p_pre = p_curr
-								count_pre = count_curr
-								H_pre = H_curr
-								G_pre = G_curr
-							else:
-
-								p = p_pre
-								count_pre = count_curr
-								H_pre = H_curr
-								G_pre = G_curr
 						else:
 
 							p = p_pre
-							count_pre = count_curr
-							H_pre = H_curr
-							G_pre = G_curr
+							# count_pre = count_curr
+							# H_pre = H_curr
+							# G_pre = G_curr
 					else:
 
-						p = p_curr
-						p_pre = p_curr
-						count_pre = count_curr
-						H_pre = H_curr
-						G_pre = G_curr
+						p = p_pre
+						# count_pre = count_curr
+						# H_pre = H_curr
+						# G_pre = G_curr
+				else:
 
-				# Stop when the box width and height reach the minimum size
-				if box_width > min_box_width and box_height > min_box_height:
+					p = p_pre
+					# p_pre = p_curr
+					# count_pre = count_curr
+					# H_pre = H_curr
+					# G_pre = G_curr
 
-					# Decrease the box width and height by 1% each iteration, but not below the minimum size
-					box_width = max(box_width - initial_box_width/100, min_box_width)
-					box_height = max(box_height - initial_box_height/100, min_box_height)
-					# box_width = max(box_width - max(initial_box_width/100, min_box_width), min_box_width)
-					# box_height = max(box_height - max(initial_box_height/100, min_box_height), min_box_height)
+			# Stop when the box width and height reach the minimum size
+			if box_width > min_box_width and box_height > min_box_height:
 
-			self.target = [[p, 2, 10]]
-			self.holdp = p
-		else:
+				# Decrease the box width and height by 1% each iteration, but not below the minimum size
+				box_width = max(box_width - initial_box_width/100, min_box_width)
+				box_height = max(box_height - initial_box_height/100, min_box_height)
+				# box_width = max(box_width*0.99, min_box_width)
+				# box_height = max(box_height*0.99, min_box_height)
+				# box_width = max(box_width - max(initial_box_width/100, min_box_width), min_box_width)
+				# box_height = max(box_height - max(initial_box_height/100, min_box_height), min_box_height)
 
-			self.target = [[self.holdp, 2, 10]]
+		print("sweet spot: " + str(self.sweet_spot))
+		print("p: " + str(p))
+		# print(halt)
+		self.target = [[p, 2, 10]]
 
 	def Kmeans(self, targets, time_):
 

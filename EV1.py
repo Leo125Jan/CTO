@@ -649,4 +649,5 @@ if __name__ == '__main__':
 
 	# concavehull()
 	# alpha_complex()
-	Kmeansb()
+	# Kmeansb()
+	print(np.array([(0,1), (2,2)]) == None)
