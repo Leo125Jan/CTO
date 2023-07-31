@@ -104,7 +104,9 @@ class PTZcon():
 			self.Gradient_Descent(targets, time_)
 		else:
 
-			self.comparsion(targets)
+			# self.comparsion(targets)
+			self.Hill_Climbing(targets, time_)
+			# self.Kmeans(targets, time_)
 
 		self.Gradient_Ascent(targets, time_)
 		
@@ -412,13 +414,13 @@ class PTZcon():
 		self.incircle = [(incircle_x, incircle_y), incircle_r, incircle_A]
 
 		# Calculate the pariswise distance between targets
-		points = [self.pos]
-		# points = [self.sweet_spot]
+		# points = [self.pos]
+		points = [self.sweet_spot]
 
 		for neighbor in self.neighbors:
 
-			points.append(neighbor.pos)
-			# points.append(neighbor.sweet_spot)
+			# points.append(neighbor.pos)
+			points.append(neighbor.sweet_spot)
 
 		agents_len = len(points)
 		
@@ -927,6 +929,320 @@ class PTZcon():
 
 		self.target = [targets[watch_1]]
 
+	def Hill_Climbing(self, targets, time_):
+
+		env_width, env_height = 25, 25
+
+		initial_box_width = env_width/2
+		initial_box_height = env_height/2
+
+		box_width = initial_box_width
+		box_height = initial_box_height
+
+		min_box_width = env_width/10
+		min_box_height = env_height/10
+
+		# Inscribed circle of FOV
+		head_theta = np.arctan(abs(self.perspective[1]/self.perspective[0]))
+		incircle_r = (self.R_max*np.sin(self.alpha))/(1 + np.sin(self.alpha))
+		incircle_x = self.pos[0] + (self.R_max - incircle_r)*np.sign(self.perspective[0])*np.cos(head_theta)
+		incircle_y = self.pos[1] + (self.R_max - incircle_r)*np.sign(self.perspective[1])*np.sin(head_theta)
+		incircle_A = np.pi*incircle_r**2
+
+		x, y = incircle_x, incircle_y
+		count_pre, H_pre, G_pre = 0, 0, 0
+
+		if int(np.round(time_, 0))/2 == 0.0:
+
+			# Initialization
+			for i in range(1):
+
+				count_curr, H_curr, G_curr = 0, 0, 0
+
+				p_pre = np.array([x,y])
+
+				for target in targets:
+
+					d = np.linalg.norm(p_pre - target[0])
+
+					if d < incircle_r:
+
+						count_curr += 1
+
+				count_pre = count_curr
+				# print("count_pre: " + str(count_pre))
+
+				# points = [self.pos]
+				points = [self.sweet_spot]
+
+				for neighbor in self.neighbors:
+
+					# points.append(neighbor.pos)
+					points.append(neighbor.sweet_spot)
+
+				agents_len = len(points)
+				
+				for target in targets:
+
+					points.append(target[0])
+
+				points = np.array(points)
+
+				points_len = len(points)
+
+				distances = distance.cdist(points, points)
+
+				# Hungarian Algorithm for 1-1
+				cost_matrix = [row[agents_len:points_len] for (row, i) in zip(distances, range(len(distances))) if i < agents_len]
+				cost_matrix = np.array(cost_matrix)
+
+				for i in range(np.shape(cost_matrix)[0]):
+
+					for j in range(np.shape(cost_matrix)[1]):
+
+						if cost_matrix[i][j] > 0.5*self.R_max and cost_matrix[i][j] < self.R_max:
+
+							H_curr += cost_matrix[i][j]
+
+				H_pre = H_curr
+
+				observer_no_target, target_not_observed = [], []
+
+				for i in range(np.shape(cost_matrix)[0]):
+
+					if np.all((cost_matrix[i] < incircle_r) == False):
+
+						observer_no_target.append(i)
+
+				for j in range(np.shape(cost_matrix)[1]):
+
+					if np.all((cost_matrix[:,j] < incircle_r) == False):
+
+						target_not_observed.append(j)
+
+				for i in observer_no_target:
+
+					d = np.inf
+
+					for j in target_not_observed:
+
+						if cost_matrix[i,j] < d:
+
+							d = cost_matrix[i,j]
+
+					G_curr += d
+
+				G_pre = G_curr
+
+				# print("cost_matrix: " + str(cost_matrix))
+				# print("H_pre: " + str(H_pre))
+				# print("G_pre: " + str(G_pre))
+				# print(halt)
+
+			# data = np.array([element[0] for element in targets])
+			# label_low = np.argmin(np.linalg.norm(data[:, np.newaxis] - np.array([0,0]), axis=2), axis=0)
+			# label_high = np.argmax(np.linalg.norm(data[:, np.newaxis] - np.array([0,0]), axis=2), axis=0)
+
+			# x = (data[label_low][0][0] + data[label_high][0][0])/2
+			# y = (data[label_low][0][1] + data[label_high][0][1])/2
+
+			# box_width = abs(data[label_low][0][0] - data[label_high][0][0])/2
+			# box_width = abs(data[label_low][0][1] - data[label_high][0][1])/2
+
+			# Run
+			for i in range(1, 100):
+
+				count_curr, H_curr, G_curr = 0, 0, 0
+
+				# Generate a random position within the box
+				x, y = p_pre[0], p_pre[1]
+				new_x = np.random.uniform(max(x - box_width, 1), min(x + box_width,25))
+				new_y = np.random.uniform(max(y - box_width, 1), min(y + box_width,25))
+
+				# Check if the new position exceeds the environment boundary
+				if 1 <= new_x <= env_width and 1 <= new_y <= env_height:
+
+					# Update the position of the point
+					x = new_x
+					y = new_y
+
+					p_curr = np.array([x, y])
+
+					# Count
+					for target in targets:
+
+						d = np.linalg.norm(p_curr - target[0])
+
+						if d < incircle_r:
+
+							count_curr += 1
+
+					# H
+					# points = [self.pos]
+					points = [self.sweet_spot]
+
+					for neighbor in self.neighbors:
+
+						# points.append(neighbor.pos)
+						points.append(neighbor.sweet_spot)
+
+					agents_len = len(points)
+					
+					for target in targets:
+
+						points.append(target[0])
+
+					points = np.array(points)
+
+					points_len = len(points)
+
+					distances = distance.cdist(points, points)
+
+					cost_matrix = [row[agents_len:points_len] for (row, i) in zip(distances, range(len(distances))) if i < agents_len]
+					cost_matrix = np.array(cost_matrix)
+
+					for i in range(np.shape(cost_matrix)[0]):
+
+						for j in range(np.shape(cost_matrix)[1]):
+
+							if cost_matrix[i][j] > 0.5*self.R_max and cost_matrix[i][j] < self.R_max:
+
+								H_curr += cost_matrix[i][j]
+					# G
+					observer_no_target, target_not_observed = [], []
+
+					for i in range(np.shape(cost_matrix)[0]):
+
+						if np.all((cost_matrix[i] < incircle_r) == False):
+
+							observer_no_target.append(i)
+
+					for j in range(np.shape(cost_matrix)[1]):
+
+						if np.all((cost_matrix[:,j] < incircle_r) == False):
+
+							target_not_observed.append(j)
+
+					for i in observer_no_target:
+
+						d = np.inf
+
+						for j in target_not_observed:
+
+							if cost_matrix[i,j] < d:
+
+								d = cost_matrix[i,j]
+
+						G_curr += d
+
+					# Heuristic Step
+					if count_curr > count_pre:
+
+						p = p_curr
+						p_pre = p_curr
+						count_pre = count_curr
+						H_pre = H_curr
+						G_pre = G_curr
+					elif count_curr == count_pre:
+
+						if H_pre > H_curr:
+
+							p = p_curr
+							p_pre = p_curr
+							count_pre = count_curr
+							H_pre = H_curr
+							G_pre = G_curr
+						elif H_curr == H_pre:
+
+							if G_pre > G_curr:
+
+								p = p_curr
+								p_pre = p_curr
+								count_pre = count_curr
+								H_pre = H_curr
+								G_pre = G_curr
+							else:
+
+								p = p_pre
+								count_pre = count_curr
+								H_pre = H_curr
+								G_pre = G_curr
+						else:
+
+							p = p_pre
+							count_pre = count_curr
+							H_pre = H_curr
+							G_pre = G_curr
+					else:
+
+						p = p_curr
+						p_pre = p_curr
+						count_pre = count_curr
+						H_pre = H_curr
+						G_pre = G_curr
+
+				# Stop when the box width and height reach the minimum size
+				if box_width > min_box_width and box_height > min_box_height:
+
+					# Decrease the box width and height by 1% each iteration, but not below the minimum size
+					box_width = max(box_width - initial_box_width/100, min_box_width)
+					box_height = max(box_height - initial_box_height/100, min_box_height)
+					# box_width = max(box_width - max(initial_box_width/100, min_box_width), min_box_width)
+					# box_height = max(box_height - max(initial_box_height/100, min_box_height), min_box_height)
+
+			self.target = [[p, 2, 10]]
+			self.holdp = p
+		else:
+
+			self.target = [[self.holdp, 2, 10]]
+
+	def Kmeans(self, targets, time_):
+
+		points = [self.sweet_spot]
+
+		for neighbor in self.neighbors:
+
+			# points.append(neighbor.pos)
+			points.append(neighbor.sweet_spot)
+
+		centroids = points
+		targets = np.array([element[0] for element in targets])
+		alpha = 0.3
+
+		# print("centroids: " + str(centroids))
+
+		for i in range(100):
+
+			# Step 2: Assignment Step - Assign each data point to the nearest centroid
+			labels = np.argmin(np.linalg.norm(targets[:, np.newaxis] - centroids, axis=2), axis=1)
+
+			# Step 3: Update Step - Recalculate the centroids
+			mean = np.array([targets[labels == i].mean(axis=0) for i in range(1)])
+			# print("mean: " + str(mean))
+			# print("Centroid: " + str(centroids[0]))
+
+			if (np.isnan(mean[0]).any()):
+
+				centroids[0] = self.sweet_spot
+			elif len(mean) > 0:
+
+				new_centroids = (1 - alpha)*centroids[0] + alpha*mean[0]
+
+				# print("new_centroids: " + str(new_centroids))
+
+				# Check for convergence
+				if np.allclose(centroids[0], new_centroids):
+
+					break
+				else:
+
+					centroids[0] = new_centroids
+
+				# print("centroids: " + str(centroids))
+				# print(halt)
+
+		self.target = [[centroids[0], 2, 10]]
+
 	def JointProbability(self, targets, time_):
 
 		W = [element[0] for element in targets]
@@ -970,9 +1286,9 @@ class PTZcon():
 		Q = np.multiply(q_per, q_res)
 		T_Joint = np.append(Q, time_)
 
-		print("Perspective: " + str(q_per))
-		print("Resolution: " + str(q_res))
-		print("Quality: " + str(Q))
+		# print("Perspective: " + str(q_per))
+		# print("Resolution: " + str(q_res))
+		# print("Quality: " + str(Q))
 
 		# filename = "D:/上課資料/IME/實驗室研究/Paper/Coverage Control/Quality based switch mode/Data/"
 

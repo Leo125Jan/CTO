@@ -245,66 +245,66 @@ if __name__ == "__main__":
 
 	camera1 = { 'id'            :  1,
 				'position'      :  np.array([23.0, 2.0]),
-				'perspective'   :  np.array([1.0, 0.0]),
+				'perspective'   :  np.array([-0.5, 0.5]),
 				'AngleofView'   :  20,
 				'range_limit'   :  4,
 				'lambda'        :  2,
 				'color'         : (0, 200, 0)}
 	cameras.append(camera1)
 
-	camera2 = { 'id'            :  2,
-				'position'      :  np.array([2.0, 23.0]),
-				'perspective'   :  np.array([1.0, 0.0]),
-				'AngleofView'   :  20,
-				'range_limit'   :  4,
-				'lambda'        :  2,
-				'color'         : (0, 0, 200)}
-	cameras.append(camera2)
+	# camera2 = { 'id'            :  2,
+	# 			'position'      :  np.array([2.0, 23.0]),
+	# 			'perspective'   :  np.array([0.5, -0.5]),
+	# 			'AngleofView'   :  20,
+	# 			'range_limit'   :  4,
+	# 			'lambda'        :  2,
+	# 			'color'         : (0, 0, 200)}
+	# cameras.append(camera2)
 
-	camera3 = { 'id'            :  3,
-				'position'      :  np.array([23.0, 23.0]),
-				'perspective'   :  np.array([1.0, 0.0]),
-				'AngleofView'   :  20,
-				'range_limit'   :  4,
-				'lambda'        :  2,
-				'color'         : (255, 150, 0)}
-	cameras.append(camera3)
+	# camera3 = { 'id'            :  3,
+	# 			'position'      :  np.array([23.0, 23.0]),
+	# 			'perspective'   :  np.array([-0.5, -0.5]),
+	# 			'AngleofView'   :  20,
+	# 			'range_limit'   :  4,
+	# 			'lambda'        :  2,
+	# 			'color'         : (255, 150, 0)}
+	# cameras.append(camera3)
 	
-	camera4 = { 'id'            :  4,
-				'position'      :  np.array([12.5, 2.0]),
-				'perspective'   :  np.array([1.0, 0.0]),
-				'AngleofView'   :  20,
-				'range_limit'   :  4,
-				'lambda'        :  2,
-				'color'         : (255, 250, 0)}
-	cameras.append(camera4)
+	# camera4 = { 'id'            :  4,
+	# 			'position'      :  np.array([12.5, 2.0]),
+	# 			'perspective'   :  np.array([1.0, 0.0]),
+	# 			'AngleofView'   :  20,
+	# 			'range_limit'   :  4,
+	# 			'lambda'        :  2,
+	# 			'color'         : (255, 250, 0)}
+	# cameras.append(camera4)
 
-	camera5 = { 'id'            :  5,
-				'position'      :  np.array([23.0, 12.5]),
-				'perspective'   :  np.array([0.5, 0.5]),
-				'AngleofView'   :  20,
-				'range_limit'   :  4,
-				'lambda'        :  2,
-				'color'         : (0, 240, 255)}
-	cameras.append(camera5)
+	# camera5 = { 'id'            :  5,
+	# 			'position'      :  np.array([23.0, 12.5]),
+	# 			'perspective'   :  np.array([0.5, 0.5]),
+	# 			'AngleofView'   :  20,
+	# 			'range_limit'   :  4,
+	# 			'lambda'        :  2,
+	# 			'color'         : (0, 240, 255)}
+	# cameras.append(camera5)
 
-	camera6 = { 'id'            :  6,
-				'position'      :  np.array([12.5, 23.0]),
-				'perspective'   :  np.array([1.0, 0.0]),
-				'AngleofView'   :  20,
-				'range_limit'   :  4,
-				'lambda'        :  2,
-				'color'         : (150, 0, 255)}
-	cameras.append(camera6)
+	# camera6 = { 'id'            :  6,
+	# 			'position'      :  np.array([12.5, 23.0]),
+	# 			'perspective'   :  np.array([1.0, 0.0]),
+	# 			'AngleofView'   :  20,
+	# 			'range_limit'   :  4,
+	# 			'lambda'        :  2,
+	# 			'color'         : (150, 0, 255)}
+	# cameras.append(camera6)
 
-	camera7 = { 'id'            :  7,
-				'position'      :  np.array([2.0, 12.5]),
-				'perspective'   :  np.array([1.0, 0.0]),
-				'AngleofView'   :  20,
-				'range_limit'   :  4,
-				'lambda'        :  2,
-				'color'         : (255, 0, 250)}
-	cameras.append(camera7)
+	# camera7 = { 'id'            :  7,
+	# 			'position'      :  np.array([2.0, 12.5]),
+	# 			'perspective'   :  np.array([1.0, 0.0]),
+	# 			'AngleofView'   :  20,
+	# 			'range_limit'   :  4,
+	# 			'lambda'        :  2,
+	# 			'color'         : (255, 0, 250)}
+	# cameras.append(camera7)
 
 	# for i in range(len(cameras)):
 
@@ -326,7 +326,7 @@ if __name__ == "__main__":
 	# 	f = open(filename, "w+")
 	# 	f.close()
 
-	cp = False
+	cp = True
 
 	for i in range(len(cameras)):
 
@@ -360,9 +360,9 @@ if __name__ == "__main__":
 
 	# target's [position, certainty, weight, velocity]
 	# targets = [[(6.5, 19), 1, 10], [(6.0, 18.0), 1, 10], [(7.0, 18.0), 1, 10]]
-	# targets = [[(12.0, 12.0), 1, 10], [(12.0, 13.0), 1, 10], [(13.0, 12.0), 1, 10], [(13.0, 13.0), 1, 10]]
-	targets = [[(12.0, 12.0), 1, 10], [(12.0, 13.0), 1, 10], [(13.0, 12.0), 1, 10], [(13.0, 13.0), 1, 10],
-				[(10.5, 12.5), 1, 10], [(12.5, 9.5), 1, 10], [(16.5, 12.5), 1, 10], [(12.5, 17.5), 1, 10]]
+	targets = [[(12.0, 12.0), 1, 10], [(12.0, 13.0), 1, 10], [(13.0, 12.0), 1, 10], [(13.0, 13.0), 1, 10]]
+	# targets = [[(12.0, 12.0), 1, 10], [(12.0, 13.0), 1, 10], [(13.0, 12.0), 1, 10], [(13.0, 13.0), 1, 10],
+	# 			[(10.5, 12.5), 1, 10], [(12.5, 9.5), 1, 10], [(16.5, 12.5), 1, 10], [(12.5, 17.5), 1, 10]]
 	velocities = 0.5*(np.random.rand(len(targets), 2) - 0.5)  # Random initial velocities (-0.5 to 0.5)
 
 	# Start Simulation

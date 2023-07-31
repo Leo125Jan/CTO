@@ -174,7 +174,7 @@ def Execute_read():
 		globals()["y1_" + str(i)] = P_Test[i]
 
 		ax[i%4, int(i/4)].plot(globals()["x0_" + str(i)], globals()["y0_" + str(i)], color = "#0000E3", label="w/o Algorithm")
-		ax[i%4, int(i/4)].plot(globals()["x1_" + str(i)], globals()["y1_" + str(i)], color = "#FF0000", label="wo Algorithm")
+		ax[i%4, int(i/4)].plot(globals()["x1_" + str(i)], globals()["y1_" + str(i)], color = "#FF0000", label="w/ Algorithm")
 		ax[i%4, int(i/4)].set_title(Name_Key[i], fontdict = {'fontsize': 20})
 		ax[i%4, int(i/4)].set_xlabel("Time (s)", fontdict = {'fontsize': 20})
 		ax[i%4, int(i/4)].set_ylabel("Probability", fontdict = {'fontsize': 20})
@@ -288,11 +288,10 @@ def PlotData():
 
 	for j in range(np.shape(Data_Comparison)[1]):
 
-		score = 0.0
-
 		for k in range(np.shape(Data_Comparison)[2]):
 
 			p = 1.0
+			score = 0.0
 
 			for i in range(np.shape(Data_Comparison)[0]):
 
@@ -351,11 +350,10 @@ def PlotData():
 
 	for j in range(np.shape(Data_Test)[1]):
 
-		score = 0.0
-
 		for k in range(np.shape(Data_Test)[2]):
 
 			p = 1.0
+			score = 0.0
 
 			for i in range(np.shape(Data_Test)[0]):
 
@@ -389,16 +387,18 @@ def PlotData():
 	ax.plot(x_0, y_0, color = "#0000E3", label="w/o Algorithm")
 	ax.plot(x_1, y_1, color = "#FF0000", label="w/ Algorithm")
 	ax.set_title("Total Score of Team", fontdict = {'fontsize': 20})
+	# ax.set_title("Total Joint Probability of Targets", fontdict = {'fontsize': 20})
 	ax.set_xlabel("Time (s)", fontdict = {'fontsize': 20})
 	ax.set_ylabel("Score", fontdict = {'fontsize': 20})
+	# ax.set_ylabel("Probability", fontdict = {'fontsize': 20})
 	ax.tick_params(axis='both', which='major', labelsize = 20)
-	ax.legend(loc = 'upper right', ncol = 1, shadow = True, fontsize = 20)
+	ax.legend(loc = 'lower right', ncol = 1, shadow = True, fontsize = 20)
 
 	plt.tight_layout()
 	plt.show()
 
 	my_path = "/home/leo/圖片/Research_Picture/7.18/Target_8_Score/"
-	my_file = 'Total_Score_pos.png'
+	my_file = 'Total_Score_sweetspot.png'
 	fig.savefig(os.path.join(my_path, my_file))
 
 def animate(i):

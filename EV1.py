@@ -577,6 +577,70 @@ def alpha_complex():
 
 	# return neighbors
 
+def Kmeans():
+
+	# Generate some example data
+	# np.random.seed(42)
+	# data = np.random.rand(100, 2)
+	data = np.array([(1, 1), (2, 3), (4, 2), (5, 4), (8, 8), (8, 3)])
+
+	# Specify the number of clusters (k)
+	k = 5
+
+	# Create a k-means model
+	kmeans = KMeans(n_clusters=k)
+
+	# Fit the model to the data
+	kmeans.fit(data)
+
+	# Get the cluster centroids
+	centroids = kmeans.cluster_centers_
+
+	print("centroids: " + str(centroids))
+
+	# Get the labels assigned to each data point (which cluster it belongs to)
+	labels = kmeans.labels_
+
+	# Plot the data points and cluster centroids
+	plt.scatter(data[:, 0], data[:, 1], c=labels, cmap='rainbow', marker='o', edgecolors='k')
+	plt.scatter(centroids[:, 0], centroids[:, 1], c='black', marker='x', s=200, label='Centroids')
+	plt.legend()
+	plt.xlabel('Feature 1')
+	plt.ylabel('Feature 2')
+	plt.title('K-Means Clustering')
+	plt.show()
+
+def Kmeansb():
+
+	data = np.array([(1, 1), (2, 3), (4, 2), (5, 4)])
+	centroids = np.array([(8,8)])
+	alpha = 0.3
+
+	for i in range(100):
+
+		labels = np.argmin(np.linalg.norm(data[:, np.newaxis] - centroids, axis=2), axis=1)
+		mean = np.array([data[labels == i].mean(axis=0) for i in range(len(centroids))])
+
+		new_centroids = (1 - alpha)*centroids + alpha*mean
+
+		if np.allclose(centroids, new_centroids):
+
+			break
+		else:
+
+			centroids = new_centroids
+
+		plt.scatter(data[:, 0], data[:, 1], c=labels, cmap='rainbow', marker='o', edgecolors='k')
+		plt.scatter(centroids[:, 0], centroids[:, 1], c='black', marker='x', s=200, label='Centroids')
+		plt.legend()
+		plt.xlabel('Feature 1')
+		plt.ylabel('Feature 2')
+		plt.title('K-Means Clustering')
+		plt.show()
+
+	print("Mean: " + str(mean))
+	print("Centroid: " + str(centroids))
+
 if __name__ == '__main__':
 
 	# MST2MSF()
@@ -584,4 +648,5 @@ if __name__ == '__main__':
 	# SEMST()
 
 	# concavehull()
-	alpha_complex()
+	# alpha_complex()
+	Kmeansb()
