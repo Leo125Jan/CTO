@@ -21,6 +21,18 @@ from alphashape import alphashape
 from sklearn.cluster import KMeans
 from scipy.spatial import ConvexHull, Delaunay
 from gudhi import AlphaComplex
+from sklearn.cluster import SpectralClustering
+from sklearn.cluster import MeanShift
+
+from sklearn.cluster import spectral_clustering
+from sklearn.metrics import pairwise_distances
+from sklearn.cluster import OPTICS
+
+from scipy.cluster.hierarchy import linkage, dendrogram, fcluster
+from scipy.cluster.vq import kmeans, vq
+
+from scipy.spatial.distance import euclidean
+from scipy.cluster.hierarchy import fcluster
 
 a = np.arange(0, 30, 0.1)
 b = np.arange(0, 30, 0.1)
@@ -29,7 +41,7 @@ X, Y = np.meshgrid(a, b)
 W = np.vstack([X.ravel(), Y.ravel()])
 W = W.transpose()
 
-def hura():
+def HA():
 
 	cost = np.array([[4, 1, 3], [2, 0, 5], [3, 2, 2]])
 	row_ind, col_ind = linear_sum_assignment(cost)
@@ -641,6 +653,388 @@ def Kmeansb():
 	print("Mean: " + str(mean))
 	print("Centroid: " + str(centroids))
 
+def NN():
+
+	# Example usage
+	points = np.array([(12.0, 12.0), (12.0, 13.0), (13.0, 12.0), (13.0, 13.0), (10.5, 12.5), 
+						(12.5, 9.5), (16.5, 12.5), (12.5, 17.5)])
+	num_points = len(points)
+	visited = [False] * num_points
+	path = []
+
+	# Start from a random point
+	current_point_idx = 0
+
+	for _ in range(num_points):
+
+		path.append(points[current_point_idx])
+		visited[current_point_idx] = True
+
+		# Find the nearest unvisited point
+		min_distance = float('inf')
+		nearest_point_idx = None
+
+		for i in range(num_points):
+
+			if not visited[i]:
+
+				distance = np.linalg.norm(points[current_point_idx] - points[i])
+
+				if distance < min_distance:
+
+					min_distance = distance
+					nearest_point_idx = i
+
+		current_point_idx = nearest_point_idx
+
+	print(path)
+
+	# Extract x and y coordinates for plotting
+	x = points[:, 0]
+	y = points[:, 1]
+
+	# Create the plot
+	plt.figure(figsize=(8, 6))
+	plt.scatter(x, y, c='blue', label='Points')
+	plt.plot([point[0] for point in path], [point[1] for point in path], c='red', marker='o', linestyle='-', label='Hamiltonian Path')
+	plt.xlabel('X')
+	plt.ylabel('Y')
+	plt.title('Nearest Neighbor Algorithm for Hamiltonian Path')
+	plt.legend()
+	plt.grid(True)
+	plt.show()
+
+def distinguish_data():
+
+	points = [[1, 2], [4, 5], [5, 7], [8, 9]]
+	threshold = np.sqrt(2)
+
+	continuous_groups = []
+	current_group = []
+
+	for i in range(len(points) - 1):
+
+		# distance = np.linalg.norm(np.array(points[i]) - np.array(points[i + 1]))
+
+
+		if points[i][1] == points[i+1][0]:
+
+			current_group.append(points[i])
+		else:
+
+			current_group.append(points[i])
+			continuous_groups.append(current_group)
+			current_group = []
+
+	# Append the last point to the current group
+	current_group.append(points[-1])
+	continuous_groups.append(current_group)
+
+	independent_points = []
+
+	for i in range(len(points)):
+
+		is_independent = True
+
+		for j in range(len(points)):
+
+			if i != j:
+
+				distance = np.linalg.norm(np.array(points[i]) - np.array(points[j]))
+
+				if distance <= threshold:
+
+					is_independent = False
+					break
+
+		if is_independent:
+
+			independent_points.append(points[i])
+
+	print("Continuous Groups:", continuous_groups)
+	print("Independent Points:", independent_points)
+
+def spc():
+
+	# Generate example data
+	np.random.seed(0)
+	n_samples = 8
+	# X = np.random.rand(n_samples, 2)
+	X = np.array([(12.0, 12.0), (12.0, 13.0), (13.0, 12.0), (13.0, 13.0),
+				(10.5, 12.5), (12.5, 9.5), (16.5, 12.5), (12.5, 17.5)])
+
+	# Create a SpectralClustering instance
+	n_clusters = 4
+	spectral_clustering = SpectralClustering(n_clusters=n_clusters, affinity='nearest_neighbors', n_neighbors=8)
+
+	# Fit and predict clusters
+	cluster_labels = spectral_clustering.fit_predict(X)
+
+	# Plot the clustering result
+	plt.scatter(X[:, 0], X[:, 1], c=cluster_labels, cmap='rainbow')
+	plt.xlabel('Feature 1')
+	plt.ylabel('Feature 2')
+	plt.title('Spectral Clustering Result')
+	plt.show()
+
+def MS():
+
+	# Generate example data
+	np.random.seed(0)
+	# n_samples = 10
+	# X = np.random.rand(n_samples, 2)
+	X = np.array([(12.0, 12.0), (12.0, 13.0), (13.0, 12.0), (13.0, 13.0),
+				(10.5, 12.5), (12.5, 9.5), (16.5, 12.5), (12.5, 17.5)])
+
+	# Create a MeanShift instance
+	bandwidth = 2
+	mean_shift_clustering = MeanShift(bandwidth=bandwidth)
+
+	# Fit and predict clusters
+	cluster_labels = mean_shift_clustering.fit_predict(X)
+	cluster_centers = mean_shift_clustering.cluster_centers_
+	print("cluster labels: " + str(cluster_labels))
+	print("cluster_centers: " + str(cluster_centers))
+
+	# Plot the clustering result
+	plt.scatter(X[:, 0], X[:, 1], c=cluster_labels, cmap='rainbow')
+	plt.xlabel('Feature 1')
+	plt.ylabel('Feature 2')
+	plt.title('Mean Shift Clustering Result')
+	plt.show()
+
+def HA_BGC():
+
+	# Targets' and trackers' positions
+	targets = np.array([[1, 2], [4, 5], [5, 6], [9, 11], [3, 8], [7, 10], [12, 4], [6, 9]])
+	trackers = np.array([[2, 4], [7, 8], [11, 10], [5, 5]])
+
+	# Combine targets and trackers for clustering
+	data = np.vstack((targets, trackers))
+
+	# Calculate distances between targets and trackers
+	distances = np.linalg.norm(targets[:, np.newaxis, :] - trackers, axis=-1)
+
+	# Convert distances to costs (negate)
+	costs = -distances
+
+	# Apply Hungarian Algorithm for assignment
+	row_indices, col_indices = linear_sum_assignment(costs)
+
+	# Assign targets to trackers based on assignment
+	assignments = {tracker_idx: [] for tracker_idx in range(len(trackers))}
+
+	for target_idx, tracker_idx in zip(row_indices, col_indices):
+
+		assignments[tracker_idx].append(target_idx)
+
+	# Print the assignments
+	for tracker_idx, assigned_targets in assignments.items():
+
+		print(f"Tracker {tracker_idx} assigned to targets: {assigned_targets}")
+
+	# Visualize the clusters
+	plt.scatter(data[:, 0], data[:, 1], c=clusters, cmap='rainbow')
+	plt.scatter(trackers[:, 0], trackers[:, 1], marker='X', color='black', label='Trackers')
+	plt.xlabel('X')
+	plt.ylabel('Y')
+	plt.title('Normalized Cut Clustering Result')
+	plt.legend()
+	plt.show()
+
+def NCA_GBC():
+
+	# Targets' and trackers' positions
+	targets = np.array([(12.0, 12.0), (12.0, 13.0), (13.0, 12.0), (13.0, 13.0)])
+	trackers = np.array([[2, 4], [7, 8], [11, 10], [5, 5]])
+
+	# Combine targets and trackers for clustering
+	data = np.vstack((targets, trackers))
+
+	# Calculate affinity matrix (similarity)
+	affinity_matrix = np.exp(-pairwise_distances(data, metric='euclidean'))
+	print("affinity matrix: " + str(affinity_matrix))
+
+	# Apply spectral clustering to obtain clusters
+	num_clusters = len(trackers)
+	clusters = spectral_clustering(affinity_matrix, n_clusters=num_clusters, eigen_solver='arpack')
+
+	# Separate targets and trackers into clusters
+	target_clusters = clusters[:len(targets)]
+	tracker_clusters = clusters[len(targets):]
+
+	# Print the assignments
+	for i, (target, tracker) in enumerate(zip(targets, trackers)):
+
+		print(f"Target {i} assigned to Tracker {tracker_clusters[i]}")
+	
+	# Visualize the clusters
+	plt.scatter(data[:, 0], data[:, 1], c=clusters, cmap='rainbow')
+	plt.scatter(trackers[:, 0], trackers[:, 1], marker='X', color='black', label='Trackers')
+	plt.xlabel('X')
+	plt.ylabel('Y')
+	plt.title('Normalized Cut Clustering Result')
+	plt.legend()
+	plt.show()
+
+def OPTICS_DBC():
+
+	# Targets' and trackers' positions
+	targets = np.array([(12.0, 12.0), (12.0, 13.0), (13.0, 12.0), (13.0, 13.0),
+				(10.5, 12.5), (12.5, 9.5), (16.5, 12.5), (12.5, 17.5)])
+	trackers = np.array([[2, 2], [2, 23], [23, 23], [23, 2]])
+
+	# Combine targets and trackers for clustering
+	data = np.vstack((targets, trackers))
+
+	# Apply OPTICS clustering
+	min_samples = 2  # Minimum number of points to form a dense region
+	optics = OPTICS(min_samples=min_samples)
+	clusters = optics.fit_predict(data)
+
+	# Separate targets and trackers into clusters
+	target_clusters = clusters[:len(targets)]
+	tracker_clusters = clusters[len(targets):]
+
+	# Print the assignments
+	for i, (target, tracker) in enumerate(zip(targets, trackers)):
+
+		print(f"Target {i} assigned to Tracker {tracker_clusters[i]}")
+
+	# Visualize the clusters
+	plt.scatter(data[:, 0], data[:, 1], c=clusters, cmap='rainbow')
+	plt.scatter(trackers[:, 0], trackers[:, 1], marker='X', color='black', label='Trackers')
+	plt.xlabel('X')
+	plt.ylabel('Y')
+	plt.title('OPTICS Clustering Result')
+	plt.legend()
+	plt.show()
+
+def Array_test():
+
+	A = [[]]
+	print(np.shape(A)[0])
+	print(type(np.shape(A)[1]))
+	data = [[(4, 0), (0, 1)], [(1, 3), (3, 2)], [(2, 5), (5, 9), (9, 11)], [(11, 15), (15, 19), (19, 31)]]
+
+	# Find the element with maximum size
+	max_element = max(data, key=len)
+	print("Element with maximum size:", max_element)
+
+	# Find elements with identical sizes
+	size_count = {}
+	size_count[len(max_element)] = [max_element]
+	print("size_count: " + str(size_count))
+
+	for element in data:
+
+		size = len(element)
+
+		if size == len(max_element) and not np.all(np.array(element) == np.array(size_count[len(max_element)])):
+
+			size_count[size].append(element)
+
+		# if size in size_count:
+
+		# 	size_count[size].append(element)
+		# else:
+
+		# 	size_count[size] = [element]
+
+	print("size_count: " + str(size_count))
+	
+	# Filter elements with identical sizes
+	identical_size_elements = [elements for size, elements in size_count.items()][0]
+
+	print("Elements with identical sizes:", identical_size_elements)
+
+def random_test():
+
+	seed_key = {1: "000", 2: "103", 3: "106"}
+
+	speed_gain = 0.1
+
+	for i in range(3):
+
+		for j in range(1, len(seed_key)+1):
+
+			np.random.seed(int(seed_key[j]))
+			velocities = (float(speed_gain)/0.5)*(np.random.rand(8, 2) - 0.5)
+
+			print("i, j, velocities: ", end = "")
+			print(i, j, velocities)
+
+def Hierarchical_Clustering():
+
+	# Sample data points
+	data = np.array([[1, 2], [2, 3], [3, 4], [6, 9], [10, 11], [12, 15]])
+
+	# Perform Agglomerative Hierarchical Clustering using complete linkage
+	linkage_matrix = linkage(data, method = 'complete')
+
+	# Create a dendrogram
+	dendrogram(linkage_matrix)
+
+	plt.xlabel('Data Points')
+	plt.ylabel('Distance')
+	plt.title('Agglomerative Hierarchical Clustering Dendrogram')
+	plt.show()
+
+	# Determine cluster memberships using a distance threshold
+	distance_threshold = np.sqrt(2) # Set the distance threshold
+	clusters = fcluster(linkage_matrix, t = distance_threshold, criterion = 'distance')
+
+	print("Cluster memberships: ", clusters)
+
+def HC_Step_2():
+
+	# Sample data points
+	data = np.array([[1, 2], [2, 3], [3, 4], [6, 9], [10, 11], [11, 12]])
+
+	# Custom distance threshold for merging clusters
+	threshold = np.sqrt(2.1)  # Adjust as needed
+
+	# Initialize cluster assignments for each data point
+	num_points = len(data)
+	cluster_assignments = list(range(num_points))
+
+	print("num_points: ", num_points)
+	print("cluster_assignments: ", cluster_assignments)
+
+	# Perform Agglomerative Hierarchical Clustering based on custom threshold
+	for i in range(num_points):
+
+		for j in range(i + 1, num_points):
+
+			if euclidean(data[i], data[j]) < threshold:
+
+				cluster_assignments[j] = cluster_assignments[i]
+
+	print("cluster_assignments: ", cluster_assignments)
+	# Get unique cluster IDs
+	unique_clusters = set(cluster_assignments)
+	print("unique_clusters: ", unique_clusters)
+
+	# Assign cluster IDs to data points
+	cluster_mapping = {cluster_id: [] for cluster_id in unique_clusters}
+	print("cluster_mapping: ", cluster_mapping)
+
+	for i, cluster_id in enumerate(cluster_assignments):
+
+		cluster_mapping[cluster_id].append(i)
+
+	print("cluster_mapping: ", cluster_mapping)
+
+	# Print cluster assignments
+	i = 0
+	cluster = {}
+	for cluster_id, points in cluster_mapping.items():
+
+		cluster[i] = points
+		i += 1
+	
+	print("Cluster: ", cluster)
+
 if __name__ == '__main__':
 
 	# MST2MSF()
@@ -650,4 +1044,13 @@ if __name__ == '__main__':
 	# concavehull()
 	# alpha_complex()
 	# Kmeansb()
-	print(np.array([(0,1), (2,2)]) == None)
+	# NN()
+	# distinguish_data()
+	# spc()
+	# MS()
+	# HA_BGC()
+	# NCA_GBC()
+	# OPTICS_DBC()
+	# random_test()
+	# Hierarchical_Clustering()
+	HC_Step_2()
