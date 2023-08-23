@@ -49,6 +49,26 @@ def HA():
 	print("row: " + str(row_ind))
 	print("col: " + str(col_ind))
 
+	# Sample data: reward matrix (m x n)
+	cost_matrix = np.array([[9, 4, 3, np.inf, np.inf],
+							[6, 7, 6, np.inf, np.inf],
+							[4, 8, 8, np.inf, np.inf],
+							[np.inf, np.inf, 5, 6, 1],
+							[np.inf, np.inf, 0, 6, 1]])
+
+	# Apply the Linear Assignment Algorithm to maximize the reward
+	row_indices, col_indices = linear_sum_assignment(cost_matrix)
+	print("row_indices: ", row_indices)
+	print("col_indices: ", col_indices)
+
+	# Print the assignments
+	for i, j in zip(row_indices, col_indices):
+
+		print(f"Agent {i} assigned to Target {j}")
+
+	a = [i for i in range(1,2)]
+	print(a)
+
 def npn():
 
 	return np.linalg.norm(W)
@@ -1035,6 +1055,47 @@ def HC_Step_2():
 	
 	print("Cluster: ", cluster)
 
+def One_hop_neighbor():
+
+	# Generate random points
+	np.random.seed(0)
+	points = np.array([[2.0, 2.0], [23.0, 2.0], [2.0, 23.0], [23.0, 23.0]])
+
+	# Create Delaunay Triangulation
+	tri = Delaunay(points)
+
+	# Find one-hop neighbors for each point
+	one_hop_neighbors = [[] for _ in range(len(points))]
+
+	print("one_hop_neighbors: ", one_hop_neighbors)
+
+	for simplex in tri.simplices:
+
+		print("simplex: ", simplex)
+
+		for point_index in simplex:
+
+			for neighbor_index in simplex:
+
+				if point_index != neighbor_index and neighbor_index not in one_hop_neighbors[point_index]:
+
+					one_hop_neighbors[point_index].append(neighbor_index)
+
+	print("one_hop_neighbors: ", one_hop_neighbors)
+
+	# Print the one-hop neighbors of each point
+	for i, neighbors in enumerate(one_hop_neighbors):
+
+		print(f"Point {i} is connected to: {neighbors}")
+
+	# Plot the Delaunay Triangulation
+	plt.triplot(points[:, 0], points[:, 1], tri.simplices)
+	plt.plot(points[:, 0], points[:, 1], 'o')
+	plt.title('Delaunay Triangulation')
+	plt.xlabel('X')
+	plt.ylabel('Y')
+	plt.show()
+
 if __name__ == '__main__':
 
 	# MST2MSF()
@@ -1053,4 +1114,13 @@ if __name__ == '__main__':
 	# OPTICS_DBC()
 	# random_test()
 	# Hierarchical_Clustering()
-	HC_Step_2()
+	# HC_Step_2()
+	# One_hop_neighbor()
+	a = np.array([[10.5, 12.5]])
+	b = np.array([[12, 12], [12, 13], [13, 12], [13, 13], [10.5,12.5]])
+	print((a == b))
+	print(np.all((a == b), axis = 0))
+	print(np.all((a == b), axis = 1).any())
+
+	c = {"4": 20, "7": 15}
+	print(c.items())

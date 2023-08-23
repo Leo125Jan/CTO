@@ -8,8 +8,11 @@ import random
 import numpy as np
 from PTZCAM import PTZcon
 from time import sleep, time
+from scipy.spatial import distance
 from math import cos, acos, sqrt, exp, sin
 from scipy.stats import multivariate_normal
+from scipy.spatial import ConvexHull, Delaunay
+from scipy.optimize import linear_sum_assignment
 
 initialized = False
 
@@ -223,6 +226,291 @@ def sidecenter(targets):
 	side_center_radius = [radius_1, radius_2, radius_3]
 
 	return side_center, side_center_radius
+
+def One_hop_neighbor(points):
+
+	# Generate random points
+	points = points
+
+	# Create Delaunay Triangulation
+	tri = Delaunay(points)
+
+	# Find one-hop neighbors for each point
+	one_hop_neighbors = [[] for _ in range(len(points))]
+
+	# print("one_hop_neighbors: ", one_hop_neighbors)
+
+	for simplex in tri.simplices:
+
+		# print("simplex: ", simplex)
+
+		for point_index in simplex:
+
+			for neighbor_index in simplex:
+
+				if point_index != neighbor_index and neighbor_index not in one_hop_neighbors[point_index]:
+
+					one_hop_neighbors[point_index].append(neighbor_index)
+
+	# print("one_hop_neighbors: ", one_hop_neighbors)
+
+	return one_hop_neighbors
+
+def Agglomerative_Hierarchical_Clustering(targets, cameras):
+
+	# Sample data points
+	data = np.array([targets[i][0] for i in range(len(targets))])
+
+	# Custom distance threshold for merging clusters
+	threshold = 1.7*cameras[0].incircle_r  # Adjust as needed
+
+	# Initialize cluster assignments for each data point
+	num_points = len(data)
+	cluster_assignments = list(range(num_points))
+
+	# print("num_points: ", num_points)
+	# print("cluster_assignments: ", cluster_assignments)
+
+	# Perform Agglomerative Hierarchical Clustering based on custom threshold
+	for i in range(num_points):
+
+		for j in range(i + 1, num_points):
+
+			if distance.euclidean(data[i], data[j]) < threshold:
+
+				cluster_assignments[j] = cluster_assignments[i]
+
+	# print("cluster_assignments: ", cluster_assignments)
+
+	# Get unique cluster IDs
+	unique_clusters = set(cluster_assignments)
+	# print("unique_clusters: ", unique_clusters)
+
+	# Assign cluster IDs to data points
+	cluster_mapping = {cluster_id: [] for cluster_id in unique_clusters}
+	# print("cluster_mapping: ", cluster_mapping)
+
+	for i, cluster_id in enumerate(cluster_assignments):
+
+		cluster_mapping[cluster_id].append(i)
+
+	# print("cluster_mapping: ", cluster_mapping)
+
+	# Print cluster assignments
+	i = 0
+	cluster = {}
+	for cluster_id, points in cluster_mapping.items():
+
+		cluster[i] = np.array(points)
+		i += 1
+
+	# print("Cluster: ", cluster)
+	
+	return cluster
+
+def Hungarian(targets, cameras):
+
+	# Agglomerative Hierarchical Clustering
+	targets_position = np.array([targets[i][0] for i in range(len(targets))])
+	GCM = np.mean(targets_position, axis = 0)
+	# print("targets_position: ", targets_position)
+	# print("global_center of mass: ", GCM)
+	cluster_set = Agglomerative_Hierarchical_Clustering(targets, cameras)
+	# print("cluster_set: ", cluster_set)
+
+	cluster_center = []
+	for key, value in cluster_set.items():
+
+		if len(value) > 1:
+
+			# print("targets_position[value]: ", targets_position[value])
+			# print(np.mean(targets_position[value], axis = 0))
+
+			cluster_center.append(np.mean(targets_position[value], axis = 0))
+		else:
+
+			cluster_center.append(targets_position[value][0])
+
+	cluster_center = np.array(cluster_center)
+	# print("cluster_center: ", cluster_center)
+
+	# Herding Algorithm
+	Pd = []; ra = 1; gain = []
+	for key, value in cluster_set.items():
+
+		df = (cluster_center[key] - GCM)
+		Af = GCM + df + (df/np.linalg.norm(df))*ra*np.sqrt(len(value))
+
+		Pd.append(Af)
+		gain.append(len(value))
+
+	# print("Pd: ", Pd)
+	# print("gain: ", gain)
+
+	# Hungarian Algorithm to get Clster Center
+	# points = [self.sweet_spot]
+	alpha = 1.0
+	points = []
+	# print("self_pos: ", self.pos)
+	# print("self_sweet_spot: ", self.sweet_spot)
+	# print("points: ", points)
+
+	for camera in cameras:
+
+		# points.append(neighbor.sweet_spot)
+		points.append(alpha*camera.pos + (1-alpha)*camera.sweet_spot)
+
+	agents_len = len(points)
+
+	for target in Pd:
+	# for target in cluster_center:
+
+		points.append(target)
+
+	points = np.array(points)
+
+	# print("points: " + str(points))
+
+	points_len = len(points)
+
+	if (points_len - agents_len) > agents_len or (points_len - agents_len) == agents_len:
+
+		distances = distance.cdist(points, points)
+		# print("points: " + str(points) + "\n")
+		# print("distances: " + str(distances) + "\n")
+
+		# Hungarian Algorithm
+		cost_matrix = [row[agents_len:points_len] for (row, i) in zip(distances, range(len(distances))) if i < agents_len]
+		cost_matrix = np.array(cost_matrix)
+		# print("cost_matrix: ", cost_matrix)
+
+		for i in range(len(gain)):
+
+			if gain[i] > 1:
+
+				cost_matrix[:,i] *= 1/gain[i]
+		# print("cost_matrix: ", cost_matrix)
+	elif (points_len - agents_len) < agents_len:
+
+		distances = distance.cdist(points, points)
+		# print("points: " + str(points) + "\n")
+		# print("distances: " + str(distances) + "\n")
+
+		cost_matrix = [row[agents_len:points_len] for (row, i) in zip(distances, range(len(distances))) if i < agents_len]
+		cost_matrix = np.array(cost_matrix)
+		# print("cost_matrix: ", cost_matrix)
+
+		for i in range(len(gain)):
+
+			if gain[i] > 1:
+
+				cost_matrix[:,i] *= 1/gain[i]
+
+		flip_ = np.inf*np.ones(agents_len - (points_len - agents_len))
+		hold = []
+		# print("flip_: ", flip_)
+
+		for i in range(agents_len):
+
+			if i >= points_len - agents_len:
+
+				hold.append(np.hstack((flip_, cost_matrix[i])))
+			else:
+				hold.append(np.hstack((cost_matrix[i], flip_)))
+
+		cost_matrix = np.array(hold)
+		# print("cost_matrix: ", cost_matrix)
+
+	row_ind, col_ind = linear_sum_assignment(cost_matrix)
+
+	# print("col_ind: ", col_ind)
+	# print("agents_len: ", agents_len)
+	# print("points_len: ", points_len)
+	# print("points_len - agents_len: ", points_len - agents_len)
+
+	for i in range(len(col_ind)):
+
+		if col_ind[i] < (points_len - agents_len)-1:
+
+			col_ind[i] = col_ind[i]
+		elif col_ind[i] > (points_len - agents_len)-1:
+
+			col_ind[i] = col_ind[i] - (agents_len - (points_len - agents_len))
+
+	# print("col_ind: ", col_ind)
+
+	return Pd, cluster_set, col_ind
+
+def K_means(targets, cameras):
+
+	points = []
+	for camera in cameras:
+
+		points.append(camera.sweet_spot)
+		# points.append(neighbor.pos)
+
+	agents_len = len(points)
+	
+	for target in targets:
+
+		points.append(target[0])
+
+	points = np.array(points)
+
+	# print("points: " + str(points))
+
+	points_len = len(points)
+
+	distances = distance.cdist(points, points)
+	# print("points: " + str(points) + "\n")
+	# print("distances: " + str(distances) + "\n")
+
+	# Hungarian Algorithm
+	cost_matrix = [row[agents_len:points_len] for (row, i) in zip(distances, range(len(distances))) if i < agents_len]
+	cost_matrix = np.array(cost_matrix)
+	row_ind, col_ind = linear_sum_assignment(cost_matrix)
+
+	# Step 2 - K-Means Algorithm to update Cluster member and its members
+	cluster_centers = np.array([targets[element][0] for element in col_ind])
+	# print("cluster_centers: " + str(cluster_centers))
+	data = np.array([element[0] for element in targets])
+	# print("data: " + str(data))
+	alpha = 0.3
+
+	for i in range(100):
+
+		# Step 2: Assignment Step - Assign each data point to the nearest centroid
+		cluster_labels = np.argmin(np.linalg.norm(data[:, np.newaxis] - cluster_centers, axis=2), axis=1)
+
+		# Step 3: Update Step - Recalculate the centroids
+		mean = np.array([data[cluster_labels == i].mean(axis=0) for i in range(1)])
+		# print("mean: " + str(mean))
+		# print("cluster_labels: " + str(cluster_labels))
+
+		if (np.isnan(mean[0]).any()):
+
+			# centroids[0] = self.sweet_spot
+			# centroids[0] = np.sum(data, axis=0)/len(data)
+			pass
+		elif len(mean) > 0:
+
+			# new_centroids = (1 - alpha)*cluster_centers[0] + alpha*mean[0]
+			new_centroids = np.array([data[cluster_labels == i].mean(axis = 0) for i in range(len(cluster_centers))])
+
+			# print("new_centroids: " + str(new_centroids))
+
+			# Check for convergence
+			if np.allclose(cluster_centers, new_centroids):
+
+				break
+			else:
+
+				cluster_centers = new_centroids
+
+	# print("labels: " + str(cluster_labels))
+	# print("Centroid: " + str(cluster_centers))
+
+	return cluster_labels
 
 if __name__ == "__main__":
 
@@ -531,11 +819,25 @@ if __name__ == "__main__":
 			event1 = event_density(event, targets, W)
 			event_plt1 = ((event - event1.min()) * (1/(event1.max() - event1.min()) * 255)).astype('uint8')
 
+			points = []
+			for i in range(len(uav_team.members)):
+
+				points.append(uav_team.members[i].pos)
+
+			one_hop_neighbor = One_hop_neighbor(points)
+
+			Pd, cluster_set, col_ind = None, None, None
+			# Pd, cluster_set, col_ind = Hungarian(targets, uav_team.members)
+			cluster_labels = None
+			cluster_labels = K_means(targets, uav_team.members)
+			# print("cluster_set, col_ind: ", cluster_set, col_ind)
+
 			past = time()
 			for i in range(len(uav_team.members)):
 
 				neighbors = [uav_team.members[j] for j in range(len(uav_team.members)) if j != i]
-				uav_team.members[i].UpdateState(targets, neighbors, np.round(time() - last, 2), cp, speed_gain, save_type[save_key])
+				uav_team.members[i].UpdateState(targets, neighbors, one_hop_neighbor, Pd, cluster_set, col_ind, cluster_labels, 
+												np.round(time() - last, 2), cp, speed_gain, save_type[save_key])
 			print("Simulation Time: " + str(time() - last))
 			print("Calculation Time: " + str(time() - past), "\n")
 
