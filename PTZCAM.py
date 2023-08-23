@@ -1064,8 +1064,8 @@ class PTZcon():
 			trunk_hold = [[-1]]
 			path = I_vertex
 
-		print("path: ", path)
-		print("trunk_hold: ", trunk_hold)
+		# print("path: ", path)
+		# print("trunk_hold: ", trunk_hold)
 
 		return trunk_hold, path
 
@@ -1094,7 +1094,7 @@ class PTZcon():
 
 					nodes.append(end)
 
-			print("nodes: ", nodes)
+			# print("nodes: ", nodes)
 
 			trunk_eli = []
 			path_eli = []; path_eli.append(tuple(nodes[0]))
@@ -1110,7 +1110,7 @@ class PTZcon():
 				geometric_center = np.array([avg_x, avg_y])
 				rangecircle_r, R = 0, 0
 
-				for i in range(1, index_+1):
+				for i in range(0, index_+1):
 
 					p1 = geometric_center
 					p2 = np.array([nodes[i][0], nodes[i][1]])
@@ -1139,16 +1139,16 @@ class PTZcon():
 			trunk_hold = trunk_eli
 
 			path_resdiual = np.array([element for element in path_save if element not in path_eli])
-			print("path_eli: ", path_eli)
-			print("path_resdiual: ", path_resdiual)
+			# print("path_eli: ", path_eli)
+			# print("path_resdiual: ", path_resdiual)
 
 			# Communication Section
-			print("one_hop_neighbor: ", self.one_hop_neighbor)
+			# print("one_hop_neighbor: ", self.one_hop_neighbor)
 
 			self.neighbor_notfication = False
 			self.comc = {str(neighbor_id): [] for neighbor_id in self.one_hop_neighbor[self.id]}
 
-			print("self.comc: ", self.comc)
+			# print("self.comc: ", self.comc)
 
 			if len(path_resdiual) != 0:
 
@@ -1160,7 +1160,7 @@ class PTZcon():
 
 						neighbor_pos[str(neighbor.id)] = neighbor.pos
 
-				print("neighbor_pos: ", neighbor_pos)
+				# print("neighbor_pos: ", neighbor_pos)
 
 				for element in path_resdiual:
 
@@ -1178,7 +1178,7 @@ class PTZcon():
 
 					self.comc[str(mini_)].append(element)
 
-			print("self.comc: ", self.comc)
+			# print("self.comc: ", self.comc)
 
 			if self.comc != None:
 
@@ -1207,131 +1207,131 @@ class PTZcon():
 		# ----------------------------------------------------------------------------------------------------------------
 		# Agglomerative Hierarchical Clustering
 		targets_position = np.array([targets[i][0] for i in range(len(targets))])
-		# GCM = np.mean(targets_position, axis = 0)
-		# # print("targets_position: ", targets_position)
-		# # print("global_center of mass: ", GCM)
-		# cluster_set = self.Agglomerative_Hierarchical_Clustering(targets)
-		# # print("cluster_set: ", cluster_set)
+		GCM = np.mean(targets_position, axis = 0)
+		# print("targets_position: ", targets_position)
+		# print("global_center of mass: ", GCM)
+		cluster_set = self.Agglomerative_Hierarchical_Clustering(targets)
+		# print("cluster_set: ", cluster_set)
 
-		# cluster_center = []
-		# for key, value in cluster_set.items():
+		cluster_center = []
+		for key, value in cluster_set.items():
 
-		# 	if len(value) > 1:
+			if len(value) > 1:
 
-		# 		# print("targets_position[value]: ", targets_position[value])
-		# 		# print(np.mean(targets_position[value], axis = 0))
+				# print("targets_position[value]: ", targets_position[value])
+				# print(np.mean(targets_position[value], axis = 0))
 
-		# 		cluster_center.append(np.mean(targets_position[value], axis = 0))
-		# 	else:
+				cluster_center.append(np.mean(targets_position[value], axis = 0))
+			else:
 
-		# 		cluster_center.append(targets_position[value][0])
+				cluster_center.append(targets_position[value][0])
 
-		# cluster_center = np.array(cluster_center)
-		# # print("cluster_center: ", cluster_center)
+		cluster_center = np.array(cluster_center)
+		# print("cluster_center: ", cluster_center)
 
-		# # Herding Algorithm
-		# Pd = []; ra = 1; gain = []
-		# for key, value in cluster_set.items():
+		# Herding Algorithm
+		Pd = []; ra = 1; gain = []
+		for key, value in cluster_set.items():
 
-		# 	df = (cluster_center[key] - GCM)
-		# 	Af = GCM + df + (df/np.linalg.norm(df))*ra*np.sqrt(len(value))
+			df = (cluster_center[key] - GCM)
+			Af = GCM + df + (df/np.linalg.norm(df))*ra*np.sqrt(len(value))
 
-		# 	Pd.append(Af)
-		# 	gain.append(len(value))
+			Pd.append(Af)
+			gain.append(len(value))
 
-		# # print("Pd: ", Pd)
-		# # print("gain: ", gain)
+		# print("Pd: ", Pd)
+		# print("gain: ", gain)
 
-		# # Hungarian Algorithm to get Clster Center
-		# # points = [self.sweet_spot]
-		# alpha = 1.0
-		# points = [alpha*self.pos + (1-alpha)*self.sweet_spot]
-		# # print("self_pos: ", self.pos)
-		# # print("self_sweet_spot: ", self.sweet_spot)
-		# # print("points: ", points)
+		# Hungarian Algorithm to get Clster Center
+		# points = [self.sweet_spot]
+		alpha = 1.0
+		points = [alpha*self.pos + (1-alpha)*self.sweet_spot]
+		# print("self_pos: ", self.pos)
+		# print("self_sweet_spot: ", self.sweet_spot)
+		# print("points: ", points)
 
-		# for neighbor in self.neighbors:
+		for neighbor in self.neighbors:
 
-		# 	# points.append(neighbor.sweet_spot)
-		# 	points.append(alpha*neighbor.pos + (1-alpha)*neighbor.sweet_spot)
+			# points.append(neighbor.sweet_spot)
+			points.append(alpha*neighbor.pos + (1-alpha)*neighbor.sweet_spot)
 
-		# agents_len = len(points)
+		agents_len = len(points)
 
-		# # for target in Pd:
-		# for target in cluster_center:
+		# for target in Pd:
+		for target in cluster_center:
 
-		# 	points.append(target)
+			points.append(target)
 
-		# points = np.array(points)
+		points = np.array(points)
 
-		# # print("points: " + str(points))
+		# print("points: " + str(points))
 
-		# points_len = len(points)
+		points_len = len(points)
 
-		# if (points_len - agents_len) > agents_len or (points_len - agents_len) == agents_len:
+		if (points_len - agents_len) > agents_len or (points_len - agents_len) == agents_len:
 
-		# 	distances = distance.cdist(points, points)
-		# 	# print("points: " + str(points) + "\n")
-		# 	# print("distances: " + str(distances) + "\n")
+			distances = distance.cdist(points, points)
+			# print("points: " + str(points) + "\n")
+			# print("distances: " + str(distances) + "\n")
 
-		# 	# Hungarian Algorithm
-		# 	cost_matrix = [row[agents_len:points_len] for (row, i) in zip(distances, range(len(distances))) if i < agents_len]
-		# 	cost_matrix = np.array(cost_matrix)
-		# 	# print("cost_matrix: ", cost_matrix)
+			# Hungarian Algorithm
+			cost_matrix = [row[agents_len:points_len] for (row, i) in zip(distances, range(len(distances))) if i < agents_len]
+			cost_matrix = np.array(cost_matrix)
+			# print("cost_matrix: ", cost_matrix)
 
-		# 	for i in range(len(gain)):
+			for i in range(len(gain)):
 
-		# 		if gain[i] > 1:
+				if gain[i] > 1:
 
-		# 			cost_matrix[:,i] *= 1/gain[i]
-		# 	# print("cost_matrix: ", cost_matrix)
-		# elif (points_len - agents_len) < agents_len:
+					cost_matrix[:,i] *= 1/gain[i]
+			# print("cost_matrix: ", cost_matrix)
+		elif (points_len - agents_len) < agents_len:
 
-		# 	distances = distance.cdist(points, points)
-		# 	# print("points: " + str(points) + "\n")
-		# 	# print("distances: " + str(distances) + "\n")
+			distances = distance.cdist(points, points)
+			# print("points: " + str(points) + "\n")
+			# print("distances: " + str(distances) + "\n")
 
-		# 	cost_matrix = [row[agents_len:points_len] for (row, i) in zip(distances, range(len(distances))) if i < agents_len]
-		# 	cost_matrix = np.array(cost_matrix)
-		# 	# print("cost_matrix: ", cost_matrix)
+			cost_matrix = [row[agents_len:points_len] for (row, i) in zip(distances, range(len(distances))) if i < agents_len]
+			cost_matrix = np.array(cost_matrix)
+			# print("cost_matrix: ", cost_matrix)
 
-		# 	for i in range(len(gain)):
+			for i in range(len(gain)):
 
-		# 		if gain[i] > 1:
+				if gain[i] > 1:
 
-		# 			cost_matrix[:,i] *= 1/gain[i]
+					cost_matrix[:,i] *= 1/gain[i]
 
-		# 	flip_ = np.inf*np.ones(agents_len - (points_len - agents_len))
-		# 	hold = []
-		# 	# print("flip_: ", flip_)
+			flip_ = np.inf*np.ones(agents_len - (points_len - agents_len))
+			hold = []
+			# print("flip_: ", flip_)
 
-		# 	for i in range(agents_len):
+			for i in range(agents_len):
 
-		# 		if i >= points_len - agents_len:
+				if i >= points_len - agents_len:
 
-		# 			hold.append(np.hstack((flip_, cost_matrix[i])))
-		# 		else:
-		# 			hold.append(np.hstack((cost_matrix[i], flip_)))
+					hold.append(np.hstack((flip_, cost_matrix[i])))
+				else:
+					hold.append(np.hstack((cost_matrix[i], flip_)))
 
-		# 	cost_matrix = np.array(hold)
-		# 	# print("cost_matrix: ", cost_matrix)
+			cost_matrix = np.array(hold)
+			# print("cost_matrix: ", cost_matrix)
 
-		# row_ind, col_ind = linear_sum_assignment(cost_matrix)
+		row_ind, col_ind = linear_sum_assignment(cost_matrix)
 
-		# if col_ind[0] < points_len - agents_len:
+		if col_ind[0] < points_len - agents_len:
 
-		# 	watch_1 = col_ind[0]
-		# elif col_ind[0] > points_len - agents_len:
+			watch_1 = col_ind[0]
+		elif col_ind[0] > points_len - agents_len:
 
-		# 	watch_1 = col_ind[0] - (agents_len - (points_len - agents_len))
+			watch_1 = col_ind[0] - (agents_len - (points_len - agents_len))
 
 		# watch_1 = col_ind[self.id]
-		# # print("watch_1: ", watch_1)
-		# I_vertex = []
-		# I_vertex = targets_position[cluster_set[watch_1]]
-		# self.Pd = Pd[watch_1]
+		# print("watch_1: ", watch_1)
+		I_vertex = []
+		I_vertex = targets_position[cluster_set[watch_1]]
+		self.Pd = Pd[watch_1]
 
-		# print("I_vertex: ", I_vertex)
+		print("I_vertex: ", I_vertex)
 
 		# K-Means ---------------------------------------------------------------------------------------------------------
 
@@ -1416,50 +1416,50 @@ class PTZcon():
 		# # print("I_vertex Shape: " + str(np.shape(I_vertex)))
 		
 		# Herding Algorithm
-		targets_position = np.array([targets[i][0] for i in range(len(targets))])
-		I_vertex = np.array(targets_position[cluster_labels == self.id])
-		GCM = np.mean(targets_position, axis = 0)
+		# targets_position = np.array([targets[i][0] for i in range(len(targets))])
+		# I_vertex = np.array(targets_position[cluster_labels == self.id])
+		# GCM = np.mean(targets_position, axis = 0)
 		
-		cluster_center = np.mean(I_vertex, axis = 0)
-		print("cluster_center: ", cluster_center)
+		# cluster_center = np.mean(I_vertex, axis = 0)
+		# # print("cluster_center: ", cluster_center)
 
-		ra = 1
-		df = (cluster_center - GCM)
-		Af = GCM + df + (df/np.linalg.norm(df))*ra*np.sqrt(len(I_vertex))
-		self.Pd = Af
+		# ra = 1
+		# df = (cluster_center - GCM)
+		# Af = GCM + df + (df/np.linalg.norm(df))*ra*np.sqrt(len(I_vertex))
+		# self.Pd = Af
 
 		# Call for Help
 		trunk_hold, path = self.Graph_Construction(I_vertex)
-		print("path_1: ", path)
-		print("trunk_hold_1: ", trunk_hold)
+		# print("path_1: ", path)
+		# print("trunk_hold_1: ", trunk_hold)
 		
 		self.Outsourcing(trunk_hold, path)
 
 		# Combine neighbor message
-		# for neighbor in self.neighbors:
+		for neighbor in self.neighbors:
 
-		# 	if neighbor.comc != None:
+			if neighbor.comc != None:
 
-		# 		print("neighbor.comc: ", neighbor.comc)
-		# 		print(str(self.id) in neighbor.comc)
+				# print("neighbor.comc: ", neighbor.comc)
+				# print(str(self.id) in neighbor.comc)
 
-		# 		if (str(self.id) in neighbor.comc):
+				if (str(self.id) in neighbor.comc):
 
-		# 			print("neighbor.comc: ", neighbor.comc[str(self.id)])
+					# print("neighbor.comc: ", neighbor.comc[str(self.id)])
 
-		# 			if len(neighbor.comc[str(self.id)]) != 0:
+					if len(neighbor.comc[str(self.id)]) != 0:
 
-		# 				for element in neighbor.comc[str(self.id)]:
+						for element in neighbor.comc[str(self.id)]:
 
-		# 					if not (np.all((element == I_vertex), axis = 1).any()):
+							if not (np.all((element == I_vertex), axis = 1).any()):
 
-		# 						I_vertex = np.concatenate((I_vertex, neighbor.comc[str(self.id)]), axis = 0)
+								I_vertex = np.concatenate((I_vertex, neighbor.comc[str(self.id)]), axis = 0)
 
-		print("I_vertex_combined: ", I_vertex)
+		# print("I_vertex_combined: ", I_vertex)
 
 		trunk_hold, path = self.Graph_Construction(I_vertex)
-		print("path_2: ", path)
-		print("trunk_hold_2: ", trunk_hold)
+		# print("path_2: ", path)
+		# print("trunk_hold_2: ", trunk_hold)
 
 		# Judgement Algorithm
 		if trunk_hold[0][0] == -1:
@@ -1489,7 +1489,7 @@ class PTZcon():
 
 					nodes.append(end)
 
-			print("nodes: ", nodes)
+			# print("nodes: ", nodes)
 
 			trunk_eli = []
 
@@ -1535,7 +1535,7 @@ class PTZcon():
 				geometric_center = np.array([avg_x, avg_y])
 				rangecircle_r, R = 0, 0
 
-				for i in range(1, index_+1):
+				for i in range(0, index_+1):
 
 					p1 = geometric_center
 					p2 = np.array([nodes[i][0], nodes[i][1]])
@@ -1567,8 +1567,8 @@ class PTZcon():
 
 				trunk_hold = trunk_eli
 
-		print("path: ", path)
-		print("trunk_hold: ", trunk_hold)
+		# print("path: ", path)
+		# print("trunk_hold: ", trunk_hold)
 
 		return path, trunk_hold
 	
@@ -2739,7 +2739,7 @@ class PTZcon():
 				visited[min_edge[1]] = True
 				temp_root = min_edge[1]
 
-		print("Hamiltonian Path: " + str(mst_edges) + "\n")
+		# print("Hamiltonian Path: " + str(mst_edges) + "\n")
 		# print("Weights: " + str(mst_weights) + "\n")
 
 		return [mst_edges]
@@ -2762,10 +2762,10 @@ class PTZcon():
 
 		modified_edges = [tuple(element) for element in modified_edges]
 
-		print("Modified Hamiltonian Path: " + str(modified_edges) + "\n")
+		# print("Modified Hamiltonian Path: " + str(modified_edges) + "\n")
 		# print("Modified Weights: " + str(modified_weights) + "\n")
 
-		print(halt)
+		# print(halt)
 		# return [modified_edges]
 
 		if len(modified_edges) == 0:
@@ -3144,11 +3144,11 @@ class PTZcon():
 
 		phi = F_.transpose()
 		ne.evaluate("sum((der_1 + der_2)*phi*0.1, axis = 0)", out = p_dot)
-		print("p_dot: " + str(p_dot))
+		# print("p_dot: " + str(p_dot))
 		p_norm = np.linalg.norm(p_dot)
 		p_dot /= p_norm
 		# p_dot = np.array([np.sign(p_dot[0]), np.sign(p_dot[1])]) + np.tanh(p_dot)
-		print("p_dot: " + str(p_dot))
+		# print("p_dot: " + str(p_dot))
 
 		if (np.isnan(p_dot).any()):
 
@@ -3170,7 +3170,7 @@ class PTZcon():
 		ne.evaluate("sum( out*phi, axis = 0)", out = v_dot)
 		v_dot = v_dot/np.linalg.norm(v_dot);
 
-		print("v_dot: " + str(v_dot))
+		# print("v_dot: " + str(v_dot))
 
 		# Angle of View
 		a_dot = np.empty_like(zoom_force)
@@ -3190,7 +3190,7 @@ class PTZcon():
 		phi = F_.transpose()
 		ne.evaluate("sum( (der_1 + der_2)*phi)", out = a_dot)
 
-		print("a_dot: " + str(a_dot))
+		# print("a_dot: " + str(a_dot))
 
 		# if abs(a_dot) <= 0.001:
 
@@ -3237,7 +3237,7 @@ class PTZcon():
 		self.H = H
 		T_Utility = [self.H, time_]
 		# print("Quality: " + str(self.FoV))
-		print("Utility: " + str(self.H))
+		# print("Utility: " + str(self.H))
 		# print(halt)
 
 		# filename = "D:/上課資料/IME/實驗室研究/Paper/Coverage Control/Quality based switch mode/Data/"

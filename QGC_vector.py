@@ -446,8 +446,8 @@ def K_means(targets, cameras):
 	points = []
 	for camera in cameras:
 
-		points.append(camera.sweet_spot)
-		# points.append(neighbor.pos)
+		# points.append(camera.sweet_spot)
+		points.append(camera.pos)
 
 	agents_len = len(points)
 	
@@ -827,9 +827,9 @@ if __name__ == "__main__":
 			one_hop_neighbor = One_hop_neighbor(points)
 
 			Pd, cluster_set, col_ind = None, None, None
-			# Pd, cluster_set, col_ind = Hungarian(targets, uav_team.members)
+			Pd, cluster_set, col_ind = Hungarian(targets, uav_team.members)
 			cluster_labels = None
-			cluster_labels = K_means(targets, uav_team.members)
+			# cluster_labels = K_means(targets, uav_team.members)
 			# print("cluster_set, col_ind: ", cluster_set, col_ind)
 
 			past = time()
