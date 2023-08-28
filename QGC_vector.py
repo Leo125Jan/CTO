@@ -61,7 +61,7 @@ class Visualize():
 		pygame.display.update()
 	
 	def Visualize2D(self, cameras, event_plt, targets, circumcenter_center, circumcenter_radius, \
-					side_center, side_center_radius):
+					side_center, side_center_radius, run_step):
 
 		map_plt = np.zeros(np.shape(event_plt)[0]) - 1
 
@@ -141,6 +141,11 @@ class Visualize():
 			pygame.draw.circle(self.display, (0,0,0), np.asarray(target[0])/self.grid_size\
 			                    *self.blockSize, 6)
 
+		targets_position = np.array([target[0] for target in targets])
+		GCM = np.mean(targets_position, axis = 0)
+
+		pygame.draw.circle(self.display, (50,40,30), GCM/self.grid_size*self.blockSize, 10)
+
 		# for (center, r) in zip(side_center, side_center_radius):
 
 		# 	pygame.draw.circle(self.display, (129, 128, 157), center/self.grid_size\
@@ -163,6 +168,29 @@ class Visualize():
 
 		pygame.draw.rect(self.display, (0, 0, 0), (0, 0, map_size[0]/grid_size[0]*self.blockSize, \
                                                         map_size[1]/grid_size[1]*self.blockSize), width = 3)
+
+		# Text
+		text_font = pygame.font.SysFont("Arial", 30)
+		img = text_font.render(str(run_step), True, (255, 255, 255))
+		self.display.blit(img, (10, 10))
+
+		text_font = pygame.font.SysFont("Arial", 30)
+		for camera in cameras:
+
+			pos = (camera.pos/grid_size*self.blockSize) - 30*camera.perspective
+
+			img = text_font.render(str(camera.id), True, (camera.color[0]*0.7, camera.color[1]*0.7, camera.color[2]*0.7))
+			self.display.blit(img, (pos[0], pos[1]))
+
+		text_font = pygame.font.SysFont("Arial", 25)
+		for (target, i)in zip(targets, range(len(targets))):
+
+			pos = np.asarray(target[0])
+			pos = ((pos - [0.5,0.5])/grid_size*self.blockSize)
+
+			img = text_font.render(str(i), True, (0, 0, 0))
+			self.display.blit(img, (pos[0], pos[1]))
+
 		pygame.display.flip()
 
 		# print(halt)
@@ -256,13 +284,13 @@ def One_hop_neighbor(points):
 
 	return one_hop_neighbors
 
-def Agglomerative_Hierarchical_Clustering(targets, cameras):
+def Agglomerative_Partitional_Clustering(targets, cameras):
 
 	# Sample data points
-	data = np.array([targets[i][0] for i in range(len(targets))])
+	data = np.array([target[0] for target in targets])
 
 	# Custom distance threshold for merging clusters
-	threshold = 1.7*cameras[0].incircle_r  # Adjust as needed
+	threshold = 1.5*cameras[0].incircle_r  # Adjust as needed
 
 	# Initialize cluster assignments for each data point
 	num_points = len(data)
@@ -308,15 +336,97 @@ def Agglomerative_Hierarchical_Clustering(targets, cameras):
 	
 	return cluster
 
+def Agglomerative_Hierarchical_Clustering(targets, cameras):
+
+	# Sample data points
+	data_points = np.array([target[0] for target in targets])
+
+	# Custom distance threshold for merging clusters
+	threshold = 1.5*cameras[0].incircle_r  # Adjust as needed
+
+	# Initialize each data point as its own cluster
+	clusters = [[point] for point in data_points]
+	cluster_mapping = {index_: [index_] for (index_, element) in enumerate(data_points)}
+	cluster_mapping_save = {str(0): [] for (index_, element) in enumerate(data_points)}
+	# print("clusters: ", clusters)
+	# print("cluster_mapping: ", cluster_mapping, "\n")
+
+	# Loop until only one cluster remains
+	while set(cluster_mapping.keys()) != set(cluster_mapping_save.keys()):
+
+		cluster_mapping_save = cluster_mapping
+
+		# Find the two closest clusters
+		min_distance = np.inf
+		min_i, min_j = -1, -1
+
+		for i in range(len(clusters)):
+
+			if len(clusters[i]) > 1:
+
+				cluster_center_i = np.mean(clusters[i], axis = 0)
+			else:
+
+				cluster_center_i = clusters[i][0]
+
+			for j in range(i + 1, len(clusters)):
+
+				if len(clusters[j]) > 1:
+
+					cluster_center_j = np.mean(clusters[j], axis = 0)
+				else:
+					cluster_center_j = clusters[j][0]
+
+				dist = np.linalg.norm(cluster_center_i - cluster_center_j)
+
+				if dist < min_distance and dist < threshold:
+
+					min_distance = dist
+					min_i, min_j = i, j
+
+		if min_i != -1 and min_j != -1:
+
+			# print("min_i, min_j: ", min_i, min_j)
+		
+			# Merge the two closest clusters
+			clusters[min_i] += clusters[min_j]
+			del clusters[min_j]
+
+			cluster_mapping[min_i] = np.append(cluster_mapping[min_i], cluster_mapping[min_j])
+			del cluster_mapping[min_j]
+
+			# Print cluster assignments
+			i = 0
+			cluster = {}
+			for cluster_id, points in cluster_mapping.items():
+
+				cluster[i] = np.array(points)
+				i += 1
+
+			cluster_mapping = cluster
+		else:
+
+	# 		print("min_i, min_j: ", min_i, min_j)
+			pass
+
+	# 	print("clusters: ", clusters)
+	# 	print("cluster_mapping: ", cluster_mapping, "\n")
+
+	# print("clusters: ", clusters)
+	# print("cluster_mapping: ", cluster_mapping)
+
+	return cluster_mapping
+
 def Hungarian(targets, cameras):
 
 	# Agglomerative Hierarchical Clustering
-	targets_position = np.array([targets[i][0] for i in range(len(targets))])
+	targets_position = np.array([target[0] for target in targets])
 	GCM = np.mean(targets_position, axis = 0)
-	# print("targets_position: ", targets_position)
-	# print("global_center of mass: ", GCM)
+	print("targets_position: ", targets_position)
+	print("global_center of mass: ", GCM)
+
 	cluster_set = Agglomerative_Hierarchical_Clustering(targets, cameras)
-	# print("cluster_set: ", cluster_set)
+	print("cluster_set: ", cluster_set)
 
 	cluster_center = []
 	for key, value in cluster_set.items():
@@ -332,7 +442,7 @@ def Hungarian(targets, cameras):
 			cluster_center.append(targets_position[value][0])
 
 	cluster_center = np.array(cluster_center)
-	# print("cluster_center: ", cluster_center)
+	print("cluster_center: ", cluster_center)
 
 	# Herding Algorithm
 	Pd = []; ra = 1; gain = []
@@ -362,8 +472,8 @@ def Hungarian(targets, cameras):
 
 	agents_len = len(points)
 
-	for target in Pd:
-	# for target in cluster_center:
+	# for target in Pd:
+	for target in cluster_center:
 
 		points.append(target)
 
@@ -372,8 +482,9 @@ def Hungarian(targets, cameras):
 	# print("points: " + str(points))
 
 	points_len = len(points)
+	targets_len = (points_len - agents_len)
 
-	if (points_len - agents_len) > agents_len or (points_len - agents_len) == agents_len:
+	if targets_len > agents_len or targets_len == agents_len:
 
 		distances = distance.cdist(points, points)
 		# print("points: " + str(points) + "\n")
@@ -390,7 +501,12 @@ def Hungarian(targets, cameras):
 
 				cost_matrix[:,i] *= 1/gain[i]
 		# print("cost_matrix: ", cost_matrix)
-	elif (points_len - agents_len) < agents_len:
+
+		row_ind, col_ind = linear_sum_assignment(cost_matrix)
+	elif targets_len < agents_len:
+
+		# print("points_len: ", points_len)
+		# print("targets_len: ", targets_len)
 
 		distances = distance.cdist(points, points)
 		# print("points: " + str(points) + "\n")
@@ -406,36 +522,81 @@ def Hungarian(targets, cameras):
 
 				cost_matrix[:,i] *= 1/gain[i]
 
-		flip_ = np.inf*np.ones(agents_len - (points_len - agents_len))
-		hold = []
-		# print("flip_: ", flip_)
+		# flip_ = np.inf*np.ones(agents_len - (points_len - agents_len))
+		# hold = []
+		# # print("flip_: ", flip_)
 
-		for i in range(agents_len):
+		# for i in range(agents_len):
 
-			if i >= points_len - agents_len:
+		# 	if i >= points_len - agents_len:
 
-				hold.append(np.hstack((flip_, cost_matrix[i])))
-			else:
-				hold.append(np.hstack((cost_matrix[i], flip_)))
+		# 		hold.append(np.hstack((flip_, cost_matrix[i])))
+		# 	else:
+		# 		hold.append(np.hstack((cost_matrix[i], flip_)))
 
-		cost_matrix = np.array(hold)
+		# cost_matrix = np.array(hold)
 		# print("cost_matrix: ", cost_matrix)
 
-	row_ind, col_ind = linear_sum_assignment(cost_matrix)
+		# hold = np.inf*np.ones([agents_len, agents_len*targets_len])
+
+		# for i in range(agents_len):
+
+		# 	hold[i,i*targets_len:(i+1)*targets_len] = cost_matrix[i,:]
+
+		# print("hold: ", hold)
+		# cost_matrix = hold
+
+		# row_ind, col_ind = linear_sum_assignment(cost_matrix)
+		# col_ind = col_ind%targets_len
+
+		row_ind, col_ind = linear_sum_assignment(cost_matrix)
+
+		col_sol = {str(i): [] for i in range(agents_len)}
+
+		for (row, col) in zip(row_ind, col_ind):
+
+			col_sol[str(row)] = col
+
+		# List with one missing number
+		sequence_num = list(range(0, agents_len))
+		missing_numbers = [num for num in sequence_num if num not in row_ind]
+
+		# print("missing_number: ", missing_numbers)
+
+		cost_matrix_missing = np.array(cost_matrix[missing_numbers])
+		# print("cost_matrix_missing: ", cost_matrix_missing)
+
+		row_ind_missing, col_ind_missing = linear_sum_assignment(cost_matrix_missing)
+		# print("row_ind_missing: ", row_ind_missing)
+		# print("col_ind_missing: ", col_ind_missing)
+
+		for (row, col) in zip(missing_numbers, col_ind_missing):
+
+			col_sol[str(row)] = col
+
+		# print("col_sol: ", col_sol)
+		
+		col_ind = np.zeros(agents_len)
+		for key_, value_ in col_sol.items():
+
+			col_ind[int(key_)] = value_
+
+		# col_indices = np.hstack((col_indices, col_indices_missing))
+		# print("col_ind: ", col_ind)
 
 	# print("col_ind: ", col_ind)
 	# print("agents_len: ", agents_len)
 	# print("points_len: ", points_len)
 	# print("points_len - agents_len: ", points_len - agents_len)
 
-	for i in range(len(col_ind)):
+	# for i in range(len(col_ind)):
 
-		if col_ind[i] < (points_len - agents_len)-1:
+	# 	if col_ind[i] < (points_len - agents_len)-1:
 
-			col_ind[i] = col_ind[i]
-		elif col_ind[i] > (points_len - agents_len)-1:
+	# 		col_ind[i] = col_ind[i]
+	# 	elif col_ind[i] > (points_len - agents_len)-1:
 
-			col_ind[i] = col_ind[i] - (agents_len - (points_len - agents_len))
+	# 		col_ind[i] = col_ind[i] - (agents_len - (points_len - agents_len))
 
 	# print("col_ind: ", col_ind)
 
@@ -444,16 +605,18 @@ def Hungarian(targets, cameras):
 def K_means(targets, cameras):
 
 	points = []
+	targets_position = np.array([target[0] for target in targets])
+
+	alpha = 0.0
 	for camera in cameras:
 
-		# points.append(camera.sweet_spot)
-		points.append(camera.pos)
+		points.append(alpha*camera.pos + (1-alpha)*camera.sweet_spot)
 
 	agents_len = len(points)
 	
-	for target in targets:
+	for target_position in targets_position:
 
-		points.append(target[0])
+		points.append(target_position)
 
 	points = np.array(points)
 
@@ -471,9 +634,9 @@ def K_means(targets, cameras):
 	row_ind, col_ind = linear_sum_assignment(cost_matrix)
 
 	# Step 2 - K-Means Algorithm to update Cluster member and its members
-	cluster_centers = np.array([targets[element][0] for element in col_ind])
+	cluster_centers = np.array([targets_position[element] for element in col_ind])
 	# print("cluster_centers: " + str(cluster_centers))
-	data = np.array([element[0] for element in targets])
+	data = targets_position
 	# print("data: " + str(data))
 	alpha = 0.3
 
@@ -715,6 +878,8 @@ if __name__ == "__main__":
 
 		while not Done:
 
+			print("run_step: ", run_step)
+
 			for op in pygame.event.get():
 
 				if op.type == pygame.QUIT:
@@ -828,6 +993,7 @@ if __name__ == "__main__":
 
 			Pd, cluster_set, col_ind = None, None, None
 			Pd, cluster_set, col_ind = Hungarian(targets, uav_team.members)
+
 			cluster_labels = None
 			# cluster_labels = K_means(targets, uav_team.members)
 			# print("cluster_set, col_ind: ", cluster_set, col_ind)
@@ -845,7 +1011,7 @@ if __name__ == "__main__":
 			side_center, side_center_radius = sidecenter(targets)
 
 			vis.Visualize2D(uav_team.members, event_plt1, targets, circumcenter_center, circumcenter_radius, \
-							side_center, side_center_radius)
+							side_center, side_center_radius, run_step)
 
 			# if np.round(time() - last, 2) > 60.00:
 			if run_step >= 1000:

@@ -9,6 +9,7 @@ from collections import namedtuple
 from scipy.optimize import linprog
 from scipy.stats import multivariate_normal
 from shapely.geometry.polygon import Polygon
+from matplotlib.animation import FuncAnimation
 from scipy.optimize import linear_sum_assignment
 
 from scipy.spatial import distance
@@ -43,31 +44,76 @@ W = W.transpose()
 
 def HA():
 
-	cost = np.array([[4, 1, 3], [2, 0, 5], [3, 2, 2]])
-	row_ind, col_ind = linear_sum_assignment(cost)
+	agents_len = 5
+	targets_len = 3
 
-	print("row: " + str(row_ind))
-	print("col: " + str(col_ind))
+	col_sol = {str(i): [] for i in range(agents_len)}
 
+	hold = np.inf*np.ones([agents_len, agents_len*targets_len])
 	# Sample data: reward matrix (m x n)
-	cost_matrix = np.array([[9, 4, 3, np.inf, np.inf],
-							[6, 7, 6, np.inf, np.inf],
-							[4, 8, 8, np.inf, np.inf],
-							[np.inf, np.inf, 5, 6, 1],
-							[np.inf, np.inf, 0, 6, 1]])
+	cost_matrix = np.array([[1, 7, 11],
+							[3, 11, 8],
+							[4, 1, 8],
+							[5, 6, 1],
+							[7, 5, 10]])
+
+	# for i in range(agents_len):
+
+	# 	hold[i,i*targets_len:(i+1)*targets_len] = cost_matrix[i,:]
+
+	# print("hold: ", hold)
+	# cost_matrix = hold
 
 	# Apply the Linear Assignment Algorithm to maximize the reward
 	row_indices, col_indices = linear_sum_assignment(cost_matrix)
 	print("row_indices: ", row_indices)
 	print("col_indices: ", col_indices)
 
+	# col_indices = col_indices%targets_len
+
 	# Print the assignments
 	for i, j in zip(row_indices, col_indices):
 
 		print(f"Agent {i} assigned to Target {j}")
 
-	a = [i for i in range(1,2)]
-	print(a)
+	for (row, col) in zip(row_indices, col_indices):
+
+		col_sol[str(row)] = col
+
+	# List with one missing number
+	sequence_num = list(range(0, agents_len))
+	missing_numbers = [num for num in sequence_num if num not in row_indices]
+
+	print("missing_number: ", missing_numbers)
+
+	cost_matrix_missing = np.array(cost_matrix[missing_numbers])
+	print("cost_matrix_missing: ", cost_matrix_missing)
+
+	row_indices_missing, col_indices_missing = linear_sum_assignment(cost_matrix_missing)
+	print("row_indices_missing: ", row_indices_missing)
+	print("col_indices_missing: ", col_indices_missing)
+
+	for (row, col) in zip(missing_numbers, col_indices_missing):
+
+		col_sol[str(row)] = col
+
+	print("col_sol: ", col_sol)
+	
+	col_indices = np.zeros(agents_len)
+	for key_, value_ in col_sol.items():
+
+		col_indices[int(key_)] = value_
+
+	# col_indices = np.hstack((col_indices, col_indices_missing))
+	print("col_indices: ", col_indices)
+
+def and_or_test():
+
+	a = np.array([[10.5, 12.5]])
+	b = np.array([[12, 12], [12, 13], [13, 12], [13, 13], [10.5,12.5]])
+	print((a == b))
+	print(np.all((a == b), axis = 0))
+	print(np.all((a == b), axis = 1).any())
 
 def npn():
 
@@ -988,9 +1034,37 @@ def Hierarchical_Clustering():
 
 	# Sample data points
 	data = np.array([[1, 2], [2, 3], [3, 4], [6, 9], [10, 11], [12, 15]])
+	# np.random.seed(0)
+	# num_points = 30
+	# data = np.random.rand(num_points, 2)
 
 	# Perform Agglomerative Hierarchical Clustering using complete linkage
 	linkage_matrix = linkage(data, method = 'complete')
+
+	clusters_at_levels = {}
+	for i in range(1, len(linkage_matrix) + 1):
+
+		cluster_assignments = fcluster(linkage_matrix, i, criterion='maxclust')
+		clusters_at_levels[i] = cluster_assignments
+
+	# Print clusters at each level
+	for level, clusters in enumerate(clusters_at_levels, start=1):
+
+		print(f"Clusters at level {level}: {clusters}")
+
+	# Print members in each cluster at different levels
+	for level, clusters in clusters_at_levels.items():
+
+		cluster_dict = {}
+
+		for idx, cluster_id in enumerate(clusters, start=1):
+
+			if cluster_id not in cluster_dict:
+
+				cluster_dict[cluster_id] = []
+				cluster_dict[cluster_id].append(idx)
+
+		print(f"Members in clusters at level {level}: {cluster_dict}")
 
 	# Create a dendrogram
 	dendrogram(linkage_matrix)
@@ -1055,6 +1129,88 @@ def HC_Step_2():
 	
 	print("Cluster: ", cluster)
 
+def HC_Step_5():
+
+	# Sample data points
+	data_points = np.array([[1, 2], [2, 3], [4, 5], [9, 10], [10, 11]])
+
+	# Custom distance threshold for merging clusters
+	threshold = np.sqrt(4)  # Adjust as needed
+
+	# Initialize each data point as its own cluster
+	clusters = [[point] for point in data_points]
+	cluster_mapping = {index_: [index_] for (index_, element) in enumerate(data_points)}
+	cluster_mapping_save = {str(0): [] for (index_, element) in enumerate(data_points)}
+	print("clusters: ", clusters)
+	print("cluster_mapping: ", cluster_mapping, "\n")
+
+	# Loop until only one cluster remains
+	count = 0
+
+	while set(cluster_mapping.keys()) != set(cluster_mapping_save.keys()) or count > 100:
+
+		cluster_mapping_save = cluster_mapping
+
+		# Find the two closest clusters
+		min_distance = np.inf
+		min_i, min_j = -1, -1
+
+		for i in range(len(clusters)):
+
+			if len(clusters[i]) > 1:
+
+				cluster_center_i = np.mean(clusters[i], axis = 0)
+			else:
+
+				cluster_center_i = clusters[i][0]
+
+			for j in range(i + 1, len(clusters)):
+
+				if len(clusters[j]) > 1:
+
+					cluster_center_j = np.mean(clusters[j], axis = 0)
+				else:
+					cluster_center_j = clusters[j][0]
+
+				dist = np.linalg.norm(cluster_center_i - cluster_center_j)
+
+				if dist < min_distance and dist < threshold:
+
+					min_distance = dist
+					min_i, min_j = i, j
+
+		if min_i != -1 and min_j != -1:
+
+			print("min_i, min_j: ", min_i, min_j)
+		
+			# Merge the two closest clusters
+			clusters[min_i] += clusters[min_j]
+			del clusters[min_j]
+
+			cluster_mapping[min_i] = np.append(cluster_mapping[min_i], cluster_mapping[min_j])
+			del cluster_mapping[min_j]
+
+			# Print cluster assignments
+			i = 0
+			cluster = {}
+			for cluster_id, points in cluster_mapping.items():
+
+				cluster[i] = np.array(points)
+				i += 1
+
+			cluster_mapping = cluster
+		else:
+
+			print("min_i, min_j: ", min_i, min_j)
+
+		print("clusters: ", clusters)
+		print("cluster_mapping: ", cluster_mapping, "\n")
+
+		count += 1
+
+	print("clusters: ", clusters)
+	print("cluster_mapping: ", cluster_mapping)
+
 def One_hop_neighbor():
 
 	# Generate random points
@@ -1096,12 +1252,46 @@ def One_hop_neighbor():
 	plt.ylabel('Y')
 	plt.show()
 
+def Tidal_Locking():
+
+	# Constants
+	center = np.array([0, 0])  # Center point with an offset
+	rotating_radius = 5  # Distance between rotating point and center
+	angular_velocity = 0.1  # Angular velocity (radians per time step)
+	time_steps = 500  # Number of time steps
+	time = np.linspace(0, 2*np.pi, time_steps)  # Time values
+
+	# Initialize arrays to store positions and orientations
+	rotating_positions = np.zeros((time_steps, 2))
+	rotating_orientations = np.zeros(time_steps)
+
+	# Simulate motion
+	for i, angle in enumerate(time):
+
+		position = center + rotating_radius * np.array([np.cos(angle), np.sin(angle)])
+		orientation = np.arctan2(center[1] - position[1], center[0] - position[0])
+		rotating_positions[i] = position
+		rotating_orientations[i] = orientation
+
+	# Plot the results
+	plt.figure(figsize=(8, 6))
+	plt.plot(rotating_positions[:, 0], rotating_positions[:, 1], label="Rotating Point")
+	plt.plot(center[0], center[1], "ro", label="Center Point")
+	plt.xlabel("X")
+	plt.ylabel("Y")
+	plt.title("Rotating Point Simulation with Offset Center")
+	plt.legend()
+	plt.axis("equal")
+	plt.grid()
+	plt.show()
+
 if __name__ == '__main__':
 
 	# MST2MSF()
 	# print("----------------------------")
 	# SEMST()
 
+	# HA()
 	# concavehull()
 	# alpha_complex()
 	# Kmeansb()
@@ -1115,12 +1305,6 @@ if __name__ == '__main__':
 	# random_test()
 	# Hierarchical_Clustering()
 	# HC_Step_2()
+	# HC_Step_5()
 	# One_hop_neighbor()
-	a = np.array([[10.5, 12.5]])
-	b = np.array([[12, 12], [12, 13], [13, 12], [13, 13], [10.5,12.5]])
-	print((a == b))
-	print(np.all((a == b), axis = 0))
-	print(np.all((a == b), axis = 1).any())
-
-	c = {"4": 20, "7": 15}
-	print(c.items())
+	# Tidal_Locking()

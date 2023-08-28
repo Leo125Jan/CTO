@@ -954,101 +954,6 @@ class PTZcon():
 
 	def Graph_Construction(self, I_vertex):
 
-		# if np.shape(I_vertex)[0] > 1:
-
-		# 	start_vertex = np.argmin(np.linalg.norm(I_vertex[:, np.newaxis] - self.pos, axis=2))
-		# 	# print("self.pos: ", self.pos)
-		# 	# print("dist: ", np.linalg.norm(I_vertex[:, np.newaxis] - self.pos, axis=2))
-		# 	# print("start_vertex: " + str(start_vertex))
-		# 	edges = self.Hamiltonian_Path(I_vertex, start_vertex)
-		# 	# print("edges: " + str(edges))
-		# 	# print(np.shape(edges))
-
-		# 	if int(np.shape(edges)[0]) == 1:
-
-		# 		trunk_hold = edges[0]
-		# 		path = I_vertex
-
-		# 	if int(np.shape(edges)[0]) == 1 and int(np.shape(edges)[1]) == 0:
-
-		# 		# print("In")
-		# 		trunk_hold = [[-1]]
-		# 		path = [I_vertex[start_vertex]]
-
-		# 	if int(np.shape(edges)[0]) > 1:
-
-		# 		max_element = max(edges, key=len)
-		# 		# print("Element with maximum size:", max_element)
-
-		# 		# Find elements with identical sizes
-		# 		size_count = {}
-		# 		size_count[len(max_element)] = [max_element]
-		# 		# print("size_count: " + str(size_count))
-
-		# 		for element in edges:
-
-		# 			size = len(element)
-
-		# 			if size == len(max_element) and not np.all(np.array(element) == np.array(size_count[len(max_element)])):
-
-		# 				size_count[size].append(element)
-
-		# 		# print("size_count: " + str(size_count))
-
-		# 		# Filter elements with identical sizes
-		# 		identical_size_elements = [elements for size, elements in size_count.items()][0]
-		# 		# print("Elements with identical sizes:", identical_size_elements)
-
-		# 		if np.shape(identical_size_elements)[0] == 1:
-
-		# 			trunk_hold = identical_size_elements[0]
-		# 			path = I_vertex
-		# 		else:
-
-		# 			dist = []
-
-		# 			for i in range(np.shape(identical_size_elements)[0]):
-
-		# 				target_points = []
-
-		# 				for element in identical_size_elements:
-
-		# 					start = I_vertex[branch[0]]
-		# 					end = I_vertex[branch[1]]
-
-		# 					if any(np.array_equal(start, arr) for arr in target_points) == False and len(target_points) > 0:
-
-		# 						target_points.append(start)
-		# 					elif len(target_points) == 0:
-
-		# 						target_points.append(start)
-
-		# 					if any(np.array_equal(end, arr) for arr in target_points) == False and len(target_points) > 0:
-
-		# 						target_points.append(end)
-		# 					elif len(target_points) == 0:
-
-		# 						target_points.append(end)
-
-		# 				nodes = target_points[0:np.shape(target_points)[0]-i]
-		# 				x = [element[0] for element in nodes]; avg_x = np.mean(x)
-		# 				y = [element[1] for element in nodes]; avg_y = np.mean(y)
-						
-		# 				geometric_center = np.array([(avg_x, avg_y)])
-		# 				distance_ = np.linalg.norm(geometric_center - self.sweet_spot)
-		# 				dist.append(distance_)
-
-		# 			trunk_hold = identical_size_elements[np.argmin(dist)]
-		# 			path = I_vertex
-
-		# 	# if len(edges) < 1:
- 
-		# 	# 	trunk_hold = [[-1]]
-		# 	# 	path = [I_vertex[start_vertex]]
-		# 	# else:
-
-		# 	# 	trunk_hold = edges
-		# 	# 	path = I_vertex
 		if np.shape(I_vertex)[0] > 1:
 
 			start_vertex = np.argmin(np.linalg.norm(I_vertex[:, np.newaxis] - self.pos, axis=2))
@@ -1056,9 +961,104 @@ class PTZcon():
 			# print("dist: ", np.linalg.norm(I_vertex[:, np.newaxis] - self.pos, axis=2))
 			# print("start_vertex: " + str(start_vertex))
 			edges = self.Hamiltonian_Path(I_vertex, start_vertex)
+			# print("edges: " + str(edges))
+			# print(np.shape(edges))
 
-			trunk_hold = edges[0]
-			path = I_vertex
+			if int(np.shape(edges)[0]) == 1:
+
+				trunk_hold = edges[0]
+				path = I_vertex
+
+			if int(np.shape(edges)[0]) == 1 and int(np.shape(edges)[1]) == 0:
+
+				# print("In")
+				trunk_hold = [[-1]]
+				path = [I_vertex[start_vertex]]
+
+			if int(np.shape(edges)[0]) > 1:
+
+				max_element = max(edges, key=len)
+				# print("Element with maximum size:", max_element)
+
+				# Find elements with identical sizes
+				size_count = {}
+				size_count[len(max_element)] = [max_element]
+				# print("size_count: " + str(size_count))
+
+				for element in edges:
+
+					size = len(element)
+
+					if size == len(max_element) and not np.all(np.array(element) == np.array(size_count[len(max_element)])):
+
+						size_count[size].append(element)
+
+				# print("size_count: " + str(size_count))
+
+				# Filter elements with identical sizes
+				identical_size_elements = [elements for size, elements in size_count.items()][0]
+				# print("Elements with identical sizes:", identical_size_elements)
+
+				if np.shape(identical_size_elements)[0] == 1:
+
+					trunk_hold = identical_size_elements[0]
+					path = I_vertex
+				else:
+
+					dist = []
+
+					for i in range(np.shape(identical_size_elements)[0]):
+
+						target_points = []
+
+						for element in identical_size_elements:
+
+							start = I_vertex[branch[0]]
+							end = I_vertex[branch[1]]
+
+							if any(np.array_equal(start, arr) for arr in target_points) == False and len(target_points) > 0:
+
+								target_points.append(start)
+							elif len(target_points) == 0:
+
+								target_points.append(start)
+
+							if any(np.array_equal(end, arr) for arr in target_points) == False and len(target_points) > 0:
+
+								target_points.append(end)
+							elif len(target_points) == 0:
+
+								target_points.append(end)
+
+						nodes = target_points[0:np.shape(target_points)[0]-i]
+						x = [element[0] for element in nodes]; avg_x = np.mean(x)
+						y = [element[1] for element in nodes]; avg_y = np.mean(y)
+						
+						geometric_center = np.array([(avg_x, avg_y)])
+						distance_ = np.linalg.norm(geometric_center - self.sweet_spot)
+						dist.append(distance_)
+
+					trunk_hold = identical_size_elements[np.argmin(dist)]
+					path = I_vertex
+
+			# if len(edges) < 1:
+ 
+			# 	trunk_hold = [[-1]]
+			# 	path = [I_vertex[start_vertex]]
+			# else:
+
+			# 	trunk_hold = edges
+			# 	path = I_vertex
+		# if np.shape(I_vertex)[0] > 1:
+
+		# 	start_vertex = np.argmin(np.linalg.norm(I_vertex[:, np.newaxis] - self.pos, axis=2))
+		# 	# print("self.pos: ", self.pos)
+		# 	# print("dist: ", np.linalg.norm(I_vertex[:, np.newaxis] - self.pos, axis=2))
+		# 	# print("start_vertex: " + str(start_vertex))
+		# 	edges = self.Hamiltonian_Path(I_vertex, start_vertex)
+
+		# 	trunk_hold = edges[0]
+		# 	path = I_vertex
 		else:
 
 			trunk_hold = [[-1]]
@@ -1094,11 +1094,15 @@ class PTZcon():
 
 					nodes.append(end)
 
-			# print("nodes: ", nodes)
+			print("nodes: ", nodes)
 
+			# Trunk after eliminate
 			trunk_eli = []
-			path_eli = []; path_eli.append(tuple(nodes[0]))
+
+			# Path after eliminate & Path Residual
 			path_save = set([tuple((element)) for element in path])
+
+			path_eli = []; path_eli.append(tuple(nodes[0]))
 			path_resdiual = []
 
 			for index_ in range(1, len(nodes)):
@@ -1108,7 +1112,7 @@ class PTZcon():
 				x = [nodes[i][0] for i in range(0, index_+1)]; avg_x = np.mean(x)
 				y = [nodes[i][1] for i in range(0, index_+1)]; avg_y = np.mean(y)
 				geometric_center = np.array([avg_x, avg_y])
-				rangecircle_r, R = 0, 0
+				rangecircle_r, R_hold = 0, -np.inf
 
 				for i in range(0, index_+1):
 
@@ -1117,9 +1121,10 @@ class PTZcon():
 
 					distance_ = np.linalg.norm(p1 - p2)
 
-					if distance_ >= R:
+					if distance_ >= R_hold:
 
 						rangecircle_r = distance_
+						R_hold = distance_
 
 					# print("rangecircle_r: ", rangecircle_r)
 
@@ -1136,11 +1141,9 @@ class PTZcon():
 					path_eli.append(tuple(nodes[index_]))
 					trunk_eli.append(trunk_hold[index_-1])
 
-			trunk_hold = trunk_eli
-
 			path_resdiual = np.array([element for element in path_save if element not in path_eli])
-			# print("path_eli: ", path_eli)
-			# print("path_resdiual: ", path_resdiual)
+			print("path_eli: ", path_eli)
+			print("path_resdiual: ", path_resdiual)
 
 			# Communication Section
 			# print("one_hop_neighbor: ", self.one_hop_neighbor)
@@ -1158,27 +1161,29 @@ class PTZcon():
 
 					if (neighbor.id in self.one_hop_neighbor[self.id]):
 
-						neighbor_pos[str(neighbor.id)] = neighbor.pos
+						neighbor_pos[str(neighbor.id)] = neighbor.sweet_spot
 
-				# print("neighbor_pos: ", neighbor_pos)
+				print("neighbor_pos: ", neighbor_pos)
 
 				for element in path_resdiual:
 
 					mini_ = None
-					d_ = np.inf
+					distance_hold = 8*self.incircle[1]
 
 					for index_, member in neighbor_pos.items():
 
 						dist_ = np.linalg.norm(member - element)
 
-						if dist_ < d_:
+						if dist_ < distance_hold:
 
 							mini_ = index_
-							d_ = dist_
+							distance_hold = dist_
 
-					self.comc[str(mini_)].append(element)
+					if mini_ != None:
 
-			# print("self.comc: ", self.comc)
+						self.comc[str(mini_)].append(element)
+
+			print("self.comc: ", self.comc)
 
 			if self.comc != None:
 
@@ -1187,6 +1192,121 @@ class PTZcon():
 			if self.neighbor_notfication:
 
 				print("Neighbor Notification")
+
+	def Judgement_Algorithm(self, trunk_hold, path):
+
+		# Judgement Algorithm
+		if trunk_hold[0][0] == -1:
+
+			trunk_hold_finale = [[-1]]
+			path_finale = path
+		else:
+
+			nodes = []
+
+			for branch in trunk_hold:
+
+				start = path[branch[0]]
+				end = path[branch[1]]
+				
+				if any(np.array_equal(start, arr) for arr in nodes) == False and len(nodes) > 0:
+
+					nodes.append(start)
+				elif len(nodes) == 0:
+
+					nodes.append(start)
+
+				if any(np.array_equal(end, arr) for arr in nodes) == False and len(nodes) > 0:
+
+					nodes.append(end)
+				elif len(nodes) == 0:
+
+					nodes.append(end)
+
+			print("nodes: ", nodes)
+
+			# for index_ in range(1, len(nodes)):
+
+			# 	# print("index_: ", index_)
+
+			# 	x = [nodes[i][0] for i in range(0, index_+1)]; avg_x = np.mean(x)
+			# 	y = [nodes[i][1] for i in range(0, index_+1)]; avg_y = np.mean(y)
+			# 	geometric_center = np.array([avg_x, avg_y])
+			# 	rangecircle_r, R = 0, 0
+
+			# 	for i in range(1, index_+1):
+
+			# 		p1 = geometric_center
+			# 		p2 = np.array([nodes[i][0], nodes[i][1]])
+
+			# 		distance_ = np.linalg.norm(p1 - p2)
+
+			# 		if distance_ >= R:
+
+			# 			rangecircle_r = distance_
+
+			# 		# print("rangecircle_r: ", rangecircle_r)
+
+			# 	rangecircle_A = np.pi*(rangecircle_r)**2
+			# 	# print("rangecircle_A: ", rangecircle_A)
+			# 	# print("incircle_r: ", self.incircle[1])
+			# 	# print("incircle_A: ", self.incircle[2])
+
+			# 	if rangecircle_A >= 1.0*self.incircle[2]:
+
+			# 		break
+			# 	else:
+
+			# 		trunk_eli.append(trunk_hold[index_-1])
+
+			# Trunk after eliminate
+			trunk_eli = []
+
+			for index_ in range(1, len(nodes)):
+
+				# print("index_: ", index_)
+
+				x = [nodes[i][0] for i in range(0, index_+1)]; avg_x = np.mean(x)
+				y = [nodes[i][1] for i in range(0, index_+1)]; avg_y = np.mean(y)
+				geometric_center = np.array([avg_x, avg_y])
+				rangecircle_r, R_hold = 0, -np.inf
+
+				for i in range(0, index_+1):
+
+					p1 = geometric_center
+					p2 = np.array([nodes[i][0], nodes[i][1]])
+
+					distance_ = np.linalg.norm(p1 - p2)
+
+					if distance_ >= R_hold:
+
+						rangecircle_r = distance_
+						R_hold = distance_
+
+					# print("rangecircle_r: ", rangecircle_r)
+
+				rangecircle_A = np.pi*(rangecircle_r)**2
+				# print("rangecircle_A: ", rangecircle_A)
+				# print("incircle_r: ", self.incircle[1])
+				# print("incircle_A: ", self.incircle[2])
+
+				if rangecircle_A >= 1.0*self.incircle[2]:
+
+					break
+				else:
+
+					trunk_eli.append(trunk_hold[index_-1])
+
+			if len(trunk_eli) == 0:
+
+				trunk_hold_finale = [[-1]]
+				path_finale = path
+			else:
+
+				trunk_hold_finale = trunk_eli
+				path_finale = path
+
+		return trunk_hold_finale, path_finale
 
 	def Optimal_Cluster(self, targets, Pd, cluster_set, col_ind, cluster_labels, time_):
 
@@ -1207,141 +1327,142 @@ class PTZcon():
 		# ----------------------------------------------------------------------------------------------------------------
 		# Agglomerative Hierarchical Clustering
 		targets_position = np.array([targets[i][0] for i in range(len(targets))])
-		GCM = np.mean(targets_position, axis = 0)
-		# print("targets_position: ", targets_position)
-		# print("global_center of mass: ", GCM)
-		cluster_set = self.Agglomerative_Hierarchical_Clustering(targets)
-		# print("cluster_set: ", cluster_set)
+		# GCM = np.mean(targets_position, axis = 0)
+		# # print("targets_position: ", targets_position)
+		# # print("global_center of mass: ", GCM)
+		# cluster_set = self.Agglomerative_Hierarchical_Clustering(targets)
+		# # print("cluster_set: ", cluster_set)
 
-		cluster_center = []
-		for key, value in cluster_set.items():
+		# cluster_center = []
+		# for key, value in cluster_set.items():
 
-			if len(value) > 1:
+		# 	if len(value) > 1:
 
-				# print("targets_position[value]: ", targets_position[value])
-				# print(np.mean(targets_position[value], axis = 0))
+		# 		# print("targets_position[value]: ", targets_position[value])
+		# 		# print(np.mean(targets_position[value], axis = 0))
 
-				cluster_center.append(np.mean(targets_position[value], axis = 0))
-			else:
+		# 		cluster_center.append(np.mean(targets_position[value], axis = 0))
+		# 	else:
 
-				cluster_center.append(targets_position[value][0])
+		# 		cluster_center.append(targets_position[value][0])
 
-		cluster_center = np.array(cluster_center)
-		# print("cluster_center: ", cluster_center)
+		# cluster_center = np.array(cluster_center)
+		# # print("cluster_center: ", cluster_center)
 
-		# Herding Algorithm
-		Pd = []; ra = 1; gain = []
-		for key, value in cluster_set.items():
+		# # Herding Algorithm
+		# Pd = []; ra = 1; gain = []
+		# for key, value in cluster_set.items():
 
-			df = (cluster_center[key] - GCM)
-			Af = GCM + df + (df/np.linalg.norm(df))*ra*np.sqrt(len(value))
+		# 	df = (cluster_center[key] - GCM)
+		# 	Af = GCM + df + (df/np.linalg.norm(df))*ra*np.sqrt(len(value))
 
-			Pd.append(Af)
-			gain.append(len(value))
+		# 	Pd.append(Af)
+		# 	gain.append(len(value))
 
-		# print("Pd: ", Pd)
-		# print("gain: ", gain)
+		# # print("Pd: ", Pd)
+		# # print("gain: ", gain)
 
-		# Hungarian Algorithm to get Clster Center
-		# points = [self.sweet_spot]
-		alpha = 1.0
-		points = [alpha*self.pos + (1-alpha)*self.sweet_spot]
-		# print("self_pos: ", self.pos)
-		# print("self_sweet_spot: ", self.sweet_spot)
-		# print("points: ", points)
+		# # Hungarian Algorithm to get Clster Center
+		# # points = [self.sweet_spot]
+		# alpha = 1.0
+		# points = [alpha*self.pos + (1-alpha)*self.sweet_spot]
+		# # print("self_pos: ", self.pos)
+		# # print("self_sweet_spot: ", self.sweet_spot)
+		# # print("points: ", points)
 
-		for neighbor in self.neighbors:
+		# for neighbor in self.neighbors:
 
-			# points.append(neighbor.sweet_spot)
-			points.append(alpha*neighbor.pos + (1-alpha)*neighbor.sweet_spot)
+		# 	# points.append(neighbor.sweet_spot)
+		# 	points.append(alpha*neighbor.pos + (1-alpha)*neighbor.sweet_spot)
 
-		agents_len = len(points)
+		# agents_len = len(points)
 
-		# for target in Pd:
-		for target in cluster_center:
+		# # for target in Pd:
+		# for target in cluster_center:
 
-			points.append(target)
+		# 	points.append(target)
 
-		points = np.array(points)
+		# points = np.array(points)
 
-		# print("points: " + str(points))
+		# # print("points: " + str(points))
 
-		points_len = len(points)
+		# points_len = len(points)
 
-		if (points_len - agents_len) > agents_len or (points_len - agents_len) == agents_len:
+		# if (points_len - agents_len) > agents_len or (points_len - agents_len) == agents_len:
 
-			distances = distance.cdist(points, points)
-			# print("points: " + str(points) + "\n")
-			# print("distances: " + str(distances) + "\n")
+		# 	distances = distance.cdist(points, points)
+		# 	# print("points: " + str(points) + "\n")
+		# 	# print("distances: " + str(distances) + "\n")
 
-			# Hungarian Algorithm
-			cost_matrix = [row[agents_len:points_len] for (row, i) in zip(distances, range(len(distances))) if i < agents_len]
-			cost_matrix = np.array(cost_matrix)
-			# print("cost_matrix: ", cost_matrix)
+		# 	# Hungarian Algorithm
+		# 	cost_matrix = [row[agents_len:points_len] for (row, i) in zip(distances, range(len(distances))) if i < agents_len]
+		# 	cost_matrix = np.array(cost_matrix)
+		# 	# print("cost_matrix: ", cost_matrix)
 
-			for i in range(len(gain)):
+		# 	for i in range(len(gain)):
 
-				if gain[i] > 1:
+		# 		if gain[i] > 1:
 
-					cost_matrix[:,i] *= 1/gain[i]
-			# print("cost_matrix: ", cost_matrix)
-		elif (points_len - agents_len) < agents_len:
+		# 			cost_matrix[:,i] *= 1/gain[i]
+		# 	# print("cost_matrix: ", cost_matrix)
+		# elif (points_len - agents_len) < agents_len:
 
-			distances = distance.cdist(points, points)
-			# print("points: " + str(points) + "\n")
-			# print("distances: " + str(distances) + "\n")
+		# 	distances = distance.cdist(points, points)
+		# 	# print("points: " + str(points) + "\n")
+		# 	# print("distances: " + str(distances) + "\n")
 
-			cost_matrix = [row[agents_len:points_len] for (row, i) in zip(distances, range(len(distances))) if i < agents_len]
-			cost_matrix = np.array(cost_matrix)
-			# print("cost_matrix: ", cost_matrix)
+		# 	cost_matrix = [row[agents_len:points_len] for (row, i) in zip(distances, range(len(distances))) if i < agents_len]
+		# 	cost_matrix = np.array(cost_matrix)
+		# 	# print("cost_matrix: ", cost_matrix)
 
-			for i in range(len(gain)):
+		# 	for i in range(len(gain)):
 
-				if gain[i] > 1:
+		# 		if gain[i] > 1:
 
-					cost_matrix[:,i] *= 1/gain[i]
+		# 			cost_matrix[:,i] *= 1/gain[i]
 
-			flip_ = np.inf*np.ones(agents_len - (points_len - agents_len))
-			hold = []
-			# print("flip_: ", flip_)
+		# 	flip_ = np.inf*np.ones(agents_len - (points_len - agents_len))
+		# 	hold = []
+		# 	# print("flip_: ", flip_)
 
-			for i in range(agents_len):
+		# 	for i in range(agents_len):
 
-				if i >= points_len - agents_len:
+		# 		if i >= points_len - agents_len:
 
-					hold.append(np.hstack((flip_, cost_matrix[i])))
-				else:
-					hold.append(np.hstack((cost_matrix[i], flip_)))
+		# 			hold.append(np.hstack((flip_, cost_matrix[i])))
+		# 		else:
+		# 			hold.append(np.hstack((cost_matrix[i], flip_)))
 
-			cost_matrix = np.array(hold)
-			# print("cost_matrix: ", cost_matrix)
+		# 	cost_matrix = np.array(hold)
+		# 	# print("cost_matrix: ", cost_matrix)
 
-		row_ind, col_ind = linear_sum_assignment(cost_matrix)
+		# row_ind, col_ind = linear_sum_assignment(cost_matrix)
 
-		if col_ind[0] < points_len - agents_len:
+		# if col_ind[0] < points_len - agents_len:
 
-			watch_1 = col_ind[0]
-		elif col_ind[0] > points_len - agents_len:
+		# 	watch_1 = col_ind[0]
+		# elif col_ind[0] > points_len - agents_len:
 
-			watch_1 = col_ind[0] - (agents_len - (points_len - agents_len))
+		# 	watch_1 = col_ind[0] - (agents_len - (points_len - agents_len))
 
-		# watch_1 = col_ind[self.id]
-		# print("watch_1: ", watch_1)
+		watch_1 = col_ind[self.id]
+		print("watch_1: ", watch_1)
 		I_vertex = []
 		I_vertex = targets_position[cluster_set[watch_1]]
-		self.Pd = Pd[watch_1]
+		# self.Pd = Pd[watch_1]
 
 		print("I_vertex: ", I_vertex)
 
 		# K-Means ---------------------------------------------------------------------------------------------------------
 
-		# # Step 1 - Hungarian Algorithm to get Clster Center
-		# points = [self.sweet_spot]
+		# Step 1 - Hungarian Algorithm to get Clster Center
+		# alpha = 0.0
+		# points = [alpha*self.pos + (1-alpha)*self.sweet_spot]
 		# # points = [self.pos]
 
 		# for neighbor in self.neighbors:
 
-		# 	points.append(neighbor.sweet_spot)
+		# 	points.append(alpha*neighbor.pos + (1-alpha)*neighbor.sweet_spot)
 		# 	# points.append(neighbor.pos)
 
 		# agents_len = len(points)
@@ -1421,18 +1542,19 @@ class PTZcon():
 		# GCM = np.mean(targets_position, axis = 0)
 		
 		# cluster_center = np.mean(I_vertex, axis = 0)
-		# # print("cluster_center: ", cluster_center)
+		# print("cluster_center: ", cluster_center)
 
 		# ra = 1
 		# df = (cluster_center - GCM)
 		# Af = GCM + df + (df/np.linalg.norm(df))*ra*np.sqrt(len(I_vertex))
 		# self.Pd = Af
 
-		# Call for Help
+		# First Construction
 		trunk_hold, path = self.Graph_Construction(I_vertex)
-		# print("path_1: ", path)
-		# print("trunk_hold_1: ", trunk_hold)
+		print("path_origin: ", path)
+		print("trunk_hold_origin: ", trunk_hold)
 		
+		# Call for Help
 		self.Outsourcing(trunk_hold, path)
 
 		# Combine neighbor message
@@ -1440,135 +1562,33 @@ class PTZcon():
 
 			if neighbor.comc != None:
 
-				# print("neighbor.comc: ", neighbor.comc)
-				# print(str(self.id) in neighbor.comc)
+				print("neighbor.comc: ", neighbor.comc)
+				print(str(self.id) in neighbor.comc)
 
 				if (str(self.id) in neighbor.comc):
 
-					# print("neighbor.comc: ", neighbor.comc[str(self.id)])
+					print("neighbor.comc: ", neighbor.comc[str(self.id)])
 
 					if len(neighbor.comc[str(self.id)]) != 0:
 
 						for element in neighbor.comc[str(self.id)]:
 
-							if not (np.all((element == I_vertex), axis = 1).any()):
+							if not (np.all((element == path), axis = 1).any()):
 
-								I_vertex = np.concatenate((I_vertex, neighbor.comc[str(self.id)]), axis = 0)
+								path = np.concatenate((path, neighbor.comc[str(self.id)]), axis = 0)
 
-		# print("I_vertex_combined: ", I_vertex)
+		print("path_combined: ", path)
+		print("trunk_hold_origin: ", trunk_hold)
 
-		trunk_hold, path = self.Graph_Construction(I_vertex)
-		# print("path_2: ", path)
-		# print("trunk_hold_2: ", trunk_hold)
+		# Sceondly Construction
+		trunk_hold, path = self.Graph_Construction(path)
+		print("path_evolution: ", path)
+		print("trunk_hold_evolution: ", trunk_hold)
 
-		# Judgement Algorithm
-		if trunk_hold[0][0] == -1:
-
-			trunk_hold = [[-1]]
-			path = I_vertex
-		else:
-
-			nodes = []
-
-			for branch in trunk_hold:
-
-				start = path[branch[0]]
-				end = path[branch[1]]
-				
-				if any(np.array_equal(start, arr) for arr in nodes) == False and len(nodes) > 0:
-
-					nodes.append(start)
-				elif len(nodes) == 0:
-
-					nodes.append(start)
-
-				if any(np.array_equal(end, arr) for arr in nodes) == False and len(nodes) > 0:
-
-					nodes.append(end)
-				elif len(nodes) == 0:
-
-					nodes.append(end)
-
-			# print("nodes: ", nodes)
-
-			trunk_eli = []
-
-			# for index_ in range(1, len(nodes)):
-
-			# 	# print("index_: ", index_)
-
-			# 	x = [nodes[i][0] for i in range(0, index_+1)]; avg_x = np.mean(x)
-			# 	y = [nodes[i][1] for i in range(0, index_+1)]; avg_y = np.mean(y)
-			# 	geometric_center = np.array([avg_x, avg_y])
-			# 	rangecircle_r, R = 0, 0
-
-			# 	for i in range(1, index_+1):
-
-			# 		p1 = geometric_center
-			# 		p2 = np.array([nodes[i][0], nodes[i][1]])
-
-			# 		distance_ = np.linalg.norm(p1 - p2)
-
-			# 		if distance_ >= R:
-
-			# 			rangecircle_r = distance_
-
-			# 		# print("rangecircle_r: ", rangecircle_r)
-
-			# 	rangecircle_A = np.pi*(rangecircle_r)**2
-			# 	# print("rangecircle_A: ", rangecircle_A)
-			# 	# print("incircle_r: ", self.incircle[1])
-			# 	# print("incircle_A: ", self.incircle[2])
-
-			# 	if rangecircle_A >= 1.0*self.incircle[2]:
-
-			# 		break
-			# 	else:
-
-			# 		trunk_eli.append(trunk_hold[index_-1])
-			for index_ in range(1, len(nodes)):
-
-				# print("index_: ", index_)
-
-				x = [nodes[i][0] for i in range(0, index_+1)]; avg_x = np.mean(x)
-				y = [nodes[i][1] for i in range(0, index_+1)]; avg_y = np.mean(y)
-				geometric_center = np.array([avg_x, avg_y])
-				rangecircle_r, R = 0, 0
-
-				for i in range(0, index_+1):
-
-					p1 = geometric_center
-					p2 = np.array([nodes[i][0], nodes[i][1]])
-
-					distance_ = np.linalg.norm(p1 - p2)
-
-					if distance_ >= R:
-
-						rangecircle_r = distance_
-
-					# print("rangecircle_r: ", rangecircle_r)
-
-				rangecircle_A = np.pi*(rangecircle_r)**2
-				# print("rangecircle_A: ", rangecircle_A)
-				# print("incircle_r: ", self.incircle[1])
-				# print("incircle_A: ", self.incircle[2])
-
-				if rangecircle_A >= 1.0*self.incircle[2]:
-
-					break
-				else:
-
-					trunk_eli.append(trunk_hold[index_-1])
-
-			if len(trunk_eli) == 0:
-
-				trunk_hold = [[-1]]
-			else:
-
-				trunk_hold = trunk_eli
-
-		# print("path: ", path)
-		# print("trunk_hold: ", trunk_hold)
+		# Secondly Judgement
+		trunk_hold, path = self.Judgement_Algorithm(trunk_hold, path)
+		print("path_finale: ", path)
+		print("trunk_hold_finale: ", trunk_hold)
 
 		return path, trunk_hold
 	
@@ -1587,18 +1607,33 @@ class PTZcon():
 		self.incircle = [(incircle_x, incircle_y), incircle_r, incircle_A]
 
 		# Optimal Clustering
-		path, trunk_hold = self.Optimal_Cluster(targets, Pd, cluster_set, col_ind, cluster_labels, time_)
-		# print("path: " + str(path))
-		# Trunk Process & Cost function
-		trunk = trunk_hold
-		# print("trunk: " + str(trunk))
+		path, trunk = self.Optimal_Cluster(targets, Pd, cluster_set, col_ind, cluster_labels, time_)
+		print("path: " + str(path))
+		print("trunk: " + str(trunk))
 		target_points = []
+
+		# Herding Algorithm
+		targets_position = np.array([target[0] for target in targets])
+		GCM = np.mean(targets_position, axis = 0)
+		cluster_center = np.mean(path, axis = 0)
+
+		print("GCM: ", GCM)
+		print("cluster_center: ", cluster_center)
+
+		ra = 1
+		df = (cluster_center - GCM)
+		pc = GCM + df + (df/np.linalg.norm(df))*ra*np.sqrt(len(path))
+		# pc = GCM + df + self.perspective*self.R*np.cos(self.alpha)
+		# self.Pd = self.pos + [1e-3, 1e-3]
+		self.Pd = pc
 
 		if trunk[0][0] == -1:
 
-			dx = (-0.5)*(-2)*\
-				np.array([(path[0][0]-self.virtual_target[0]), (path[0][1]-self.virtual_target[1])])
-			# self.target = [[targets[watch_1][0], 2.0, 10]]
+			nearest_index = np.argmin(np.linalg.norm(path[:, np.newaxis] - self.pos, axis=2))
+
+			dx = 1.0*\
+				np.array([(path[nearest_index][0]-self.virtual_target[0]), (path[nearest_index][1]-self.virtual_target[1])])
+			# self.target = [[path[0][0], 2.0, 10]]
 
 			# print("target_1: " + str(self.target))
 		else:
@@ -1664,7 +1699,7 @@ class PTZcon():
 					y = [element[1] for element in nodes]; avg_y = np.mean(y)
 					
 					geometric_center = np.array([(avg_x, avg_y)])
-					R, rangecircle_d = 0, 0
+					rangecircle_r, R_hold = 0, -np.inf
 
 					for (element, i) in zip(nodes, range(len(nodes))):
 
@@ -1673,12 +1708,13 @@ class PTZcon():
 
 						distance_ = np.linalg.norm(p1 - p2)
 
-						if distance_ >= R:
+						if distance_ >= R_hold:
 
-							rangecircle_d = distance_
+							rangecircle_r = distance_
+							R_hold = distance_
 
-					rangecircle_A = np.pi*(rangecircle_d)**2
-					theta = self.calculate_tangent_angle((avg_x, avg_y), rangecircle_d, self.pos)
+					rangecircle_A = np.pi*(rangecircle_r)**2
+					theta = self.calculate_tangent_angle((avg_x, avg_y), rangecircle_r, self.pos)
 
 					# print("rangecircle_A: " + str(rangecircle_A))
 					# print("theta: " + str(theta))
@@ -1697,7 +1733,9 @@ class PTZcon():
 					if len(C_descent) == 0:
 
 						# dx += (-Cn)*(-2)*np.array([(avg_x-self.virtual_target[0]), (avg_y-self.virtual_target[1])])
-						Dx.append(-(-2)*np.array([(avg_x-self.virtual_target[0]), (avg_y-self.virtual_target[1])]))
+						# Dx.append(-(-2)*np.array([(avg_x-self.virtual_target[0]), (avg_y-self.virtual_target[1])]))
+						dx += (Cn)*(1.0)*np.array([(avg_x-self.virtual_target[0]), (avg_y-self.virtual_target[1])])
+						# Dx.append(1.0*np.array([(avg_x-self.virtual_target[0]), (avg_y-self.virtual_target[1])]))
 
 						# Cd = np.exp( -( ((0.25*incircle_A)/rangecircle_A)*(1/(2*0.5**2)) ) )*\
 						# 	np.exp( -( ((0.25*self.alpha)/(theta))*(1/(2*0.5**2)) ) )
@@ -1711,7 +1749,9 @@ class PTZcon():
 
 						Cn *= C_descent[-1]
 						# dx += (-Cn)*(-2)*np.array([(avg_x-self.virtual_target[0]), (avg_y-self.virtual_target[1])])
-						Dx.append(-(-2)*np.array([(avg_x-self.virtual_target[0]), (avg_y-self.virtual_target[1])]))
+						# Dx.append(-(-2)*np.array([(avg_x-self.virtual_target[0]), (avg_y-self.virtual_target[1])]))
+						dx += (Cn)*(1.0)*np.array([(avg_x-self.virtual_target[0]), (avg_y-self.virtual_target[1])])
+						# Dx.append(1.0*np.array([(avg_x-self.virtual_target[0]), (avg_y-self.virtual_target[1])]))
 
 						# Cd = np.exp( -( ((0.25*incircle_A)/rangecircle_A)*(1/(2*0.5**2)) ) )*\
 						# 	np.exp( -( ((0.25*self.alpha)/(theta))*(1/(2*0.5**2)) ) )
@@ -1734,7 +1774,7 @@ class PTZcon():
 					y = [element[1] for element in nodes]; avg_y = np.mean(y)
 					
 					geometric_center = np.array([avg_x, avg_y])
-					R, rangecircle_d = 0, 0
+					rangecircle_r, R_hold = 0, 0
 
 					for (element, i) in zip(nodes, range(len(nodes))):
 
@@ -1743,11 +1783,12 @@ class PTZcon():
 
 						distance_ = np.linalg.norm(p1 - p2)
 
-						if distance_ >= R:
+						if distance_ >= R_hold:
 
-							rangecircle_d = distance_
+							rangecircle_r = distance_
+							R_hold = distance_
 
-					circumcircle_A = np.pi*(rangecircle_d)**2
+					circumcircle_A = np.pi*(rangecircle_r)**2
 
 					# nodes = target_points[0:np.shape(target_points)[0]-i]
 
@@ -1778,7 +1819,9 @@ class PTZcon():
 					if len(C_descent) == 0:
 
 						# dx += (-Cn)*(-2)*np.array([(geometric_center[0]-self.virtual_target[0]), (geometric_center[1]-self.virtual_target[1])])
-						Dx.append(-(-2)*np.array([(geometric_center[0]-self.virtual_target[0]), (geometric_center[1]-self.virtual_target[1])]))
+						# Dx.append(-(-2)*np.array([(geometric_center[0]-self.virtual_target[0]), (geometric_center[1]-self.virtual_target[1])]))
+						dx += (Cn)*(1.0)*np.array([(geometric_center[0]-self.virtual_target[0]), (geometric_center[1]-self.virtual_target[1])])
+						# Dx.append(1.0*np.array([(geometric_center[0]-self.virtual_target[0]), (geometric_center[1]-self.virtual_target[1])]))
 
 						# Cd = np.exp( -( ((0.25*incircle_A)/circumcircle_A)*(1/(2*0.5**2)) ) )*\
 						# 	np.exp( -( ((0.25*self.alpha)/(theta))*(1/(2*0.5**2)) ) )
@@ -1792,7 +1835,9 @@ class PTZcon():
 
 						Cn *= C_descent[-1]
 						# dx += (-Cn)*(-2)*np.array([(geometric_center[0]-self.virtual_target[0]), (geometric_center[1]-self.virtual_target[1])])
-						Dx.append(-(-2)*np.array([(geometric_center[0]-self.virtual_target[0]), (geometric_center[1]-self.virtual_target[1])]))
+						# Dx.append(-(-2)*np.array([(geometric_center[0]-self.virtual_target[0]), (geometric_center[1]-self.virtual_target[1])]))
+						dx += (Cn)*(1.0)*np.array([(geometric_center[0]-self.virtual_target[0]), (geometric_center[1]-self.virtual_target[1])])
+						# Dx.append(1.0*np.array([(geometric_center[0]-self.virtual_target[0]), (geometric_center[1]-self.virtual_target[1])]))
 
 						# Cd = np.exp( -( ((0.25*incircle_A)/circumcircle_A)*(1/(2*0.5**2)) ) )*\
 						# 	np.exp( -( ((0.25*self.alpha)/(theta))*(1/(2*0.5**2)) ) )
@@ -1843,33 +1888,41 @@ class PTZcon():
 
 						# dx += (-Cn)*(-2)*np.array([(sidecircle_center[0]-self.virtual_target[0]), (sidecircle_center[1]-self.virtual_target[1])])+\
 						# (-C1)*(-2)*np.array([(nodes[0][0]-self.virtual_target[0]), (nodes[0][1]-self.virtual_target[1])])
-						Dx.append(-(-2)*np.array([(sidecircle_center[0]-self.virtual_target[0]), (sidecircle_center[1]-self.virtual_target[1])]))
-						Dx.append(-(-2)*np.array([(nodes[0][0]-self.virtual_target[0]), (nodes[0][1]-self.virtual_target[1])]))
+						# Dx.append(-(-2)*np.array([(sidecircle_center[0]-self.virtual_target[0]), (sidecircle_center[1]-self.virtual_target[1])]))
+						# Dx.append(-(-2)*np.array([(nodes[0][0]-self.virtual_target[0]), (nodes[0][1]-self.virtual_target[1])]))
+						dx += (Cn)*(1.0)*np.array([(sidecircle_center[0]-self.virtual_target[0]), (sidecircle_center[1]-self.virtual_target[1])])+\
+						(C1)*(1.0)*np.array([(nodes[0][0]-self.virtual_target[0]), (nodes[0][1]-self.virtual_target[1])])
+						# Dx.append(1.0*np.array([(sidecircle_center[0]-self.virtual_target[0]), (sidecircle_center[1]-self.virtual_target[1])]))
+						# Dx.append(1.0*np.array([(nodes[0][0]-self.virtual_target[0]), (nodes[0][1]-self.virtual_target[1])]))
 					else:
 
 						Cn *= C_descent[-1]
 						C1 *= C_descent[-1]
 						# dx += (-Cn)*(-2)*np.array([(sidecircle_center[0]-self.virtual_target[0]), (sidecircle_center[1]-self.virtual_target[1])])+\
 						# (-C1)*(-2)*np.array([(nodes[0][0]-self.virtual_target[0]), (nodes[0][1]-self.virtual_target[1])])
-						Dx.append(-(-2)*np.array([(sidecircle_center[0]-self.virtual_target[0]), (sidecircle_center[1]-self.virtual_target[1])]))
-						Dx.append(-(-2)*np.array([(nodes[0][0]-self.virtual_target[0]), (nodes[0][1]-self.virtual_target[1])]))
+						# Dx.append(-(-2)*np.array([(sidecircle_center[0]-self.virtual_target[0]), (sidecircle_center[1]-self.virtual_target[1])]))
+						# Dx.append(-(-2)*np.array([(nodes[0][0]-self.virtual_target[0]), (nodes[0][1]-self.virtual_target[1])]))
+						dx += (Cn)*(1.0)*np.array([(sidecircle_center[0]-self.virtual_target[0]), (sidecircle_center[1]-self.virtual_target[1])])+\
+						(C1)*(1.0)*np.array([(nodes[0][0]-self.virtual_target[0]), (nodes[0][1]-self.virtual_target[1])])
+						# Dx.append(1.0*np.array([(sidecircle_center[0]-self.virtual_target[0]), (sidecircle_center[1]-self.virtual_target[1])]))
+						# Dx.append(1.0*np.array([(nodes[0][0]-self.virtual_target[0]), (nodes[0][1]-self.virtual_target[1])]))
 
 					Cn_.append(Cn)
 					Cn_.append(C1)
 					# print("dx_21: " + str(dx) + "\n")
-			Cn_ = np.array(Cn_)/np.sum(np.array(Cn_))
-			# print("Cn: ", Cn_)
-			# print("dx: ", Dx)
+			# Cn_ = np.array(Cn_)/np.sum(np.array(Cn_))
+			# # print("Cn: ", Cn_)
+			# # print("dx: ", Dx)
 
-			dx = np.zeros(2)
-			for (i, element) in zip(range(len(Dx)), Dx):
+			# dx = np.zeros(2)
+			# for (i, element) in zip(range(len(Dx)), Dx):
 
-				dx += Cn_[i]*element
+			# 	dx += Cn_[i]*element
 
 			# print("dx: ", dx)
 
-		# self.virtual_target += 0.7*dx
-		self.virtual_target += 0.40*dx
+		self.virtual_target += 0.8*dx
+		# self.virtual_target += 0.40*dx
 		print("virtual_target: " + str(self.virtual_target) + "\n")
 		self.target = [[self.virtual_target, 2.0, 10]]
 		print("self.target: " + str(self.target))
@@ -3312,24 +3365,9 @@ class PTZcon():
 
 		# # print("enemy_force: " + str(enemy_force))
 
-		# Herding Force ------------------------------------------------------------------------------------------------------------
-		center_force = (np.asarray(self.target[0][0]) - self.pos)/(np.linalg.norm(np.asarray(self.target[0][0]) - self.pos))
-		herd_force = (np.array(self.Pd) - self.pos)/(np.linalg.norm(np.array(self.Pd) - self.pos))
-
-		theta_ = np.arccos(np.dot(center_force, herd_force))
-		direction_ = np.sign(np.cross(center_force, herd_force))
-		R = np.array([[np.cos(direction_*np.pi*0.5), -np.sin(direction_*np.pi*0.5)],
-						[np.sin(direction_*np.pi*0.5), np.cos(direction_*np.pi*0.5)]])
-		herding_transvers = np.dot(R, center_force)\
-							*np.linalg.norm(np.array(self.Pd) - self.pos)*np.sin(theta_)
-
-		# print("center force: ", center_force)
-		# print("center_force_R: ", np.dot(R, center_force))
-		# print(halt)
-		# print("herding_transvers: ", herding_transvers)
 		# Replusive Force of Targets -----------------------------------------------------------------------------------------------
 		tracker_margin = 1.2
-		enemy_force = 0.0
+		enemy_force = np.zeros(2)
 
 		for k in range(len(targets)):
 
@@ -3345,6 +3383,38 @@ class PTZcon():
 				# direction = (self.pos - targets[k][0])
 				# enemy_force += +(tracker_margin - dist)*(direction/np.linalg.norm(direction))
 
+		if (enemy_force != 0.0).all():
+
+			center_force = (np.asarray(self.target[0][0]) - self.pos)
+			center_force_norm = np.linalg.norm(center_force)
+			center_force_normal = center_force/center_force_norm
+
+			enemy_force_norm = np.linalg.norm(enemy_force)
+			enemy_force_normal = enemy_force/enemy_force_norm
+			# print("enemy_force: ", enemy_force)
+
+			# Rotating Direction
+			direction_ = np.sign(np.cross(center_force_normal, enemy_force_normal))
+			R = np.array([[np.cos(direction_*np.pi*0.5), -np.sin(direction_*np.pi*0.5)],
+							[np.sin(direction_*np.pi*0.5), np.cos(direction_*np.pi*0.5)]])
+
+			# Rotating Magnitude
+			center_force_R = np.dot(R, center_force)
+			center_force_R_norm = np.linalg.norm(center_force_R)
+			center_force_R_normal = center_force_R/center_force_R_norm
+
+			theta_ = np.arccos(np.dot(center_force_R_normal, enemy_force_normal))
+
+			enemy_force_transvers = enemy_force_norm*np.cos(theta_)*center_force_R_normal
+			enemy_force_transvers_norm = np.linalg.norm(enemy_force_transvers)
+			enemy_force_transvers_normal = enemy_force_transvers/enemy_force_transvers_norm
+			# enemy_transvers = np.dot(R, center_force)\
+			# 					*np.linalg.norm(enemy_force)*np.sin(theta_)
+		else:
+
+			enemy_force_transvers = np.zeros(2)
+
+		# Neighbors Force---------------------------------------------------------------------------------------------------------
 		neighbors_pos = []; neighbors_pos.append(self.pos)
 		neighbors_pos = np.concatenate((neighbors_pos, [neighbor.pos for neighbor in self.neighbors]))
 		# print("targets: " + str(targets) + "\n")
@@ -3355,40 +3425,127 @@ class PTZcon():
 		weight = 1 - 0.5*( 1 + np.tanh(2*(distances-5)) )
 
 		# Consider which neighbor is sharing the same target and only use them to obtain formation force
-		neighbor_force = np.array([0.,0.])
+		neighbor_force = 0.0
 
 		for (i, neighbor) in zip(range(len(distances)), self.neighbors):
 
 			neighbor_force += weight[i]*((self.pos - neighbor.pos)/(np.linalg.norm(self.pos - neighbor.pos)))
 
-		neighbor_norm = np.linalg.norm(neighbor_force)
+		if (neighbor_force != 0.0).all():
 
+			center_force = (np.asarray(self.target[0][0]) - self.pos)
+			center_force_norm = np.linalg.norm(center_force)
+			center_force_normal = center_force/center_force_norm
+
+			neighbor_force_norm = np.linalg.norm(neighbor_force)
+			neighbor_force_normal = neighbor_force/neighbor_force_norm
+			# print("neighbor_force: ", neighbor_force)
+
+			# Rotating Direction
+			direction_ = np.sign(np.cross(center_force_normal, neighbor_force_normal))
+			R = np.array([[np.cos(direction_*np.pi*0.5), -np.sin(direction_*np.pi*0.5)],
+							[np.sin(direction_*np.pi*0.5), np.cos(direction_*np.pi*0.5)]])
+
+			# Rotating Magnitude
+			center_force_R = np.dot(R, center_force)
+			center_force_R_norm = np.linalg.norm(center_force_R)
+			center_force_R_normal = center_force_R/center_force_R_norm
+
+			theta_ = np.arccos(np.dot(center_force_R_normal, neighbor_force_normal))
+
+			neighbor_force_transvers = neighbor_force_norm*np.cos(theta_)*center_force_R_normal
+			neighbor_force_transvers_norm = np.linalg.norm(neighbor_force_transvers)
+			neighbor_force_transvers_normal = neighbor_force_transvers/neighbor_force_transvers_norm
+			# neighbor_transvers = np.dot(R, center_force)\
+			# 					*np.linalg.norm(neighbor_force)*np.sin(theta_)
+		else:
+
+			neighbor_force_transvers = np.zeros(2)
+
+		# Herding Force ------------------------------------------------------------------------------------------------------------
+		Pc_force = self.Pd - self.pos
+		Pc_force_norm = np.linalg.norm(Pc_force)
+		Pc_force_normal = Pc_force/Pc_force_norm
+
+		center_force = (np.asarray(self.target[0][0]) - self.pos)
+		center_force_norm = np.linalg.norm(center_force)
+		center_force_normal = center_force/center_force_norm
+
+		theta_alert = np.arccos(np.dot(center_force_normal, Pc_force_normal))
+		if theta_alert <= 2*(np.pi/180) and Pc_force_norm > center_force_norm:
+
+			herd_force_transvers = enemy_force_transvers + neighbor_force_transvers
+			herd_force_transvers_norm = np.linalg.norm(herd_force_transvers)
+			herd_force_transvers_normal = herd_force_transvers/herd_force_transvers_norm
+		else:
+
+			herd_force = (np.array(self.Pd) - self.pos)
+			herd_force_norm = np.linalg.norm(herd_force)
+			herd_force_normal = herd_force/herd_force_norm
+
+			# Rotating Direction
+			direction_ = np.sign(np.cross(center_force_normal, herd_force_normal))
+			R = np.array([[np.cos(direction_*np.pi*0.5), -np.sin(direction_*np.pi*0.5)],
+							[np.sin(direction_*np.pi*0.5), np.cos(direction_*np.pi*0.5)]])
+
+			# Rotating Magnitude
+			center_force_R = np.dot(R, center_force)
+			center_force_R_norm = np.linalg.norm(center_force_R)
+			center_force_R_normal = center_force_R/center_force_R_norm
+
+			theta_ = np.arccos(np.dot(center_force_R_normal, herd_force_normal))
+
+			herd_force_transvers = 1.5*herd_force_norm*np.cos(theta_)*center_force_R_normal
+			herd_force_transvers_norm = np.linalg.norm(herd_force_transvers)
+			herd_force_transvers_normal = herd_force_transvers/herd_force_transvers_norm
+
+			# herding_transvers = np.dot(R, center_force)\
+			# 					*np.linalg.norm(np.array(self.Pd) - self.pos)*np.sin(theta_)
+
+		# Formation Control-------------------------------------------------------------------------------------------------------
 		if self.stage == 2:
-
-			target_force = (np.asarray(self.target[0][0]) - self.pos)\
-				/(np.linalg.norm(np.asarray(self.target[0][0])- self.pos))
-
-			target_norm = np.linalg.norm(target_force)
-			# target_force = self.translational_force
-			# target_norm = np.linalg.norm(self.translational_force)
 
 			center_force = (np.asarray(self.target[0][0]) - self.pos)\
 				/(np.linalg.norm(np.asarray(self.target[0][0]) - self.pos))
 
-			formation_force = (target_force*(neighbor_norm/(target_norm+neighbor_norm))\
-							+ neighbor_force*(target_norm/(target_norm+neighbor_norm)))
+			center_force_norm = np.linalg.norm(np.asarray(self.target[0][0]) - self.pos)
 
-			formation_force -= (center_force/np.linalg.norm(center_force))*(self.r - self.norm\
-							(self.pos - np.asarray(self.target[0][0])))
+			repulsive_force = (self.pos - np.asarray(self.target[0][0]))\
+				/(np.linalg.norm(self.pos - np.asarray(self.target[0][0])))
 
-			self.translational_force += (formation_force + enemy_force + Risky_force + herding_transvers)
-			# self.translational_force = formation_force
+			repulsive_force_norm = np.linalg.norm(self.pos - np.asarray(self.target[0][0]))
+
+			drive_force = enemy_force_transvers + neighbor_force_transvers + herd_force_transvers
+			drive_force_norm = np.linalg.norm(drive_force)
+
+			formation_force = (center_force*(drive_force_norm/(center_force_norm + drive_force_norm))\
+							+ drive_force*(center_force_norm/(center_force_norm + drive_force_norm)))
+
+			formation_force += repulsive_force*(self.r - self.norm(self.pos - np.asarray(self.target[0][0])))
+
+			# target_force = (np.asarray(self.target[0][0]) - self.pos)\
+			# 	/(np.linalg.norm(np.asarray(self.target[0][0])- self.pos))
+
+			# target_norm = np.linalg.norm(target_force)
+
+			# center_force = (np.asarray(self.target[0][0]) - self.pos)\
+			# 	/(np.linalg.norm(np.asarray(self.target[0][0]) - self.pos))
+
+			# formation_force = (target_force*(neighbor_norm/(target_norm+neighbor_norm))\
+			# 				+ neighbor_force*(target_norm/(target_norm+neighbor_norm)))
+
+			# formation_force -= (center_force/np.linalg.norm(center_force))*(self.r - self.norm\
+			# 				(self.pos - np.asarray(self.target[0][0])))
+
+			# self.translational_force += (formation_force + enemy_force + Risky_force + herding_transvers)
+			self.translational_force += (formation_force)
 
 			return
 
 		else:
 
-			formation_force = (neighbor_force + enemy_force + Risky_force)
+			# formation_force = (neighbor_force + enemy_force + Risky_force + herding_transvers)
+			formation_force = (enemy_force_transvers + neighbor_force_transvers + herd_force_transvers)
 			self.translational_force += formation_force
 
 		return
