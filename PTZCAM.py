@@ -100,7 +100,7 @@ class PTZcon():
 
 	def UpdateState(self, targets, neighbors, one_hop_neighbor,
 					Pd, cluster_set, col_ind, cluster_labels,
-					time_, cp, speed_gain, save_type):
+					cluster_centers, time_, cp, speed_gain, save_type):
 
 		self.cp = cp
 		self.speed_gain = speed_gain
@@ -131,10 +131,10 @@ class PTZcon():
 			self.Hill_Climbing(targets, time_)
 		elif self.cp == "K":
 
-			self.Kmeans(targets, time_)
+			self.Kmeans(targets, cluster_labels, time_)
 		elif self.cp == "FCM":
 
-			self.FuzzyCMeans(targets, time_)
+			self.FuzzyCMeans(targets, cluster_centers, cluster_labels, time_)
 
 		self.Gradient_Ascent(targets, time_)
 		
@@ -957,6 +957,7 @@ class PTZcon():
 		if np.shape(I_vertex)[0] > 1:
 
 			start_vertex = np.argmin(np.linalg.norm(I_vertex[:, np.newaxis] - self.pos, axis=2))
+			# start_vertex = np.argmin(np.linalg.norm(I_vertex[:, np.newaxis] - self.sweet_spot, axis=2))
 			# print("self.pos: ", self.pos)
 			# print("dist: ", np.linalg.norm(I_vertex[:, np.newaxis] - self.pos, axis=2))
 			# print("start_vertex: " + str(start_vertex))
@@ -1445,6 +1446,7 @@ class PTZcon():
 
 		# 	watch_1 = col_ind[0] - (agents_len - (points_len - agents_len))
 
+
 		watch_1 = col_ind[self.id]
 		print("watch_1: ", watch_1)
 		I_vertex = []
@@ -1452,6 +1454,7 @@ class PTZcon():
 		# self.Pd = Pd[watch_1]
 
 		print("I_vertex: ", I_vertex)
+
 
 		# K-Means ---------------------------------------------------------------------------------------------------------
 
@@ -1530,16 +1533,18 @@ class PTZcon():
 		# # print("labels: " + str(cluster_labels))
 		# # print("Centroid: " + str(cluster_centers))
 		# # -------------------------------------------------------------------------------------------------------------------
-		# # Step 3 - Construct Hamiltonian Path from Cluster Center and its member
-		# # Hamiltonian Path
+		# Step 3 - Construct Hamiltonian Path from Cluster Center and its member
+		# Hamiltonian Path
 		# I_vertex = np.array(data[cluster_labels == 0])
 		# print("I_vertex: " + str(I_vertex))
-		# # print("I_vertex Shape: " + str(np.shape(I_vertex)))
+		# print("I_vertex Shape: " + str(np.shape(I_vertex)))
+
 		
 		# Herding Algorithm
 		# targets_position = np.array([targets[i][0] for i in range(len(targets))])
 		# I_vertex = np.array(targets_position[cluster_labels == self.id])
 		# GCM = np.mean(targets_position, axis = 0)
+
 		
 		# cluster_center = np.mean(I_vertex, axis = 0)
 		# print("cluster_center: ", cluster_center)
@@ -1612,21 +1617,6 @@ class PTZcon():
 		print("trunk: " + str(trunk))
 		target_points = []
 
-		# Herding Algorithm
-		targets_position = np.array([target[0] for target in targets])
-		GCM = np.mean(targets_position, axis = 0)
-		cluster_center = np.mean(path, axis = 0)
-
-		print("GCM: ", GCM)
-		print("cluster_center: ", cluster_center)
-
-		ra = 1
-		df = (cluster_center - GCM)
-		pc = GCM + df + (df/np.linalg.norm(df))*ra*np.sqrt(len(path))
-		# pc = GCM + df + self.perspective*self.R*np.cos(self.alpha)
-		# self.Pd = self.pos + [1e-3, 1e-3]
-		self.Pd = pc
-
 		if trunk[0][0] == -1:
 
 			nearest_index = np.argmin(np.linalg.norm(path[:, np.newaxis] - self.pos, axis=2))
@@ -1636,6 +1626,21 @@ class PTZcon():
 			# self.target = [[path[0][0], 2.0, 10]]
 
 			# print("target_1: " + str(self.target))
+
+			# Herding Algorithm
+			targets_position = np.array([target[0] for target in targets])
+			GCM = np.mean(targets_position, axis = 0)
+			cluster_center = np.mean(path, axis = 0)
+
+			print("GCM: ", GCM)
+			print("cluster_center: ", cluster_center)
+
+			ra = 1
+			df = (cluster_center - GCM)
+			pc = GCM + df + (df/np.linalg.norm(df))*ra*np.sqrt(len(path))
+			# pc = GCM + df + self.perspective*self.R*np.cos(self.alpha)
+			# self.Pd = self.pos + [1e-3, 1e-3]
+			self.Pd = pc
 		else:
 
 			for branch in trunk:
@@ -1656,6 +1661,21 @@ class PTZcon():
 				elif len(target_points) == 0:
 
 					target_points.append(end)
+
+			# Herding Algorithm
+			targets_position = np.array([target[0] for target in targets])
+			GCM = np.mean(targets_position, axis = 0)
+			cluster_center = np.mean(target_points, axis = 0)
+
+			print("GCM: ", GCM)
+			print("cluster_center: ", cluster_center)
+
+			ra = 1
+			df = (cluster_center - GCM)
+			pc = GCM + df + (df/np.linalg.norm(df))*ra*np.sqrt(len(path))
+			# pc = GCM + df + self.perspective*self.R*np.cos(self.alpha)
+			# self.Pd = self.pos + [1e-3, 1e-3]
+			self.Pd = pc
 
 			# print("target_points: " + str(target_points))
 
@@ -1944,13 +1964,13 @@ class PTZcon():
 		Observe_list = np.append(Observe_list, time_)
 
 		# filename = "/home/leo/mts/src/QBSM/Data/ANOT/PA/" + self.save_type + self.speed_gain + "/"
-		# filename = "/home/leo/mts/src/QBSM/Data/ANOT/PA/" + self.save_type + str(int(self.R)) + "/"
-		# filename += "PA_" + str(self.id) + ".csv"
-		# with open(filename, "a", encoding='UTF8', newline='') as f:
+		filename = "/home/leo/mts/src/QBSM/Data/ANOT/PA/" + self.save_type + str(int(self.R)) + "/"
+		filename += "PA_" + str(self.id) + ".csv"
+		with open(filename, "a", encoding='UTF8', newline='') as f:
 
-		# 	row = Observe_list
-		# 	writer = csv.writer(f)
-		# 	writer.writerow(row)
+			row = Observe_list
+			writer = csv.writer(f)
+			writer.writerow(row)
 
 	def comparsion(self, targets):
 
@@ -2281,7 +2301,7 @@ class PTZcon():
 		# print(halt)
 		self.target = [[self.virtual_target, 2, 10]]
 
-	def Kmeans(self, targets, time_):
+	def Kmeans(self, targets, cluster_labels, time_):
 
 		# Hungarian Algorithm for centroids
 		# points = [self.sweet_spot]
@@ -2310,56 +2330,67 @@ class PTZcon():
 		# points = np.array([targets[element][0] for element in col_ind])
 
 		# Origin
-		points = [self.sweet_spot]
+		# points = [self.sweet_spot]
 
-		for neighbor in self.neighbors:
+		# for neighbor in self.neighbors:
 
-			# points.append(neighbor.pos)
-			points.append(neighbor.sweet_spot)
+		# 	# points.append(neighbor.pos)
+		# 	points.append(neighbor.sweet_spot)
 
-		centroids = points
-		data = np.array([element[0] for element in targets])
-		alpha = 0.3
+		# centroids = points
+		# data = np.array([element[0] for element in targets])
+		# alpha = 0.3
 
-		# ----------------------------------------------------------------------------------
+		# # ----------------------------------------------------------------------------------
 
-		# print("centroids: " + str(centroids))
-		for i in range(100):
+		# # print("centroids: " + str(centroids))
+		# for i in range(100):
 
-			# Step 2: Assignment Step - Assign each data point to the nearest centroid
-			labels = np.argmin(np.linalg.norm(data[:, np.newaxis] - centroids, axis=2), axis=1)
+		# 	# Step 2: Assignment Step - Assign each data point to the nearest centroid
+		# 	labels = np.argmin(np.linalg.norm(data[:, np.newaxis] - centroids, axis=2), axis=1)
 
-			# Step 3: Update Step - Recalculate the centroids
-			mean = np.array([data[labels == i].mean(axis=0) for i in range(1)])
-			# print("mean: " + str(mean))
-			# print("Centroid: " + str(centroids[0]))
+		# 	# Step 3: Update Step - Recalculate the centroids
+		# 	mean = np.array([data[labels == i].mean(axis=0) for i in range(1)])
+		# 	# print("mean: " + str(mean))
+		# 	# print("Centroid: " + str(centroids[0]))
 
-			if (np.isnan(mean[0]).any()):
+		# 	if (np.isnan(mean[0]).any()):
 
-				# centroids[0] = self.sweet_spot
-				# centroids[0] = np.sum(data, axis=0)/len(data)
-				pass
-			elif len(mean) > 0:
+		# 		# centroids[0] = self.sweet_spot
+		# 		# centroids[0] = np.sum(data, axis=0)/len(data)
+		# 		pass
+		# 	elif len(mean) > 0:
 
-				# new_centroids = (1 - alpha)*centroids[0] + alpha*mean[0]
-				new_centroids = np.array([data[labels == i].mean(axis = 0) for i in range(len(centroids))])
+		# 		# new_centroids = (1 - alpha)*centroids[0] + alpha*mean[0]
+		# 		new_centroids = np.array([data[labels == i].mean(axis = 0) for i in range(len(centroids))])
 
-				# print("new_centroids: " + str(new_centroids))
+		# 		# print("new_centroids: " + str(new_centroids))
 
-				# Check for convergence
-				# if np.allclose(centroids[0], new_centroids):
-				if np.allclose(centroids, new_centroids):
+		# 		# Check for convergence
+		# 		# if np.allclose(centroids[0], new_centroids):
+		# 		if np.allclose(centroids, new_centroids):
 
-					break
-				else:
+		# 			break
+		# 		else:
 
-					# centroids[0] = new_centroids
-					centroids = new_centroids
+		# 			# centroids[0] = new_centroids
+		# 			centroids = new_centroids
 
-				# print("centroids: " + str(centroids))
-				# print(halt)
+		# 		# print("centroids: " + str(centroids))
+		# 		# print(halt)
 
-		self.target = [[centroids[0], 2, 10]]
+		# self.target = [[centroids[0], 2, 10]]
+
+		
+		# Herding Algorithm
+		targets_position = np.array([targets[i][0] for i in range(len(targets))])
+		I_vertex = np.array(targets_position[cluster_labels == self.id])
+		
+		cluster_center = np.mean(I_vertex, axis = 0)
+		print("cluster_center: ", cluster_center)
+
+		self.target = [[cluster_center, 2, 10]]
+
 
 		# ANOT
 		pt = [self.pos, self.ltop, self.top, self.rtop, self.pos]
@@ -2378,15 +2409,15 @@ class PTZcon():
 		Observe_list = np.append(Observe_list, time_)
 
 		# filename = "/home/leo/mts/src/QBSM/Data/ANOT/K/" + self.save_type + self.speed_gain + "/"
-		# filename = "/home/leo/mts/src/QBSM/Data/ANOT/K/" + self.save_type + str(int(self.R)) + "/"
-		# filename += "K_" + str(self.id) + ".csv"
-		# with open(filename, "a", encoding='UTF8', newline='') as f:
+		filename = "/home/leo/mts/src/QBSM/Data/ANOT/K/" + self.save_type + str(int(self.R)) + "/"
+		filename += "K_" + str(self.id) + ".csv"
+		with open(filename, "a", encoding='UTF8', newline='') as f:
 
-		# 	row = Observe_list
-		# 	writer = csv.writer(f)
-		# 	writer.writerow(row)
+			row = Observe_list
+			writer = csv.writer(f)
+			writer.writerow(row)
 
-	def FuzzyCMeans(self, targets, time_):
+	def FuzzyCMeans(self, targets, cluster_centers, cluster_labels, time_):
 
 		# # Hungarian Algorithm for cluster_centers
 		# # points = [self.sweet_spot]
@@ -2489,21 +2520,30 @@ class PTZcon():
 		# # print(halt)
 
 		# Number of clusters (c)
-		points = [self.sweet_spot]
+		# points = [self.sweet_spot]
 
-		for neighbor in self.neighbors:
+		# for neighbor in self.neighbors:
 
-			points.append(neighbor.sweet_spot)
+		# 	points.append(neighbor.sweet_spot)
 
-		c = len(points)
-		data = np.array([element[0] for element in targets])
+		# c = len(points)
+		# data = np.array([element[0] for element in targets])
 
-		# Fuzzy C-Means algorithm
-		cntr, u, u0, d, jm, p, fpc = fuzz.cluster.cmeans(data.T, c, 2.0, error = 0.001, maxiter = 1000)
-		cluster_centers = cntr
+		# # Fuzzy C-Means algorithm
+		# cntr, u, u0, d, jm, p, fpc = fuzz.cluster.cmeans(data.T, c, 2.0, error = 0.001, maxiter = 1000)
+		# cluster_centers = cntr
 
 		# --------------------------------------------------------------------------------
-		# Hungarian Algorithm
+		# Member Method
+		# targets_position = np.array([targets[i][0] for i in range(len(targets))])
+		# I_vertex = np.array(targets_position[cluster_labels == self.id])
+		
+		# cluster_center = np.mean(I_vertex, axis = 0)
+		# print("cluster_center: ", cluster_center)
+
+		# self.target = [[cluster_center, 2, 10]]
+
+		# Center Method
 		points = [self.sweet_spot]
 
 		for neighbor in self.neighbors:
@@ -2546,13 +2586,13 @@ class PTZcon():
 		Observe_list = np.append(Observe_list, time_)
 
 		# filename = "/home/leo/mts/src/QBSM/Data/ANOT/FCM/" + self.save_type + self.speed_gain + "/"
-		# filename = "/home/leo/mts/src/QBSM/Data/ANOT/FCM/" + self.save_type + str(int(self.R)) + "/"
-		# filename += "FCM_" + str(self.id) + ".csv"
-		# with open(filename, "a", encoding='UTF8', newline='') as f:
+		filename = "/home/leo/mts/src/QBSM/Data/ANOT/FCM/" + self.save_type + str(int(self.R)) + "/"
+		filename += "FCM_" + str(self.id) + ".csv"
+		with open(filename, "a", encoding='UTF8', newline='') as f:
 
-		# 	row = Observe_list
-		# 	writer = csv.writer(f)
-		# 	writer.writerow(row)
+			row = Observe_list
+			writer = csv.writer(f)
+			writer.writerow(row)
 
 	def Agglomerative_Hierarchical_Clustering(self, targets):
 
@@ -3205,9 +3245,9 @@ class PTZcon():
 
 		if (np.isnan(p_dot).any()):
 
-			print(halt)
+			# print(halt)
 
-		# 	p_dot = np.array([0.1, 0.1])
+			p_dot = np.array([0.1, 0.1])
 		# 	print("p_dot: " + str(p_dot))
 
 		# Perspective
@@ -3245,9 +3285,9 @@ class PTZcon():
 
 		# print("a_dot: " + str(a_dot))
 
-		# if abs(a_dot) <= 0.001:
+		if abs(a_dot) <= 0.001:
 
-		# 	a_dot = 0.13
+			a_dot = 0.13
 
 		# Utiltiy Function
 		H = np.empty_like(zoom_force)
@@ -3463,44 +3503,49 @@ class PTZcon():
 			neighbor_force_transvers = np.zeros(2)
 
 		# Herding Force ------------------------------------------------------------------------------------------------------------
-		Pc_force = self.Pd - self.pos
-		Pc_force_norm = np.linalg.norm(Pc_force)
-		Pc_force_normal = Pc_force/Pc_force_norm
+		if self.cp == "PA":
 
-		center_force = (np.asarray(self.target[0][0]) - self.pos)
-		center_force_norm = np.linalg.norm(center_force)
-		center_force_normal = center_force/center_force_norm
+			Pc_force = self.Pd - self.pos
+			Pc_force_norm = np.linalg.norm(Pc_force)
+			Pc_force_normal = Pc_force/Pc_force_norm
 
-		theta_alert = np.arccos(np.dot(center_force_normal, Pc_force_normal))
-		if theta_alert <= 2*(np.pi/180) and Pc_force_norm > center_force_norm:
+			center_force = (np.asarray(self.target[0][0]) - self.pos)
+			center_force_norm = np.linalg.norm(center_force)
+			center_force_normal = center_force/center_force_norm
 
-			herd_force_transvers = enemy_force_transvers + neighbor_force_transvers
-			herd_force_transvers_norm = np.linalg.norm(herd_force_transvers)
-			herd_force_transvers_normal = herd_force_transvers/herd_force_transvers_norm
+			theta_alert = np.arccos(np.dot(center_force_normal, Pc_force_normal))
+			if theta_alert <= 2*(np.pi/180) and Pc_force_norm > center_force_norm:
+
+				herd_force_transvers = enemy_force_transvers + neighbor_force_transvers
+				herd_force_transvers_norm = np.linalg.norm(herd_force_transvers)
+				herd_force_transvers_normal = herd_force_transvers/herd_force_transvers_norm
+			else:
+
+				herd_force = (np.array(self.Pd) - self.pos)
+				herd_force_norm = np.linalg.norm(herd_force)
+				herd_force_normal = herd_force/herd_force_norm
+
+				# Rotating Direction
+				direction_ = np.sign(np.cross(center_force_normal, herd_force_normal))
+				R = np.array([[np.cos(direction_*np.pi*0.5), -np.sin(direction_*np.pi*0.5)],
+								[np.sin(direction_*np.pi*0.5), np.cos(direction_*np.pi*0.5)]])
+
+				# Rotating Magnitude
+				center_force_R = np.dot(R, center_force)
+				center_force_R_norm = np.linalg.norm(center_force_R)
+				center_force_R_normal = center_force_R/center_force_R_norm
+
+				theta_ = np.arccos(np.dot(center_force_R_normal, herd_force_normal))
+
+				herd_force_transvers = 1.5*herd_force_norm*np.cos(theta_)*center_force_R_normal
+				herd_force_transvers_norm = np.linalg.norm(herd_force_transvers)
+				herd_force_transvers_normal = herd_force_transvers/herd_force_transvers_norm
+
+				# herding_transvers = np.dot(R, center_force)\
+				# 					*np.linalg.norm(np.array(self.Pd) - self.pos)*np.sin(theta_)
 		else:
 
-			herd_force = (np.array(self.Pd) - self.pos)
-			herd_force_norm = np.linalg.norm(herd_force)
-			herd_force_normal = herd_force/herd_force_norm
-
-			# Rotating Direction
-			direction_ = np.sign(np.cross(center_force_normal, herd_force_normal))
-			R = np.array([[np.cos(direction_*np.pi*0.5), -np.sin(direction_*np.pi*0.5)],
-							[np.sin(direction_*np.pi*0.5), np.cos(direction_*np.pi*0.5)]])
-
-			# Rotating Magnitude
-			center_force_R = np.dot(R, center_force)
-			center_force_R_norm = np.linalg.norm(center_force_R)
-			center_force_R_normal = center_force_R/center_force_R_norm
-
-			theta_ = np.arccos(np.dot(center_force_R_normal, herd_force_normal))
-
-			herd_force_transvers = 1.5*herd_force_norm*np.cos(theta_)*center_force_R_normal
-			herd_force_transvers_norm = np.linalg.norm(herd_force_transvers)
-			herd_force_transvers_normal = herd_force_transvers/herd_force_transvers_norm
-
-			# herding_transvers = np.dot(R, center_force)\
-			# 					*np.linalg.norm(np.array(self.Pd) - self.pos)*np.sin(theta_)
+			herd_force_transvers = np.zeros(2)
 
 		# Formation Control-------------------------------------------------------------------------------------------------------
 		if self.stage == 2:

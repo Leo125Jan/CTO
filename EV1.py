@@ -34,6 +34,8 @@ from scipy.cluster.vq import kmeans, vq
 
 from scipy.spatial.distance import euclidean
 from scipy.cluster.hierarchy import fcluster
+from sklearn.datasets import make_blobs
+import skfuzzy as fuzz
 
 a = np.arange(0, 30, 0.1)
 b = np.arange(0, 30, 0.1)
@@ -1285,6 +1287,45 @@ def Tidal_Locking():
 	plt.grid()
 	plt.show()
 
+def FuzzyCMeans():
+
+	# Step 1: Generate sample data (you can replace this with your data)
+	n_samples = 300
+	n_features = 2
+	n_clusters = 3
+	data, _ = make_blobs(n_samples=n_samples, n_features=n_features, centers=n_clusters, random_state=42)
+
+	# Step 2: Normalize the data (optional but recommended)
+	data = (data - data.min()) / (data.max() - data.min())
+
+	# Step 3: Configure and run fuzzy c-means clustering
+	n_clusters = 3  # Number of clusters
+	fuzziness = 2.0  # Fuzziness parameter (usually >= 1)
+	error_threshold = 0.005  # Stop criterion for convergence
+	max_iterations = 1000  # Maximum number of iterations
+
+	cntr, u, u0, d, jm, p, fpc = fuzz.cluster.cmeans(
+	data.T, n_clusters, fuzziness, error_threshold, max_iterations, seed=42
+	)
+
+	# Step 4: Analyze the results
+	cluster_membership = np.argmax(u, axis=0)  # Get the cluster membership for each point
+
+	# Visualize the clusters
+	colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']
+
+	for i in range(n_clusters):
+
+		plt.scatter(data[cluster_membership == i, 0], data[cluster_membership == i, 1], c=colors[i], label=f'Cluster {i+1}')
+
+	plt.scatter(cntr[:, 0], cntr[:, 1], marker='*', s=200, c='k', label='Cluster centers')
+	plt.xlabel('Feature 1')
+	plt.ylabel('Feature 2')
+	plt.legend()
+	plt.title('Fuzzy C-Means Clustering')
+	plt.show()
+
+
 if __name__ == '__main__':
 
 	# MST2MSF()
@@ -1308,3 +1349,4 @@ if __name__ == '__main__':
 	# HC_Step_5()
 	# One_hop_neighbor()
 	# Tidal_Locking()
+	FuzzyCMeans()

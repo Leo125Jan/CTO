@@ -6,6 +6,7 @@ import csv
 import pygame
 import random
 import numpy as np
+import skfuzzy as fuzz
 from PTZCAM import PTZcon
 from time import sleep, time
 from scipy.spatial import distance
@@ -459,7 +460,7 @@ def Hungarian(targets, cameras):
 
 	# Hungarian Algorithm to get Clster Center
 	# points = [self.sweet_spot]
-	alpha = 1.0
+	alpha = 0.0
 	points = []
 	# print("self_pos: ", self.pos)
 	# print("self_sweet_spot: ", self.sweet_spot)
@@ -675,6 +676,26 @@ def K_means(targets, cameras):
 
 	return cluster_labels
 
+def FuzzyCMeans(targets, cameras):
+
+	points = []
+	targets_position = np.array([target[0] for target in targets])
+
+	alpha = 0.0
+	for camera in cameras:
+
+		points.append(alpha*camera.pos + (1-alpha)*camera.sweet_spot)
+
+	c = len(points)
+
+	# Fuzzy C-Means algorithm
+	cntr, u, u0, d, jm, p, fpc = fuzz.cluster.cmeans(targets_position.T, c, 2.0, error = 0.001, maxiter = 1000, seed = 42)
+	cluster_centers = cntr
+	cluster_membership = np.argmax(u, axis = 0)  # Get the cluster membership for each point
+
+	return cluster_centers, cluster_membership
+
+
 if __name__ == "__main__":
 
 	for i in range(1):
@@ -689,7 +710,7 @@ if __name__ == "__main__":
 		cameras = []
 		cameras_pos = []
 
-		sensing_range = "4"
+		sensing_range = "7"
 
 		camera0 = { 'id'            :  0,
 					'position'      :  np.array([2.0, 2.0]),
@@ -837,14 +858,14 @@ if __name__ == "__main__":
 		# 			[(10.5, 12.5), 1, 10], [(12.5, 9.5), 1, 10], [(16.5, 12.5), 1, 10], [(12.5, 17.5), 1, 10],
 		# 			[(3.5, 2.5), 1, 10], [(5.2, 9.0), 1, 10], [(6.5, 2.5), 1, 10], [(2.5, 13), 1, 10],
 		# 			[(14.5, 18.0), 1, 10], [(2.5, 19.5), 1, 10], [(16.5, 2.5), 1, 10], [(17.5, 8.5), 1, 10]]
-
+# 
 		# Start Simulation
 		Done = False
 		vis = Visualize(map_size, grid_size)
 		last = time()
 
 		save_key = 4
-		save_type = {1: "Target_Speed/O/", 2: "Sensing_Range/O/", 3: "Target_Speed/T/", 4: "Sensing_Range/T/"}
+		save_type = {1: "Target_Speed/KC/", 2: "Sensing_Range/KC/", 3: "Target_Speed/APC/", 4: "Sensing_Range/APC/"}
 		Alg_key = {0: "FCM", 1: "K", 2: "PA"}
 		speed_gain = "0.50"
 
@@ -853,26 +874,26 @@ if __name__ == "__main__":
 		# cp = Alg_key[int(i)]
 		cp = "PA"
 		
-		# for i in range(len(cameras)):
+		for i in range(len(cameras)):
 
-		# 	if cp == "FCM":
+			if cp == "FCM":
 
-		# 		# filename = "/home/leo/mts/src/QBSM/Data/ANOT/FCM/" + save_type[save_key] + speed_gain + "/"
-		# 		filename = "/home/leo/mts/src/QBSM/Data/ANOT/FCM/" + save_type[save_key] + sensing_range + "/"
-		# 		filename += "FCM_" + str(i) + ".csv"
-		# 	elif cp == "K":
+				# filename = "/home/leo/mts/src/QBSM/Data/ANOT/FCM/" + save_type[save_key] + speed_gain + "/"
+				filename = "/home/leo/mts/src/QBSM/Data/ANOT/FCM/" + save_type[save_key] + sensing_range + "/"
+				filename += "FCM_" + str(i) + ".csv"
+			elif cp == "K":
 
-		# 		# filename = "/home/leo/mts/src/QBSM/Data/ANOT/K/" + save_type[save_key] + speed_gain + "/"
-		# 		filename = "/home/leo/mts/src/QBSM/Data/ANOT/K/" + save_type[save_key] + sensing_range + "/"
-		# 		filename += "K_" + str(i) + ".csv"
-		# 	elif cp == "PA":
+				# filename = "/home/leo/mts/src/QBSM/Data/ANOT/K/" + save_type[save_key] + speed_gain + "/"
+				filename = "/home/leo/mts/src/QBSM/Data/ANOT/K/" + save_type[save_key] + sensing_range + "/"
+				filename += "K_" + str(i) + ".csv"
+			elif cp == "PA":
 
-		# 		# filename = "/home/leo/mts/src/QBSM/Data/ANOT/PA/" + save_type[save_key] + speed_gain + "/"
-		# 		filename = "/home/leo/mts/src/QBSM/Data/ANOT/PA/" + save_type[save_key] + sensing_range + "/"
-		# 		filename += "PA_" + str(i) + ".csv"
+				# filename = "/home/leo/mts/src/QBSM/Data/ANOT/PA/" + save_type[save_key] + speed_gain + "/"
+				filename = "/home/leo/mts/src/QBSM/Data/ANOT/PA/" + save_type[save_key] + sensing_range + "/"
+				filename += "PA_" + str(i) + ".csv"
 
-		# 	f = open(filename, "w+")
-		# 	f.close()
+			f = open(filename, "w+")
+			f.close()
 
 		run_step = 1
 
@@ -989,21 +1010,32 @@ if __name__ == "__main__":
 
 				points.append(uav_team.members[i].pos)
 
-			one_hop_neighbor = One_hop_neighbor(points)
+			if cp == "FCM":
 
-			Pd, cluster_set, col_ind = None, None, None
-			Pd, cluster_set, col_ind = Hungarian(targets, uav_team.members)
+				one_hop_neighbor = None
+				Pd, cluster_set, col_ind = None, None, None
+				cluster_centers, cluster_labels = FuzzyCMeans(targets, uav_team.members)
+			elif cp == "K":
 
-			cluster_labels = None
-			# cluster_labels = K_means(targets, uav_team.members)
-			# print("cluster_set, col_ind: ", cluster_set, col_ind)
+				one_hop_neighbor = None
+				Pd, cluster_set, col_ind, cluster_centers = None, None, None, None
+				cluster_labels = K_means(targets, uav_team.members)
+			elif cp == "PA":
+
+				one_hop_neighbor = One_hop_neighbor(points)
+
+				cluster_labels, cluster_centers = None, None
+				Pd, cluster_set, col_ind = Hungarian(targets, uav_team.members)
+
+				# Pd, cluster_set, col_ind, cluster_centers = None, None, None, None
+				# cluster_labels = K_means(targets, uav_team.members)
 
 			past = time()
 			for i in range(len(uav_team.members)):
 
 				neighbors = [uav_team.members[j] for j in range(len(uav_team.members)) if j != i]
 				uav_team.members[i].UpdateState(targets, neighbors, one_hop_neighbor, Pd, cluster_set, col_ind, cluster_labels, 
-												np.round(time() - last, 2), cp, speed_gain, save_type[save_key])
+												cluster_centers, np.round(time() - last, 2), cp, speed_gain, save_type[save_key])
 			print("Simulation Time: " + str(time() - last))
 			print("Calculation Time: " + str(time() - past), "\n")
 
