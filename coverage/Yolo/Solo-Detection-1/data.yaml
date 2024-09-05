@@ -1,0 +1,12 @@
+names:
+- Drone
+nc: 1
+roboflow:
+  license: CC BY 4.0
+  project: solo-detection
+  url: https://universe.roboflow.com/drone-detection-u4baf/solo-detection/dataset/1
+  version: 1
+  workspace: drone-detection-u4baf
+test: ../test/images
+train: Solo-Detection-1/train/images
+val: Solo-Detection-1/valid/images

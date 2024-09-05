@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<launch>
+	<node name="controller_5" pkg="coverage" type="controller_5.py" output="screen" />
+	<node name="controller_6" pkg="coverage" type="controller_6.py" output="screen" />
+	<node name="controller_7" pkg="coverage" type="controller_7.py" output="screen" />
+	<node name="controller_8" pkg="coverage" type="controller_8.py" output="screen" />
+	<node name="controller_9" pkg="coverage" type="controller_9.py" output="screen" />
+	<node name="controller_10" pkg="coverage" type="controller_10.py" output="screen" />
+</launch>

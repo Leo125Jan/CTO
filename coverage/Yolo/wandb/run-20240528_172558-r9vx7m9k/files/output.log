@@ -1,0 +1,21 @@
+results:  <generator object BasePredictor.stream_inference at 0x7f6a3beede40>
+image 1/1 /home/leo/mts/src/coverage/Yolo/drone-detection-2-1/left0000.jpg: 384x640 2 Drones, 26.5ms
+boxes:  ultralytics.engine.results.Boxes object with attributes:
+cls: tensor([0., 0.], device='cuda:0')
+conf: tensor([0.8372, 0.5933], device='cuda:0')
+data: tensor([[5.5132e+02, 2.9236e+02, 7.4262e+02, 4.0907e+02, 8.3722e-01, 0.0000e+00],
+        [1.2964e+02, 2.5280e+02, 2.9283e+02, 3.6313e+02, 5.9335e-01, 0.0000e+00]], device='cuda:0')
+id: None
+is_track: False
+orig_shape: (720, 1280)
+shape: torch.Size([2, 6])
+xywh: tensor([[646.9661, 350.7164, 191.3018, 116.7124],
+        [211.2335, 307.9655, 163.1850, 110.3317]], device='cuda:0')
+xywhn: tensor([[0.5054, 0.4871, 0.1495, 0.1621],
+        [0.1650, 0.4277, 0.1275, 0.1532]], device='cuda:0')
+xyxy: tensor([[551.3152, 292.3602, 742.6169, 409.0726],
+        [129.6410, 252.7996, 292.8260, 363.1313]], device='cuda:0')
+xyxyn: tensor([[0.4307, 0.4061, 0.5802, 0.5682],
+        [0.1013, 0.3511, 0.2288, 0.5043]], device='cuda:0')
+id:  None
+Speed: 1.2ms preprocess, 26.5ms inference, 32.6ms postprocess per image at shape (1, 3, 384, 640)

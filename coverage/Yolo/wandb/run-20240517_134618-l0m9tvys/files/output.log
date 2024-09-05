@@ -1,0 +1,2 @@
+image 1/1 /home/leo/mts/src/coverage/Yolo/drone-detection-2-1/left0000.jpg: 736x1280 2 drones, 29.2ms
+Speed: 2.7ms preprocess, 29.2ms inference, 1.1ms postprocess per image at shape (1, 3, 736, 1280)

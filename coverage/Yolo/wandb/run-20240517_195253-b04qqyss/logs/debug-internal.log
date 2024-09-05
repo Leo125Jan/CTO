@@ -1,0 +1,1291 @@
+2024-05-17 19:52:53,629 INFO    StreamThr :134292 [internal.py:wandb_internal():86] W&B internal server running at pid: 134292, started at: 2024-05-17 19:52:53.629469
+2024-05-17 19:52:53,631 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: status
+2024-05-17 19:52:53,631 INFO    WriterThread:134292 [datastore.py:open_for_write():85] open: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/run-b04qqyss.wandb
+2024-05-17 19:52:53,631 DEBUG   SenderThread:134292 [sender.py:send():380] send: header
+2024-05-17 19:52:53,631 DEBUG   SenderThread:134292 [sender.py:send():380] send: run
+2024-05-17 19:52:54,073 INFO    SenderThread:134292 [dir_watcher.py:__init__():211] watching files in: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files
+2024-05-17 19:52:54,074 INFO    SenderThread:134292 [sender.py:_start_run_threads():1122] run started: b04qqyss with start time 1715946773.629317
+2024-05-17 19:52:54,078 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: check_version
+2024-05-17 19:52:54,078 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: check_version
+2024-05-17 19:52:54,254 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: run_start
+2024-05-17 19:52:54,274 DEBUG   HandlerThread:134292 [system_info.py:__init__():32] System info init
+2024-05-17 19:52:54,274 DEBUG   HandlerThread:134292 [system_info.py:__init__():47] System info init done
+2024-05-17 19:52:54,274 INFO    HandlerThread:134292 [system_monitor.py:start():181] Starting system monitor
+2024-05-17 19:52:54,274 INFO    SystemMonitor:134292 [system_monitor.py:_start():145] Starting system asset monitoring threads
+2024-05-17 19:52:54,275 INFO    HandlerThread:134292 [system_monitor.py:probe():201] Collecting system info
+2024-05-17 19:52:54,275 INFO    SystemMonitor:134292 [interfaces.py:start():190] Started cpu monitoring
+2024-05-17 19:52:54,275 INFO    SystemMonitor:134292 [interfaces.py:start():190] Started disk monitoring
+2024-05-17 19:52:54,276 INFO    SystemMonitor:134292 [interfaces.py:start():190] Started gpu monitoring
+2024-05-17 19:52:54,276 INFO    SystemMonitor:134292 [interfaces.py:start():190] Started memory monitoring
+2024-05-17 19:52:54,276 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:52:54,276 INFO    SystemMonitor:134292 [interfaces.py:start():190] Started network monitoring
+2024-05-17 19:52:54,277 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:52:54,862 DEBUG   HandlerThread:134292 [system_info.py:probe():196] Probing system
+2024-05-17 19:52:54,865 DEBUG   HandlerThread:134292 [system_info.py:_probe_git():181] Probing git
+2024-05-17 19:52:54,868 DEBUG   HandlerThread:134292 [system_info.py:_probe_git():189] Probing git done
+2024-05-17 19:52:54,868 DEBUG   HandlerThread:134292 [system_info.py:probe():244] Probing system done
+2024-05-17 19:52:54,868 DEBUG   HandlerThread:134292 [system_monitor.py:probe():210] {'os': 'Linux-5.15.0-107-generic-x86_64-with-glibc2.29', 'python': '3.8.10', 'heartbeatAt': '2024-05-17T11:52:54.862331', 'startedAt': '2024-05-17T11:52:53.627508', 'docker': None, 'cuda': None, 'args': (), 'state': 'running', 'program': 'detect.py', 'codePathLocal': 'detect.py', 'codePath': 'coverage/Yolo/detect.py', 'git': {'remote': None, 'commit': None}, 'email': 'leomagic170@gmail.com', 'root': '/home/leo/mts/src', 'host': 'leo-System-Product-Name', 'username': 'leo', 'executable': '/usr/bin/python3', 'cpu_count': 24, 'cpu_count_logical': 32, 'cpu_freq': {'current': 2337.1519375, 'min': 800.0, 'max': 4937.5}, 'cpu_freq_per_core': [{'current': 2260.98, 'min': 800.0, 'max': 5500.0}, {'current': 1984.625, 'min': 800.0, 'max': 5500.0}, {'current': 1316.107, 'min': 800.0, 'max': 5500.0}, {'current': 2008.647, 'min': 800.0, 'max': 5500.0}, {'current': 1335.964, 'min': 800.0, 'max': 5500.0}, {'current': 1585.809, 'min': 800.0, 'max': 5500.0}, {'current': 3596.018, 'min': 800.0, 'max': 5500.0}, {'current': 2260.377, 'min': 800.0, 'max': 5500.0}, {'current': 1626.944, 'min': 800.0, 'max': 5800.0}, {'current': 2412.783, 'min': 800.0, 'max': 5800.0}, {'current': 4869.875, 'min': 800.0, 'max': 5800.0}, {'current': 1800.52, 'min': 800.0, 'max': 5800.0}, {'current': 2979.919, 'min': 800.0, 'max': 5500.0}, {'current': 1448.16, 'min': 800.0, 'max': 5500.0}, {'current': 2064.358, 'min': 800.0, 'max': 5500.0}, {'current': 1843.722, 'min': 800.0, 'max': 5500.0}, {'current': 923.006, 'min': 800.0, 'max': 4300.0}, {'current': 1163.219, 'min': 800.0, 'max': 4300.0}, {'current': 1107.459, 'min': 800.0, 'max': 4300.0}, {'current': 1136.853, 'min': 800.0, 'max': 4300.0}, {'current': 826.793, 'min': 800.0, 'max': 4300.0}, {'current': 816.926, 'min': 800.0, 'max': 4300.0}, {'current': 844.135, 'min': 800.0, 'max': 4300.0}, {'current': 838.986, 'min': 800.0, 'max': 4300.0}, {'current': 813.449, 'min': 800.0, 'max': 4300.0}, {'current': 1109.228, 'min': 800.0, 'max': 4300.0}, {'current': 829.567, 'min': 800.0, 'max': 4300.0}, {'current': 804.599, 'min': 800.0, 'max': 4300.0}, {'current': 984.879, 'min': 800.0, 'max': 4300.0}, {'current': 1114.672, 'min': 800.0, 'max': 4300.0}, {'current': 1142.948, 'min': 800.0, 'max': 4300.0}, {'current': 1133.989, 'min': 800.0, 'max': 4300.0}], 'disk': {'/': {'total': 915.3223114013672, 'used': 537.453441619873}}, 'gpu': 'NVIDIA GeForce RTX 3070 Ti', 'gpu_count': 1, 'gpu_devices': [{'name': 'NVIDIA GeForce RTX 3070 Ti', 'memory_total': 8589934592}], 'memory': {'total': 62.50288391113281}}
+2024-05-17 19:52:54,868 INFO    HandlerThread:134292 [system_monitor.py:probe():211] Finished collecting system info
+2024-05-17 19:52:54,868 INFO    HandlerThread:134292 [system_monitor.py:probe():214] Publishing system info
+2024-05-17 19:52:54,868 DEBUG   HandlerThread:134292 [system_info.py:_save_pip():52] Saving list of pip packages installed into the current environment
+2024-05-17 19:52:54,868 DEBUG   HandlerThread:134292 [system_info.py:_save_pip():68] Saving pip packages done
+2024-05-17 19:52:54,869 INFO    HandlerThread:134292 [system_monitor.py:probe():216] Finished publishing system info
+2024-05-17 19:52:54,870 DEBUG   SenderThread:134292 [sender.py:send():380] send: files
+2024-05-17 19:52:54,870 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-metadata.json with policy now
+2024-05-17 19:52:54,873 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: stop_status
+2024-05-17 19:52:54,873 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: stop_status
+2024-05-17 19:52:54,880 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: internal_messages
+2024-05-17 19:52:55,074 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_created():271] file/dir created: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/requirements.txt
+2024-05-17 19:52:55,074 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_created():271] file/dir created: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-metadata.json
+2024-05-17 19:52:55,171 DEBUG   SenderThread:134292 [sender.py:send():380] send: telemetry
+2024-05-17 19:52:55,689 INFO    wandb-upload_0:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/btaasv2n-wandb-metadata.json
+2024-05-17 19:52:56,074 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_created():271] file/dir created: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:52:56,278 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:52:56,278 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:52:58,075 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:52:58,278 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:52:58,278 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:52:58,952 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: status_report
+2024-05-17 19:53:00,281 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:00,282 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:01,076 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:01,532 DEBUG   SenderThread:134292 [sender.py:send():380] send: telemetry
+2024-05-17 19:53:01,798 DEBUG   SenderThread:134292 [sender.py:send():380] send: telemetry
+2024-05-17 19:53:01,806 DEBUG   SenderThread:134292 [sender.py:send():380] send: telemetry
+2024-05-17 19:53:01,861 DEBUG   SenderThread:134292 [sender.py:send():380] send: telemetry
+2024-05-17 19:53:02,076 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:02,282 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:02,282 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:03,076 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:04,076 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:04,282 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:04,283 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:04,540 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: status_report
+2024-05-17 19:53:05,647 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:05,647 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:05,854 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:06,077 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:06,240 DEBUG   SenderThread:134292 [sender.py:send():380] send: files
+2024-05-17 19:53:06,241 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file media/images/labels_1_5eadc9bf84308564636d.jpg with policy now
+2024-05-17 19:53:06,241 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:06,253 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:06,254 DEBUG   SenderThread:134292 [sender.py:send():380] send: files
+2024-05-17 19:53:06,254 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file media/images/train_batch0_1_27ece488fd5a45342442.jpg with policy now
+2024-05-17 19:53:06,260 DEBUG   SenderThread:134292 [sender.py:send():380] send: files
+2024-05-17 19:53:06,260 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:06,260 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file media/images/train_batch1_1_8bd988787cb795fdedd8.jpg with policy now
+2024-05-17 19:53:06,266 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:06,266 DEBUG   SenderThread:134292 [sender.py:send():380] send: files
+2024-05-17 19:53:06,266 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file media/images/train_batch2_1_96c1c83e70954ca8476f.jpg with policy now
+2024-05-17 19:53:06,283 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:06,283 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:06,314 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:07,051 INFO    wandb-upload_3:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/ixbi33tg-media/images/train_batch2_1_96c1c83e70954ca8476f.jpg
+2024-05-17 19:53:07,077 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:07,077 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_created():271] file/dir created: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/images/labels_1_5eadc9bf84308564636d.jpg
+2024-05-17 19:53:07,077 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_created():271] file/dir created: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/images/train_batch0_1_27ece488fd5a45342442.jpg
+2024-05-17 19:53:07,078 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_created():271] file/dir created: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/images/train_batch1_1_8bd988787cb795fdedd8.jpg
+2024-05-17 19:53:07,078 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_created():271] file/dir created: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/images/train_batch2_1_96c1c83e70954ca8476f.jpg
+2024-05-17 19:53:07,078 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_created():271] file/dir created: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/images
+2024-05-17 19:53:07,078 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_created():271] file/dir created: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media
+2024-05-17 19:53:07,113 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:07,114 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:07,114 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:07,115 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:07,115 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:07,133 INFO    wandb-upload_0:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/y0y4hs73-media/images/labels_1_5eadc9bf84308564636d.jpg
+2024-05-17 19:53:07,220 INFO    wandb-upload_2:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/0ijrj6jb-media/images/train_batch1_1_8bd988787cb795fdedd8.jpg
+2024-05-17 19:53:07,274 INFO    wandb-upload_1:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/n27wur36-media/images/train_batch0_1_27ece488fd5a45342442.jpg
+2024-05-17 19:53:07,276 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:08,011 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:08,011 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:08,012 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:08,012 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:08,012 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:08,077 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:08,078 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_created():271] file/dir created: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:08,108 INFO    wandb-upload_3:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/o2s91e5d-media/images/train_batch2_1_96c1c83e70954ca8476f.jpg
+2024-05-17 19:53:08,133 INFO    wandb-upload_0:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/j3kptbdv-media/images/labels_1_5eadc9bf84308564636d.jpg
+2024-05-17 19:53:08,167 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:08,284 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:08,285 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:08,323 INFO    wandb-upload_2:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/ej2xu0q5-media/images/train_batch1_1_8bd988787cb795fdedd8.jpg
+2024-05-17 19:53:08,851 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:08,852 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:08,852 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:08,852 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:08,852 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:09,017 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:09,078 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:09,078 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:09,172 INFO    wandb-upload_1:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/pzen2bog-media/images/train_batch0_1_27ece488fd5a45342442.jpg
+2024-05-17 19:53:09,590 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: status_report
+2024-05-17 19:53:09,710 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:09,710 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:09,710 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:09,710 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:09,710 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:09,873 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: stop_status
+2024-05-17 19:53:09,873 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: stop_status
+2024-05-17 19:53:09,874 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: internal_messages
+2024-05-17 19:53:09,880 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:10,078 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:10,078 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:10,286 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:10,286 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:10,576 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:10,576 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:10,576 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:10,577 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:10,577 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:10,733 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:11,078 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:11,078 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:11,403 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:11,404 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:11,404 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:11,404 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:11,404 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:11,555 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:12,079 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:12,079 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:12,266 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:12,266 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:12,266 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:12,266 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:12,266 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:12,286 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:12,286 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:12,416 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:13,079 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:13,079 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:13,121 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:13,121 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:13,121 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:13,122 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:13,122 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:13,270 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:13,967 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:13,968 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:13,968 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:13,968 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:13,969 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:14,079 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:14,079 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:14,122 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:14,287 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:14,287 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:14,617 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: status_report
+2024-05-17 19:53:14,798 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:14,799 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:14,799 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:14,799 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:14,799 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:14,959 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:15,079 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:15,079 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:15,633 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:15,633 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:15,633 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:15,633 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:15,633 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:15,790 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:16,080 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:16,080 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:16,287 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:16,288 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:16,480 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:16,480 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:16,481 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:16,481 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:16,481 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:16,631 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:17,080 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:17,080 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:17,310 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:17,311 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:17,311 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:17,311 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:17,311 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:17,458 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:18,080 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:18,080 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:18,153 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:18,153 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:18,153 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:18,153 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:18,154 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:18,288 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:18,288 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:18,310 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:18,995 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:18,996 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:18,996 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:18,996 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:18,996 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:19,080 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:19,081 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:19,156 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:19,637 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: status_report
+2024-05-17 19:53:19,833 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:19,833 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:19,833 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:19,833 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:19,834 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:19,977 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:20,081 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:20,081 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:20,288 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:20,289 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:20,650 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:20,650 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:20,651 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:20,651 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:20,651 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:20,803 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:21,081 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:21,081 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:21,491 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:21,491 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:21,491 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:21,492 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:21,492 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:21,641 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:22,081 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:22,081 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:22,289 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:22,289 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:22,323 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:22,323 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:22,323 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:22,324 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:22,324 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:22,481 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:23,081 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:23,082 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:23,153 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:23,153 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:23,154 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:23,154 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:23,154 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:23,298 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:23,968 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:23,968 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:23,969 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:23,969 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:23,969 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:24,082 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:24,082 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:24,111 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:24,290 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:24,290 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:24,688 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: status_report
+2024-05-17 19:53:24,805 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:24,806 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:24,873 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: stop_status
+2024-05-17 19:53:24,874 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: internal_messages
+2024-05-17 19:53:24,955 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:25,082 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:25,342 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:25,342 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:25,342 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:25,343 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: stop_status
+2024-05-17 19:53:25,621 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:25,622 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:25,622 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:25,622 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:25,622 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:25,773 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:26,082 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/config.yaml
+2024-05-17 19:53:26,082 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:26,082 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:26,290 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:26,290 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:26,442 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:26,442 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:26,442 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:26,443 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:26,443 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:26,591 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:27,082 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:27,083 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:27,272 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:27,272 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:27,272 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:27,272 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:27,273 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:27,413 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:28,083 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:28,083 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:28,085 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:28,085 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:28,085 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:28,085 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:28,086 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:28,242 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:28,291 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:28,291 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:28,939 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:28,940 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:28,940 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:28,940 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:28,940 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:29,083 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:29,083 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:29,083 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:29,758 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:29,758 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:29,758 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:29,758 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:29,759 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:29,917 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:30,083 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:30,083 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:30,291 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:30,292 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:30,343 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: status_report
+2024-05-17 19:53:30,591 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:30,591 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:30,591 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:30,591 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:30,592 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:30,737 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:31,084 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:31,084 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:31,419 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:31,420 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:31,420 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:31,420 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:31,420 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:31,566 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:32,084 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:32,084 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:32,273 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:32,274 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:32,274 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:32,274 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:32,275 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:32,292 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:32,292 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:32,416 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:33,084 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:33,084 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:33,091 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:33,091 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:33,091 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:33,092 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:33,092 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:33,231 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:33,913 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:33,913 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:33,914 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:33,914 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:33,914 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:34,063 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:34,084 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:34,084 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:34,292 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:34,293 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:34,748 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:34,749 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:34,749 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:34,749 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:34,750 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:34,904 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:35,084 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:35,085 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:35,345 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: status_report
+2024-05-17 19:53:35,592 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:35,592 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:35,592 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:35,593 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:35,593 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:35,736 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:36,085 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:36,085 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:36,293 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:36,293 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:36,418 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:36,419 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:36,419 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:36,420 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:36,420 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:36,566 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:37,085 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:37,085 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:37,243 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:37,244 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:37,244 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:37,244 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:37,245 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:37,391 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:38,077 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:38,077 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:38,078 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:38,078 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:38,078 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:38,085 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:38,085 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:38,226 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:38,294 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:38,294 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:38,920 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:38,920 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:38,920 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:38,920 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:38,921 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:39,057 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:39,086 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:39,086 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:39,724 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:39,724 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:39,725 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:39,725 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:39,725 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:39,863 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:39,921 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: stop_status
+2024-05-17 19:53:39,922 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: stop_status
+2024-05-17 19:53:39,953 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: internal_messages
+2024-05-17 19:53:40,086 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:40,086 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:40,294 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:40,294 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:40,348 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: status_report
+2024-05-17 19:53:40,547 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:40,547 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:40,548 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:40,548 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:40,548 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:40,690 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:41,086 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:41,087 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:41,356 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:41,356 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:41,356 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:41,356 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:41,357 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:41,500 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:42,086 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:42,086 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:42,193 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:42,193 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:42,194 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:42,194 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:42,194 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:42,295 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:42,295 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:42,347 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:43,042 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:43,042 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:43,043 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:43,043 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:43,043 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:43,087 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:43,087 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:43,191 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:43,864 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:43,865 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:43,865 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:43,865 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:43,866 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:44,008 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:44,087 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:44,087 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:44,295 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:44,296 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:44,705 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:44,705 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:44,705 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:44,705 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:44,706 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:44,855 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:45,087 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:45,087 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:45,416 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: status_report
+2024-05-17 19:53:45,544 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:45,544 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:45,544 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:45,544 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:45,544 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:45,698 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:46,087 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:46,088 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:46,296 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:46,296 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:46,389 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:46,390 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:46,390 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:46,390 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:46,390 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:46,535 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:47,088 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:47,088 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:47,225 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:47,225 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:47,226 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:47,226 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:47,226 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:47,361 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:48,057 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:48,057 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:48,058 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:48,058 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:48,058 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:48,088 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:48,088 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:48,208 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:48,297 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:48,297 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:48,898 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:48,898 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:48,898 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:48,898 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:48,899 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:49,040 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:49,088 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:49,088 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:49,703 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:49,704 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:49,707 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:49,707 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:49,707 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:49,855 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:50,088 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:50,089 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:50,297 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:50,297 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:50,472 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: status_report
+2024-05-17 19:53:50,523 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:50,523 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:50,523 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:50,524 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:50,524 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:50,662 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:51,089 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:51,089 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:51,332 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:51,332 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:51,332 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:51,332 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:51,332 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:51,470 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:52,089 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:52,089 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:52,149 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:52,150 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:52,150 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:52,150 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:52,150 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:52,298 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:52,298 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:52,300 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:52,966 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:52,966 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:52,966 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:52,966 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:52,967 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:53,089 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:53,089 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:53,109 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:53,782 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:53,782 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:53,782 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:53,782 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:53,782 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:53,926 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:54,090 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:54,090 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:54,276 DEBUG   SystemMonitor:134292 [system_monitor.py:_start():159] Starting system metrics aggregation loop
+2024-05-17 19:53:54,277 DEBUG   SenderThread:134292 [sender.py:send():380] send: stats
+2024-05-17 19:53:54,298 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:54,298 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:54,603 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:54,603 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:54,603 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:54,603 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:54,604 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:54,752 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:54,921 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: stop_status
+2024-05-17 19:53:54,921 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: stop_status
+2024-05-17 19:53:54,922 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: internal_messages
+2024-05-17 19:53:55,090 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:55,090 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:55,434 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:55,434 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:55,434 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:55,434 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:55,435 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:55,514 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: status_report
+2024-05-17 19:53:55,576 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:56,090 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:56,090 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:56,264 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:56,264 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:56,264 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:56,264 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:56,265 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:56,299 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:56,299 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:56,401 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:57,077 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:57,077 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:57,078 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:57,078 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:57,078 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:57,090 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:57,090 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:57,223 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:57,897 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:57,897 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:57,897 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:57,898 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:57,898 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:58,055 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:58,091 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:58,091 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:58,299 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:58,299 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:53:58,735 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:58,735 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:58,735 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:58,735 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:58,736 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:58,889 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:59,091 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:53:59,091 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:53:59,557 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:59,558 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:53:59,558 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:53:59,558 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:53:59,559 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:53:59,706 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:00,091 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:54:00,091 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:54:00,300 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:54:00,300 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:54:00,402 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:00,402 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:00,402 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:54:00,403 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:54:00,403 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:54:00,540 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:00,627 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: status_report
+2024-05-17 19:54:01,091 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:54:01,092 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:54:01,223 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:01,223 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:01,223 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:54:01,224 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:54:01,224 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:54:01,367 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:02,051 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:02,051 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:02,052 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:54:02,052 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:54:02,052 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:54:02,092 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:54:02,092 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:54:02,200 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:02,300 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:54:02,300 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:54:02,870 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:02,871 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:02,871 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:54:02,871 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:54:02,872 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:54:03,017 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:03,092 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:54:03,092 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:54:03,687 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:03,687 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:03,687 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:54:03,687 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:54:03,689 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:54:03,841 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:04,092 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:54:04,092 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:54:04,301 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:54:04,301 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:54:04,532 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:04,533 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:04,533 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:54:04,533 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:54:04,534 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:54:04,677 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:05,092 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:54:05,093 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:54:05,352 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:05,352 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:05,352 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:54:05,353 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:54:05,353 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:54:05,502 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:05,664 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: status_report
+2024-05-17 19:54:06,093 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:54:06,093 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:54:06,184 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:06,185 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:06,185 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:54:06,185 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:54:06,186 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:54:06,301 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:54:06,302 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:54:06,325 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:07,008 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:07,009 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:07,009 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:54:07,009 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:54:07,010 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:54:07,093 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:54:07,093 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:54:07,146 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:07,810 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:07,810 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:07,810 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:54:07,810 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:54:07,811 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:54:07,967 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:08,093 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:54:08,093 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:54:08,302 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:54:08,302 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:54:08,644 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:08,644 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:08,644 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:54:08,644 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:54:08,645 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:54:08,799 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:09,093 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:54:09,094 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:54:09,479 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:09,479 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:09,480 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:54:09,480 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:54:09,480 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:54:09,615 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:09,921 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: stop_status
+2024-05-17 19:54:09,922 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: stop_status
+2024-05-17 19:54:09,923 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: internal_messages
+2024-05-17 19:54:10,094 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:54:10,094 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:54:10,292 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:10,293 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:10,293 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:54:10,293 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:54:10,293 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:54:10,303 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:54:10,303 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:54:10,430 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:10,722 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: status_report
+2024-05-17 19:54:11,094 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:54:11,094 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:54:11,107 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:11,107 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:11,107 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:54:11,107 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:54:11,108 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:54:11,259 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:11,942 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:11,942 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:11,942 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:54:11,942 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:54:11,942 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:54:12,089 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:12,094 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:54:12,094 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:54:12,303 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:54:12,303 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:54:12,771 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:12,772 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:12,772 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:54:12,772 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:54:12,772 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:54:12,924 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:13,094 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:54:13,095 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:54:13,610 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:13,611 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:13,611 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:54:13,611 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:54:13,611 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:54:13,754 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:14,095 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:54:14,095 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:54:14,304 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:54:14,304 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:54:14,439 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:14,440 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:14,440 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:54:14,440 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:54:14,440 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:54:14,591 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:15,095 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:54:15,095 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:54:15,280 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:15,280 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:15,280 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:54:15,280 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:54:15,280 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:54:15,425 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:15,788 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: status_report
+2024-05-17 19:54:16,095 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:54:16,095 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:54:16,111 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:16,112 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:16,112 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:54:16,112 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:54:16,112 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:54:16,261 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:16,304 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:54:16,304 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:54:16,937 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:16,938 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:16,938 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:54:16,938 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:54:16,939 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:54:17,090 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:17,095 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:54:17,096 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:54:17,766 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:17,767 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:17,767 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:54:17,767 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:54:17,768 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:54:17,915 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:18,096 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:54:18,096 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:54:18,305 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:54:18,305 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:54:18,604 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:18,605 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:18,605 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:54:18,605 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:54:18,605 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:54:18,741 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:19,096 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:54:19,096 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:54:19,427 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:19,428 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:19,428 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:54:19,428 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:54:19,428 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:54:19,566 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:20,096 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:54:20,096 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:54:20,248 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:20,248 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:20,249 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:54:20,249 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:54:20,249 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:54:20,305 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:54:20,305 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:54:20,398 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:20,797 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: status_report
+2024-05-17 19:54:21,096 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:54:21,097 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:54:21,489 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:21,490 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:21,490 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:54:21,490 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:54:21,491 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:54:21,637 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:21,645 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:21,645 DEBUG   SenderThread:134292 [sender.py:send():380] send: files
+2024-05-17 19:54:21,645 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file media/images/train_batch810_91_8bb27c73a6a9f65662d0.jpg with policy now
+2024-05-17 19:54:21,651 DEBUG   SenderThread:134292 [sender.py:send():380] send: files
+2024-05-17 19:54:21,651 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file media/images/train_batch811_91_cbf88a9078a199bee396.jpg with policy now
+2024-05-17 19:54:21,651 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:21,657 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:21,657 DEBUG   SenderThread:134292 [sender.py:send():380] send: files
+2024-05-17 19:54:21,657 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file media/images/train_batch812_91_daa267e9b09cc6a626f6.jpg with policy now
+2024-05-17 19:54:22,097 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:54:22,097 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:54:22,097 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_created():271] file/dir created: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/images/train_batch811_91_cbf88a9078a199bee396.jpg
+2024-05-17 19:54:22,097 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_created():271] file/dir created: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/images/train_batch812_91_daa267e9b09cc6a626f6.jpg
+2024-05-17 19:54:22,097 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_created():271] file/dir created: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/images/train_batch810_91_8bb27c73a6a9f65662d0.jpg
+2024-05-17 19:54:22,097 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/images
+2024-05-17 19:54:22,305 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:54:22,306 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:54:22,366 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:22,367 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:22,367 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:54:22,368 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:54:22,368 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:54:22,523 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:22,577 INFO    wandb-upload_3:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/oizy3pez-media/images/train_batch810_91_8bb27c73a6a9f65662d0.jpg
+2024-05-17 19:54:22,586 INFO    wandb-upload_0:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/cumud5zb-media/images/train_batch812_91_daa267e9b09cc6a626f6.jpg
+2024-05-17 19:54:22,600 INFO    wandb-upload_2:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/0b5vvmsg-media/images/train_batch811_91_cbf88a9078a199bee396.jpg
+2024-05-17 19:54:23,097 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:54:23,097 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:54:23,183 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:23,184 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:23,184 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:54:23,184 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:54:23,184 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:54:23,319 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:23,695 INFO    wandb-upload_0:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/cfjsgr8f-media/images/train_batch810_91_8bb27c73a6a9f65662d0.jpg
+2024-05-17 19:54:23,695 INFO    wandb-upload_1:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/9eyje2sp-media/images/train_batch812_91_daa267e9b09cc6a626f6.jpg
+2024-05-17 19:54:23,989 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:23,990 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:23,990 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:54:23,990 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:54:23,990 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:54:24,097 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:54:24,097 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:54:24,147 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:24,278 DEBUG   SenderThread:134292 [sender.py:send():380] send: stats
+2024-05-17 19:54:24,306 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:54:24,306 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:54:24,753 INFO    wandb-upload_2:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/17jh1enp-media/images/train_batch811_91_cbf88a9078a199bee396.jpg
+2024-05-17 19:54:24,834 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:24,834 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:24,834 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:54:24,835 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:54:24,835 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:54:24,922 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: stop_status
+2024-05-17 19:54:24,922 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: internal_messages
+2024-05-17 19:54:24,922 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: stop_status
+2024-05-17 19:54:24,983 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:25,098 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:54:25,098 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:54:25,659 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:25,659 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:25,659 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:54:25,660 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:54:25,660 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:54:25,815 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:25,907 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: status_report
+2024-05-17 19:54:26,098 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:54:26,098 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:54:26,306 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:54:26,307 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:54:26,504 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:26,504 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:26,505 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:54:26,505 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:54:26,505 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:54:26,640 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:27,098 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:54:27,098 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:54:27,312 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:27,312 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:27,312 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:54:27,312 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:54:27,313 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:54:27,461 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:28,098 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:54:28,098 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:54:28,152 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:28,152 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:28,152 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:54:28,152 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:54:28,153 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:54:28,293 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:28,307 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:54:28,307 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:54:28,967 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:28,967 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:28,968 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:54:28,968 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:54:28,968 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:54:29,099 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:54:29,099 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:54:29,115 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:30,099 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:54:30,308 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:54:30,308 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:54:30,532 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:30,539 DEBUG   SenderThread:134292 [sender.py:send():380] send: files
+2024-05-17 19:54:30,539 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file media/images/val_batch1_pred_100_e80017e6f4a754382909.jpg with policy now
+2024-05-17 19:54:30,539 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:30,544 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:30,544 DEBUG   SenderThread:134292 [sender.py:send():380] send: files
+2024-05-17 19:54:30,544 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file media/images/val_batch1_labels_100_4dea1a01488051450de2.jpg with policy now
+2024-05-17 19:54:30,550 DEBUG   SenderThread:134292 [sender.py:send():380] send: files
+2024-05-17 19:54:30,550 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file media/images/val_batch0_labels_100_7212020323e43213ad39.jpg with policy now
+2024-05-17 19:54:30,550 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:30,556 DEBUG   SenderThread:134292 [sender.py:send():380] send: files
+2024-05-17 19:54:30,556 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file media/images/val_batch0_pred_100_3e4e868c2d29d198e2b8.jpg with policy now
+2024-05-17 19:54:30,556 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:30,570 DEBUG   SenderThread:134292 [sender.py:send():380] send: files
+2024-05-17 19:54:30,570 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file media/images/PR_curve_100_f10f398df1b4fee5dfea.png with policy now
+2024-05-17 19:54:30,570 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:30,584 DEBUG   SenderThread:134292 [sender.py:send():380] send: files
+2024-05-17 19:54:30,584 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file media/images/F1_curve_100_b85417e85d0f40030668.png with policy now
+2024-05-17 19:54:30,584 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:30,598 DEBUG   SenderThread:134292 [sender.py:send():380] send: files
+2024-05-17 19:54:30,598 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file media/images/P_curve_100_2a0c368380e45f63e20f.png with policy now
+2024-05-17 19:54:30,598 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:30,611 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:30,612 DEBUG   SenderThread:134292 [sender.py:send():380] send: files
+2024-05-17 19:54:30,612 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file media/images/R_curve_100_117e0044c809eaf92505.png with policy now
+2024-05-17 19:54:30,640 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:30,640 DEBUG   SenderThread:134292 [sender.py:send():380] send: files
+2024-05-17 19:54:30,640 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file media/images/confusion_matrix_normalized_100_92dbc14cd98b5ea232d0.png with policy now
+2024-05-17 19:54:30,667 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:30,668 DEBUG   SenderThread:134292 [sender.py:send():380] send: files
+2024-05-17 19:54:30,668 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file media/images/confusion_matrix_100_1c816dc315df9c59752c.png with policy now
+2024-05-17 19:54:31,087 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:31,087 DEBUG   SenderThread:134292 [sender.py:send():380] send: files
+2024-05-17 19:54:31,087 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file media/images/results_100_b3437835154d004d71ab.png with policy now
+2024-05-17 19:54:31,088 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: status_report
+2024-05-17 19:54:31,099 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:54:31,099 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_created():271] file/dir created: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/images/R_curve_100_117e0044c809eaf92505.png
+2024-05-17 19:54:31,099 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_created():271] file/dir created: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/images/val_batch0_pred_100_3e4e868c2d29d198e2b8.jpg
+2024-05-17 19:54:31,099 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_created():271] file/dir created: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/images/confusion_matrix_normalized_100_92dbc14cd98b5ea232d0.png
+2024-05-17 19:54:31,100 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_created():271] file/dir created: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/images/val_batch1_pred_100_e80017e6f4a754382909.jpg
+2024-05-17 19:54:31,100 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_created():271] file/dir created: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/images/PR_curve_100_f10f398df1b4fee5dfea.png
+2024-05-17 19:54:31,100 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_created():271] file/dir created: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/images/F1_curve_100_b85417e85d0f40030668.png
+2024-05-17 19:54:31,100 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_created():271] file/dir created: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/images/val_batch0_labels_100_7212020323e43213ad39.jpg
+2024-05-17 19:54:31,100 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_created():271] file/dir created: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/images/results_100_b3437835154d004d71ab.png
+2024-05-17 19:54:31,100 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_created():271] file/dir created: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/images/confusion_matrix_100_1c816dc315df9c59752c.png
+2024-05-17 19:54:31,100 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_created():271] file/dir created: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/images/P_curve_100_2a0c368380e45f63e20f.png
+2024-05-17 19:54:31,100 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_created():271] file/dir created: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/images/val_batch1_labels_100_4dea1a01488051450de2.jpg
+2024-05-17 19:54:31,100 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/images
+2024-05-17 19:54:31,233 INFO    wandb-upload_0:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/1mtm3df8-media/images/val_batch1_pred_100_e80017e6f4a754382909.jpg
+2024-05-17 19:54:31,306 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: log_artifact
+2024-05-17 19:54:31,306 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: log_artifact
+2024-05-17 19:54:31,363 INFO    wandb-upload_4:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/jb438xrs-media/images/PR_curve_100_f10f398df1b4fee5dfea.png
+2024-05-17 19:54:31,364 INFO    wandb-upload_6:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/m7b4jhif-media/images/P_curve_100_2a0c368380e45f63e20f.png
+2024-05-17 19:54:31,388 INFO    wandb-upload_5:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/hgcqt6zh-media/images/F1_curve_100_b85417e85d0f40030668.png
+2024-05-17 19:54:31,398 INFO    wandb-upload_7:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/92yrahin-media/images/R_curve_100_117e0044c809eaf92505.png
+2024-05-17 19:54:31,424 INFO    wandb-upload_8:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/z04rvmkf-media/images/confusion_matrix_normalized_100_92dbc14cd98b5ea232d0.png
+2024-05-17 19:54:31,466 INFO    wandb-upload_1:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/3018gowz-media/images/val_batch1_labels_100_4dea1a01488051450de2.jpg
+2024-05-17 19:54:31,482 INFO    wandb-upload_9:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/7h760l35-media/images/confusion_matrix_100_1c816dc315df9c59752c.png
+2024-05-17 19:54:31,514 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: log_artifact
+2024-05-17 19:54:31,518 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:31,530 INFO    wandb-upload_2:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/kw1ly6ut-media/images/val_batch0_pred_100_3e4e868c2d29d198e2b8.jpg
+2024-05-17 19:54:31,653 INFO    wandb-upload_3:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/blo2efsl-media/images/val_batch0_labels_100_7212020323e43213ad39.jpg
+2024-05-17 19:54:31,724 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: log_artifact
+2024-05-17 19:54:31,731 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:31,947 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: log_artifact
+2024-05-17 19:54:31,955 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:32,102 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:54:32,102 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_created():271] file/dir created: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/table/curves/Precision-Confidence(B)_table_100_22f2db1f450fc299e767.table.json
+2024-05-17 19:54:32,102 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_created():271] file/dir created: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/table/curves/Precision-Recall(B)_table_100_01bc462cf669009a1048.table.json
+2024-05-17 19:54:32,103 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_created():271] file/dir created: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/table/curves/F1-Confidence(B)_table_100_b37744942f25cce2aef8.table.json
+2024-05-17 19:54:32,103 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media
+2024-05-17 19:54:32,104 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_created():271] file/dir created: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/table/curves
+2024-05-17 19:54:32,104 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_created():271] file/dir created: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/table
+2024-05-17 19:54:32,157 INFO    wandb-upload_10:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/hij4xrqo-media/images/results_100_b3437835154d004d71ab.png
+2024-05-17 19:54:32,167 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: log_artifact
+2024-05-17 19:54:32,170 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: partial_history
+2024-05-17 19:54:32,264 INFO    wandb-upload_6:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/kljbms4a-media/images/PR_curve_100_f10f398df1b4fee5dfea.png
+2024-05-17 19:54:32,293 INFO    wandb-upload_4:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/z0azvig4-media/images/F1_curve_100_b85417e85d0f40030668.png
+2024-05-17 19:54:32,303 INFO    wandb-upload_0:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/zmo1kx17-media/images/val_batch1_pred_100_e80017e6f4a754382909.jpg
+2024-05-17 19:54:32,308 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:54:32,308 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:54:32,432 INFO    wandb-upload_5:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/lgugdary-media/images/confusion_matrix_100_1c816dc315df9c59752c.png
+2024-05-17 19:54:32,535 INFO    wandb-upload_7:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/yzxzq60s-media/images/P_curve_100_2a0c368380e45f63e20f.png
+2024-05-17 19:54:32,610 INFO    wandb-upload_8:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/6yccoj0m-media/table/curves/Precision-Confidence(B)_table_100_22f2db1f450fc299e767.table.json
+2024-05-17 19:54:32,612 INFO    wandb-upload_1:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/04uzev2b-media/table/curves/Precision-Recall(B)_table_100_01bc462cf669009a1048.table.json
+2024-05-17 19:54:32,664 INFO    wandb-upload_3:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/wt6jhfc2-media/table/curves/F1-Confidence(B)_table_100_b37744942f25cce2aef8.table.json
+2024-05-17 19:54:33,103 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_created():271] file/dir created: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/table/curves/Recall-Confidence(B)_table_100_2690558a2f0ce965841e.table.json
+2024-05-17 19:54:33,103 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/table/curves
+2024-05-17 19:54:33,128 INFO    wandb-upload_2:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/xmra8902-media/images/val_batch1_labels_100_4dea1a01488051450de2.jpg
+2024-05-17 19:54:33,132 INFO    wandb-upload_10:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/9xc3exi8-media/images/R_curve_100_117e0044c809eaf92505.png
+2024-05-17 19:54:33,171 INFO    wandb-upload_4:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/tsa5dpm3-media/images/confusion_matrix_normalized_100_92dbc14cd98b5ea232d0.png
+2024-05-17 19:54:33,172 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: poll_exit
+2024-05-17 19:54:33,517 INFO    wandb-upload_6:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/u7zv6rmn-media/images/val_batch0_pred_100_3e4e868c2d29d198e2b8.jpg
+2024-05-17 19:54:33,577 INFO    wandb-upload_7:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/8f2nv0wm-media/table/curves/Recall-Confidence(B)_table_100_2690558a2f0ce965841e.table.json
+2024-05-17 19:54:33,593 INFO    wandb-upload_0:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/6h2x79yg-media/images/val_batch0_labels_100_7212020323e43213ad39.jpg
+2024-05-17 19:54:33,693 INFO    wandb-upload_5:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/87vx9a80-media/images/results_100_b3437835154d004d71ab.png
+2024-05-17 19:54:34,261 INFO    wandb-upload_9:134292 [upload_job.py:push():89] Uploaded file /home/leo/.local/share/wandb/artifacts/staging/tmpg2pd3uxl
+2024-05-17 19:54:34,309 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:54:34,309 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:54:35,141 INFO    SenderThread:134292 [sender.py:send_request_log_artifact():1444] logged artifact run_b04qqyss_model - {'id': 'QXJ0aWZhY3Q6ODM5OTczNTUy', 'state': 'PENDING', 'artifactSequence': {'id': 'QXJ0aWZhY3RDb2xsZWN0aW9uOjE3NjAwNjQ4Mw==', 'latestArtifact': None}}
+2024-05-17 19:54:35,142 DEBUG   SenderThread:134292 [sender.py:send():380] send: config
+2024-05-17 19:54:35,142 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: log_artifact
+2024-05-17 19:54:36,279 INFO    wandb-upload_1:134292 [upload_job.py:push():89] Uploaded file /home/leo/.local/share/wandb/artifacts/staging/tmpo1gyjr3c
+2024-05-17 19:54:36,310 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:54:36,311 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:54:37,059 INFO    SenderThread:134292 [sender.py:send_request_log_artifact():1444] logged artifact run-b04qqyss-curvesPrecisionRecallB_table - {'id': 'QXJ0aWZhY3Q6ODM5OTczNTkz', 'state': 'PENDING', 'artifactSequence': {'id': 'QXJ0aWZhY3RDb2xsZWN0aW9uOjE3NjAwNjQ4OA==', 'latestArtifact': None}}
+2024-05-17 19:54:37,060 DEBUG   SenderThread:134292 [sender.py:send():380] send: files
+2024-05-17 19:54:37,060 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file media/table/curves/Precision-Recall(B)_table_100_01bc462cf669009a1048.table.json with policy now
+2024-05-17 19:54:37,061 DEBUG   SenderThread:134292 [sender.py:send():380] send: config
+2024-05-17 19:54:37,061 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: log_artifact
+2024-05-17 19:54:37,066 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: status_report
+2024-05-17 19:54:37,730 INFO    wandb-upload_8:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/qz1vnbjw-media/table/curves/Precision-Recall(B)_table_100_01bc462cf669009a1048.table.json
+2024-05-17 19:54:38,153 INFO    wandb-upload_10:134292 [upload_job.py:push():89] Uploaded file /home/leo/.local/share/wandb/artifacts/staging/tmprxab22x1
+2024-05-17 19:54:38,173 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: keepalive
+2024-05-17 19:54:38,311 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:54:38,311 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:54:39,060 INFO    SenderThread:134292 [sender.py:send_request_log_artifact():1444] logged artifact run-b04qqyss-curvesF1ConfidenceB_table - {'id': 'QXJ0aWZhY3Q6ODM5OTczNjE2', 'state': 'PENDING', 'artifactSequence': {'id': 'QXJ0aWZhY3RDb2xsZWN0aW9uOjE3NjAwNjQ5MQ==', 'latestArtifact': None}}
+2024-05-17 19:54:39,060 DEBUG   SenderThread:134292 [sender.py:send():380] send: files
+2024-05-17 19:54:39,060 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file media/table/curves/F1-Confidence(B)_table_100_b37744942f25cce2aef8.table.json with policy now
+2024-05-17 19:54:39,060 DEBUG   SenderThread:134292 [sender.py:send():380] send: config
+2024-05-17 19:54:39,061 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: log_artifact
+2024-05-17 19:54:39,705 INFO    wandb-upload_6:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/2uozyfpv-media/table/curves/F1-Confidence(B)_table_100_b37744942f25cce2aef8.table.json
+2024-05-17 19:54:40,172 INFO    wandb-upload_0:134292 [upload_job.py:push():89] Uploaded file /home/leo/.local/share/wandb/artifacts/staging/tmpryujuna3
+2024-05-17 19:54:40,313 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:54:40,313 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:54:41,121 INFO    SenderThread:134292 [sender.py:send_request_log_artifact():1444] logged artifact run-b04qqyss-curvesPrecisionConfidenceB_table - {'id': 'QXJ0aWZhY3Q6ODM5OTczNjM5', 'state': 'PENDING', 'artifactSequence': {'id': 'QXJ0aWZhY3RDb2xsZWN0aW9uOjE3NjAwNjQ5OA==', 'latestArtifact': None}}
+2024-05-17 19:54:41,121 DEBUG   SenderThread:134292 [sender.py:send():380] send: files
+2024-05-17 19:54:41,121 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file media/table/curves/Precision-Confidence(B)_table_100_22f2db1f450fc299e767.table.json with policy now
+2024-05-17 19:54:41,122 DEBUG   SenderThread:134292 [sender.py:send():380] send: config
+2024-05-17 19:54:41,122 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: log_artifact
+2024-05-17 19:54:41,717 INFO    wandb-upload_9:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/zhtgw3b5-media/table/curves/Precision-Confidence(B)_table_100_22f2db1f450fc299e767.table.json
+2024-05-17 19:54:42,265 INFO    wandb-upload_1:134292 [upload_job.py:push():89] Uploaded file /home/leo/.local/share/wandb/artifacts/staging/tmprg5yizxo
+2024-05-17 19:54:42,314 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:54:42,316 ERROR   disk      :134292 [interfaces.py:monitor():144] Failed to sample metric: not sure how to interpret line '   7       0 loop0 14 0 34 0 0 0 0 0 0 12 0 0 0 0 0 0 0\n'
+2024-05-17 19:54:43,156 INFO    SenderThread:134292 [sender.py:send_request_log_artifact():1444] logged artifact run-b04qqyss-curvesRecallConfidenceB_table - {'id': 'QXJ0aWZhY3Q6ODM5OTczNjY5', 'state': 'PENDING', 'artifactSequence': {'id': 'QXJ0aWZhY3RDb2xsZWN0aW9uOjE3NjAwNjUwOA==', 'latestArtifact': None}}
+2024-05-17 19:54:43,156 DEBUG   SenderThread:134292 [sender.py:send():380] send: files
+2024-05-17 19:54:43,157 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file media/table/curves/Recall-Confidence(B)_table_100_2690558a2f0ce965841e.table.json with policy now
+2024-05-17 19:54:43,157 DEBUG   SenderThread:134292 [sender.py:send():380] send: telemetry
+2024-05-17 19:54:43,157 DEBUG   SenderThread:134292 [sender.py:send():380] send: exit
+2024-05-17 19:54:43,157 INFO    SenderThread:134292 [sender.py:send_exit():585] handling exit code: 0
+2024-05-17 19:54:43,157 INFO    SenderThread:134292 [sender.py:send_exit():587] handling runtime: 97
+2024-05-17 19:54:43,158 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:54:43,159 INFO    SenderThread:134292 [sender.py:send_exit():593] send defer
+2024-05-17 19:54:43,159 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: poll_exit
+2024-05-17 19:54:43,160 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: status_report
+2024-05-17 19:54:43,160 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: defer
+2024-05-17 19:54:43,160 INFO    HandlerThread:134292 [handler.py:handle_request_defer():170] handle defer: 0
+2024-05-17 19:54:43,161 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: defer
+2024-05-17 19:54:43,162 INFO    SenderThread:134292 [sender.py:send_request_defer():609] handle sender defer: 0
+2024-05-17 19:54:43,162 INFO    SenderThread:134292 [sender.py:transition_state():613] send defer: 1
+2024-05-17 19:54:43,162 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: defer
+2024-05-17 19:54:43,162 INFO    HandlerThread:134292 [handler.py:handle_request_defer():170] handle defer: 1
+2024-05-17 19:54:43,163 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: defer
+2024-05-17 19:54:43,163 INFO    SenderThread:134292 [sender.py:send_request_defer():609] handle sender defer: 1
+2024-05-17 19:54:43,163 INFO    SenderThread:134292 [sender.py:transition_state():613] send defer: 2
+2024-05-17 19:54:43,163 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: defer
+2024-05-17 19:54:43,163 INFO    HandlerThread:134292 [handler.py:handle_request_defer():170] handle defer: 2
+2024-05-17 19:54:43,163 INFO    HandlerThread:134292 [system_monitor.py:finish():190] Stopping system monitor
+2024-05-17 19:54:43,163 DEBUG   SystemMonitor:134292 [system_monitor.py:_start():166] Finished system metrics aggregation loop
+2024-05-17 19:54:43,164 INFO    HandlerThread:134292 [interfaces.py:finish():202] Joined cpu monitor
+2024-05-17 19:54:43,165 DEBUG   SystemMonitor:134292 [system_monitor.py:_start():170] Publishing last batch of metrics
+2024-05-17 19:54:43,165 INFO    HandlerThread:134292 [interfaces.py:finish():202] Joined disk monitor
+2024-05-17 19:54:43,222 INFO    HandlerThread:134292 [interfaces.py:finish():202] Joined gpu monitor
+2024-05-17 19:54:43,222 INFO    HandlerThread:134292 [interfaces.py:finish():202] Joined memory monitor
+2024-05-17 19:54:43,222 INFO    HandlerThread:134292 [interfaces.py:finish():202] Joined network monitor
+2024-05-17 19:54:43,222 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: keepalive
+2024-05-17 19:54:43,222 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: defer
+2024-05-17 19:54:43,222 INFO    SenderThread:134292 [sender.py:send_request_defer():609] handle sender defer: 2
+2024-05-17 19:54:43,222 INFO    SenderThread:134292 [sender.py:transition_state():613] send defer: 3
+2024-05-17 19:54:43,222 DEBUG   SenderThread:134292 [sender.py:send():380] send: stats
+2024-05-17 19:54:43,223 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: defer
+2024-05-17 19:54:43,223 INFO    HandlerThread:134292 [handler.py:handle_request_defer():170] handle defer: 3
+2024-05-17 19:54:43,223 DEBUG   SenderThread:134292 [sender.py:send():380] send: history
+2024-05-17 19:54:43,223 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: summary_record
+2024-05-17 19:54:43,224 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:54:43,224 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: defer
+2024-05-17 19:54:43,224 INFO    SenderThread:134292 [sender.py:send_request_defer():609] handle sender defer: 3
+2024-05-17 19:54:43,224 INFO    SenderThread:134292 [sender.py:transition_state():613] send defer: 4
+2024-05-17 19:54:43,224 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: defer
+2024-05-17 19:54:43,224 INFO    HandlerThread:134292 [handler.py:handle_request_defer():170] handle defer: 4
+2024-05-17 19:54:43,224 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: defer
+2024-05-17 19:54:43,224 INFO    SenderThread:134292 [sender.py:send_request_defer():609] handle sender defer: 4
+2024-05-17 19:54:43,224 INFO    SenderThread:134292 [sender.py:transition_state():613] send defer: 5
+2024-05-17 19:54:43,224 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: defer
+2024-05-17 19:54:43,224 INFO    HandlerThread:134292 [handler.py:handle_request_defer():170] handle defer: 5
+2024-05-17 19:54:43,225 DEBUG   SenderThread:134292 [sender.py:send():380] send: summary
+2024-05-17 19:54:43,225 INFO    SenderThread:134292 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2024-05-17 19:54:43,225 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: defer
+2024-05-17 19:54:43,225 INFO    SenderThread:134292 [sender.py:send_request_defer():609] handle sender defer: 5
+2024-05-17 19:54:43,225 INFO    SenderThread:134292 [sender.py:transition_state():613] send defer: 6
+2024-05-17 19:54:43,225 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: defer
+2024-05-17 19:54:43,225 INFO    HandlerThread:134292 [handler.py:handle_request_defer():170] handle defer: 6
+2024-05-17 19:54:43,225 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: defer
+2024-05-17 19:54:43,225 INFO    SenderThread:134292 [sender.py:send_request_defer():609] handle sender defer: 6
+2024-05-17 19:54:43,227 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: status_report
+2024-05-17 19:54:43,443 INFO    SenderThread:134292 [sender.py:transition_state():613] send defer: 7
+2024-05-17 19:54:43,443 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: defer
+2024-05-17 19:54:43,443 INFO    HandlerThread:134292 [handler.py:handle_request_defer():170] handle defer: 7
+2024-05-17 19:54:43,444 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: defer
+2024-05-17 19:54:43,444 INFO    SenderThread:134292 [sender.py:send_request_defer():609] handle sender defer: 7
+2024-05-17 19:54:43,766 INFO    wandb-upload_4:134292 [upload_job.py:push():131] Uploaded file /tmp/tmpdinbmvriwandb/vpddmjtb-media/table/curves/Recall-Confidence(B)_table_100_2690558a2f0ce965841e.table.json
+2024-05-17 19:54:44,113 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/config.yaml
+2024-05-17 19:54:44,113 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:54:45,080 INFO    SenderThread:134292 [sender.py:transition_state():613] send defer: 8
+2024-05-17 19:54:45,080 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: defer
+2024-05-17 19:54:45,080 INFO    HandlerThread:134292 [handler.py:handle_request_defer():170] handle defer: 8
+2024-05-17 19:54:45,081 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: defer
+2024-05-17 19:54:45,081 INFO    SenderThread:134292 [sender.py:send_request_defer():609] handle sender defer: 8
+2024-05-17 19:54:45,082 INFO    SenderThread:134292 [job_builder.py:build():281] Attempting to build job artifact
+2024-05-17 19:54:45,083 INFO    SenderThread:134292 [job_builder.py:_get_source_type():404] no source found
+2024-05-17 19:54:45,083 INFO    SenderThread:134292 [sender.py:transition_state():613] send defer: 9
+2024-05-17 19:54:45,084 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: defer
+2024-05-17 19:54:45,084 INFO    HandlerThread:134292 [handler.py:handle_request_defer():170] handle defer: 9
+2024-05-17 19:54:45,085 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: defer
+2024-05-17 19:54:45,085 INFO    SenderThread:134292 [sender.py:send_request_defer():609] handle sender defer: 9
+2024-05-17 19:54:45,085 INFO    SenderThread:134292 [dir_watcher.py:finish():358] shutting down directory watcher
+2024-05-17 19:54:45,114 INFO    Thread-12 :134292 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:54:45,115 INFO    SenderThread:134292 [dir_watcher.py:finish():388] scan: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files
+2024-05-17 19:54:45,116 INFO    SenderThread:134292 [dir_watcher.py:finish():402] scan save: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/config.yaml config.yaml
+2024-05-17 19:54:45,116 INFO    SenderThread:134292 [dir_watcher.py:finish():402] scan save: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-metadata.json wandb-metadata.json
+2024-05-17 19:54:45,116 INFO    SenderThread:134292 [dir_watcher.py:finish():402] scan save: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/requirements.txt requirements.txt
+2024-05-17 19:54:45,116 INFO    SenderThread:134292 [dir_watcher.py:finish():402] scan save: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log output.log
+2024-05-17 19:54:45,116 INFO    SenderThread:134292 [dir_watcher.py:finish():402] scan save: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json wandb-summary.json
+2024-05-17 19:54:45,136 INFO    SenderThread:134292 [dir_watcher.py:finish():402] scan save: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/table/curves/Recall-Confidence(B)_table_100_2690558a2f0ce965841e.table.json media/table/curves/Recall-Confidence(B)_table_100_2690558a2f0ce965841e.table.json
+2024-05-17 19:54:45,136 INFO    SenderThread:134292 [dir_watcher.py:finish():402] scan save: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/table/curves/F1-Confidence(B)_table_100_b37744942f25cce2aef8.table.json media/table/curves/F1-Confidence(B)_table_100_b37744942f25cce2aef8.table.json
+2024-05-17 19:54:45,136 INFO    SenderThread:134292 [dir_watcher.py:finish():402] scan save: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/table/curves/Precision-Recall(B)_table_100_01bc462cf669009a1048.table.json media/table/curves/Precision-Recall(B)_table_100_01bc462cf669009a1048.table.json
+2024-05-17 19:54:45,136 INFO    SenderThread:134292 [dir_watcher.py:finish():402] scan save: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/table/curves/Precision-Confidence(B)_table_100_22f2db1f450fc299e767.table.json media/table/curves/Precision-Confidence(B)_table_100_22f2db1f450fc299e767.table.json
+2024-05-17 19:54:45,136 INFO    SenderThread:134292 [dir_watcher.py:finish():402] scan save: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/images/val_batch0_labels_100_7212020323e43213ad39.jpg media/images/val_batch0_labels_100_7212020323e43213ad39.jpg
+2024-05-17 19:54:45,137 INFO    SenderThread:134292 [dir_watcher.py:finish():402] scan save: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/images/val_batch1_labels_100_4dea1a01488051450de2.jpg media/images/val_batch1_labels_100_4dea1a01488051450de2.jpg
+2024-05-17 19:54:45,137 INFO    SenderThread:134292 [dir_watcher.py:finish():402] scan save: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/images/R_curve_100_117e0044c809eaf92505.png media/images/R_curve_100_117e0044c809eaf92505.png
+2024-05-17 19:54:45,137 INFO    SenderThread:134292 [dir_watcher.py:finish():402] scan save: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/images/train_batch2_1_96c1c83e70954ca8476f.jpg media/images/train_batch2_1_96c1c83e70954ca8476f.jpg
+2024-05-17 19:54:45,137 INFO    SenderThread:134292 [dir_watcher.py:finish():402] scan save: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/images/train_batch0_1_27ece488fd5a45342442.jpg media/images/train_batch0_1_27ece488fd5a45342442.jpg
+2024-05-17 19:54:45,137 INFO    SenderThread:134292 [dir_watcher.py:finish():402] scan save: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/images/train_batch812_91_daa267e9b09cc6a626f6.jpg media/images/train_batch812_91_daa267e9b09cc6a626f6.jpg
+2024-05-17 19:54:45,137 INFO    SenderThread:134292 [dir_watcher.py:finish():402] scan save: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/images/confusion_matrix_100_1c816dc315df9c59752c.png media/images/confusion_matrix_100_1c816dc315df9c59752c.png
+2024-05-17 19:54:45,137 INFO    SenderThread:134292 [dir_watcher.py:finish():402] scan save: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/images/labels_1_5eadc9bf84308564636d.jpg media/images/labels_1_5eadc9bf84308564636d.jpg
+2024-05-17 19:54:45,138 INFO    SenderThread:134292 [dir_watcher.py:finish():402] scan save: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/images/results_100_b3437835154d004d71ab.png media/images/results_100_b3437835154d004d71ab.png
+2024-05-17 19:54:45,138 INFO    SenderThread:134292 [dir_watcher.py:finish():402] scan save: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/images/confusion_matrix_normalized_100_92dbc14cd98b5ea232d0.png media/images/confusion_matrix_normalized_100_92dbc14cd98b5ea232d0.png
+2024-05-17 19:54:45,138 INFO    SenderThread:134292 [dir_watcher.py:finish():402] scan save: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/images/train_batch810_91_8bb27c73a6a9f65662d0.jpg media/images/train_batch810_91_8bb27c73a6a9f65662d0.jpg
+2024-05-17 19:54:45,138 INFO    SenderThread:134292 [dir_watcher.py:finish():402] scan save: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/images/val_batch0_pred_100_3e4e868c2d29d198e2b8.jpg media/images/val_batch0_pred_100_3e4e868c2d29d198e2b8.jpg
+2024-05-17 19:54:45,138 INFO    SenderThread:134292 [dir_watcher.py:finish():402] scan save: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/images/PR_curve_100_f10f398df1b4fee5dfea.png media/images/PR_curve_100_f10f398df1b4fee5dfea.png
+2024-05-17 19:54:45,138 INFO    SenderThread:134292 [dir_watcher.py:finish():402] scan save: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/images/train_batch1_1_8bd988787cb795fdedd8.jpg media/images/train_batch1_1_8bd988787cb795fdedd8.jpg
+2024-05-17 19:54:45,138 INFO    SenderThread:134292 [dir_watcher.py:finish():402] scan save: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/images/val_batch1_pred_100_e80017e6f4a754382909.jpg media/images/val_batch1_pred_100_e80017e6f4a754382909.jpg
+2024-05-17 19:54:45,138 INFO    SenderThread:134292 [dir_watcher.py:finish():402] scan save: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/images/P_curve_100_2a0c368380e45f63e20f.png media/images/P_curve_100_2a0c368380e45f63e20f.png
+2024-05-17 19:54:45,139 INFO    SenderThread:134292 [dir_watcher.py:finish():402] scan save: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/images/train_batch811_91_cbf88a9078a199bee396.jpg media/images/train_batch811_91_cbf88a9078a199bee396.jpg
+2024-05-17 19:54:45,139 INFO    SenderThread:134292 [dir_watcher.py:finish():402] scan save: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/media/images/F1_curve_100_b85417e85d0f40030668.png media/images/F1_curve_100_b85417e85d0f40030668.png
+2024-05-17 19:54:45,139 INFO    SenderThread:134292 [sender.py:transition_state():613] send defer: 10
+2024-05-17 19:54:45,139 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: defer
+2024-05-17 19:54:45,139 INFO    HandlerThread:134292 [handler.py:handle_request_defer():170] handle defer: 10
+2024-05-17 19:54:45,140 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: defer
+2024-05-17 19:54:45,140 INFO    SenderThread:134292 [sender.py:send_request_defer():609] handle sender defer: 10
+2024-05-17 19:54:45,140 INFO    SenderThread:134292 [file_pusher.py:finish():175] shutting down file pusher
+2024-05-17 19:54:45,582 INFO    wandb-upload_10:134292 [upload_job.py:push():131] Uploaded file /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/config.yaml
+2024-05-17 19:54:45,610 INFO    wandb-upload_7:134292 [upload_job.py:push():131] Uploaded file /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/requirements.txt
+2024-05-17 19:54:45,616 INFO    wandb-upload_6:134292 [upload_job.py:push():131] Uploaded file /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/wandb-summary.json
+2024-05-17 19:54:45,843 INFO    wandb-upload_5:134292 [upload_job.py:push():131] Uploaded file /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/files/output.log
+2024-05-17 19:54:46,043 INFO    Thread-11 :134292 [sender.py:transition_state():613] send defer: 11
+2024-05-17 19:54:46,043 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: defer
+2024-05-17 19:54:46,043 INFO    HandlerThread:134292 [handler.py:handle_request_defer():170] handle defer: 11
+2024-05-17 19:54:46,044 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: defer
+2024-05-17 19:54:46,044 INFO    SenderThread:134292 [sender.py:send_request_defer():609] handle sender defer: 11
+2024-05-17 19:54:46,044 INFO    SenderThread:134292 [file_pusher.py:join():181] waiting for file pusher
+2024-05-17 19:54:46,044 INFO    SenderThread:134292 [sender.py:transition_state():613] send defer: 12
+2024-05-17 19:54:46,044 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: defer
+2024-05-17 19:54:46,044 INFO    HandlerThread:134292 [handler.py:handle_request_defer():170] handle defer: 12
+2024-05-17 19:54:46,044 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: defer
+2024-05-17 19:54:46,045 INFO    SenderThread:134292 [sender.py:send_request_defer():609] handle sender defer: 12
+2024-05-17 19:54:46,045 INFO    SenderThread:134292 [file_stream.py:finish():595] file stream finish called
+2024-05-17 19:54:46,253 INFO    SenderThread:134292 [file_stream.py:finish():599] file stream finish is done
+2024-05-17 19:54:46,253 INFO    SenderThread:134292 [sender.py:transition_state():613] send defer: 13
+2024-05-17 19:54:46,253 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: defer
+2024-05-17 19:54:46,253 INFO    HandlerThread:134292 [handler.py:handle_request_defer():170] handle defer: 13
+2024-05-17 19:54:46,253 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: defer
+2024-05-17 19:54:46,253 INFO    SenderThread:134292 [sender.py:send_request_defer():609] handle sender defer: 13
+2024-05-17 19:54:46,253 INFO    SenderThread:134292 [sender.py:transition_state():613] send defer: 14
+2024-05-17 19:54:46,253 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: defer
+2024-05-17 19:54:46,253 INFO    HandlerThread:134292 [handler.py:handle_request_defer():170] handle defer: 14
+2024-05-17 19:54:46,253 DEBUG   SenderThread:134292 [sender.py:send():380] send: final
+2024-05-17 19:54:46,253 DEBUG   SenderThread:134292 [sender.py:send():380] send: footer
+2024-05-17 19:54:46,254 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: defer
+2024-05-17 19:54:46,254 INFO    SenderThread:134292 [sender.py:send_request_defer():609] handle sender defer: 14
+2024-05-17 19:54:46,254 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: internal_messages
+2024-05-17 19:54:46,254 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: poll_exit
+2024-05-17 19:54:46,255 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: poll_exit
+2024-05-17 19:54:46,255 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: server_info
+2024-05-17 19:54:46,255 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: get_summary
+2024-05-17 19:54:46,255 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: sampled_history
+2024-05-17 19:54:46,256 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: job_info
+2024-05-17 19:54:46,256 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: server_info
+2024-05-17 19:54:46,432 DEBUG   SenderThread:134292 [sender.py:send_request():407] send_request: job_info
+2024-05-17 19:54:46,433 DEBUG   HandlerThread:134292 [handler.py:handle_request():144] handle_request: shutdown
+2024-05-17 19:54:46,433 INFO    HandlerThread:134292 [handler.py:finish():844] shutting down handler
+2024-05-17 19:54:47,256 INFO    WriterThread:134292 [datastore.py:close():294] close: /home/leo/mts/src/coverage/Yolo/wandb/run-20240517_195253-b04qqyss/run-b04qqyss.wandb
+2024-05-17 19:54:47,433 INFO    SenderThread:134292 [sender.py:finish():1534] shutting down sender
+2024-05-17 19:54:47,433 INFO    SenderThread:134292 [file_pusher.py:finish():175] shutting down file pusher
+2024-05-17 19:54:47,433 INFO    SenderThread:134292 [file_pusher.py:join():181] waiting for file pusher

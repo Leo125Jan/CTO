@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<launch>
+
+  <group ns="uav0">
+    <node pkg="coverage" type="yoloV8.py" name="yoloV8_ros" output="screen" >
+      <param name="weight_path" value="/home/leo/mts/src/coverage/Yolo/runs/detect/train8/weights/best.pt"/>
+      <param name="image_topic" value="camera/camera/color/image_raw" />
+      <param name="pub_topic" value="yolov8/BoundingBoxes" />
+      <param name="output_topic" value="yolov8/detections_image" />
+      <param name="camera_frame" value="camera_color_frame"/>
+      <param name="visualize" value="false"/>
+      <param name="conf" value="0.25" />
+      <param name="sort" value="/home/leo/mts/src/coverage/config/sort.yaml" />
+    </node>
+  </group>
+
+<!--   <group ns="uav4">
+    <node pkg="coverage" type="yoloV8.py" name="yoloV8_ros" output="screen" >
+      <param name="weight_path" value="/home/leo/mts/src/coverage/Yolo/runs/detect/train8/weights/best.pt"/>
+      <param name="image_topic" value="camera/camera/color/image_raw" />
+      <param name="pub_topic" value="yolov8/BoundingBoxes" />
+      <param name="output_topic" value="yolov8/detections_image" />
+      <param name="camera_frame" value="camera_color_frame"/>
+      <param name="visualize" value="false"/>
+      <param name="conf" value="0.25" />
+      <param name="sort" value="/home/leo/mts/src/coverage/config/sort.yaml" />
+    </node>
+  </group> -->
+
+  <group ns="uav1">
+    <node pkg="coverage" type="yoloV8.py" name="yoloV8_ros" output="screen" >
+      <param name="weight_path" value="/home/leo/mts/src/coverage/Yolo/runs/detect/train8/weights/best.pt"/>
+      <param name="image_topic" value="camera/camera/color/image_raw" />
+      <param name="pub_topic" value="yolov8/BoundingBoxes" />
+      <param name="output_topic" value="yolov8/detections_image" />
+      <param name="camera_frame" value="camera_color_frame"/>
+      <param name="visualize" value="false"/>
+      <param name="conf" value="0.25" />
+      <param name="sort" value="/home/leo/mts/src/coverage/config/sort.yaml" />
+    </node>
+  </group>
+
+  <group ns="uav2">
+    <node pkg="coverage" type="yoloV8.py" name="yoloV8_ros" output="screen" >
+      <param name="weight_path" value="/home/leo/mts/src/coverage/Yolo/runs/detect/train8/weights/best.pt"/>
+      <param name="image_topic" value="camera/camera/color/image_raw" />
+      <param name="pub_topic" value="yolov8/BoundingBoxes" />
+      <param name="output_topic" value="yolov8/detections_image" />
+      <param name="camera_frame" value="camera_color_frame"/>
+      <param name="visualize" value="false"/>
+      <param name="conf" value="0.25" />
+      <param name="sort" value="/home/leo/mts/src/coverage/config/sort.yaml" />
+    </node>
+  </group>
+
+  <group ns="uav3">
+    <node pkg="coverage" type="yoloV8.py" name="yoloV8_ros" output="screen" >
+      <param name="weight_path" value="/home/leo/mts/src/coverage/Yolo/runs/detect/train8/weights/best.pt"/>
+      <param name="image_topic" value="camera/camera/color/image_raw" />
+      <param name="pub_topic" value="yolov8/BoundingBoxes" />
+      <param name="output_topic" value="yolov8/detections_image" />
+      <param name="camera_frame" value="camera_color_frame"/>
+      <param name="visualize" value="false"/>
+      <param name="conf" value="0.25" />
+      <param name="sort" value="/home/leo/mts/src/coverage/config/sort.yaml" />
+    </node>
+  </group>
+
+</launch>

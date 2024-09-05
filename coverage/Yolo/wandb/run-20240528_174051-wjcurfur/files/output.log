@@ -1,0 +1,113 @@
+image 1/1 /home/leo/mts/src/coverage/Yolo/drone-detection-2-1/left0000.jpg: 384x640 2 Drones, 26.9ms
+Speed: 1.1ms preprocess, 26.9ms inference, 33.2ms postprocess per image at shape (1, 3, 384, 640)
+Results saved to [1mruns/detect/predict21
+results1:  [ultralytics.engine.results.Results object with attributes:
+boxes: ultralytics.engine.results.Boxes object
+keypoints: None
+masks: None
+names: {0: 'Drone'}
+obb: None
+orig_img: array([[[178, 178, 178],
+        [178, 178, 178],
+        [178, 178, 178],
+        ...,
+        [178, 178, 178],
+        [178, 178, 178],
+        [178, 178, 178]],
+       [[178, 178, 178],
+        [178, 178, 178],
+        [178, 178, 178],
+        ...,
+        [178, 178, 178],
+        [178, 178, 178],
+        [178, 178, 178]],
+       [[178, 178, 178],
+        [178, 178, 178],
+        [178, 178, 178],
+        ...,
+        [178, 178, 178],
+        [178, 178, 178],
+        [178, 178, 178]],
+       ...,
+       [[155, 155, 155],
+        [155, 155, 155],
+        [155, 155, 155],
+        ...,
+        [155, 155, 155],
+        [155, 155, 155],
+        [155, 155, 155]],
+       [[155, 155, 155],
+        [155, 155, 155],
+        [155, 155, 155],
+        ...,
+        [155, 155, 155],
+        [155, 155, 155],
+        [155, 155, 155]],
+       [[155, 155, 155],
+        [155, 155, 155],
+        [155, 155, 155],
+        ...,
+        [155, 155, 155],
+        [155, 155, 155],
+        [155, 155, 155]]], dtype=uint8)
+orig_shape: (720, 1280)
+path: '/home/leo/mts/src/coverage/Yolo/drone-detection-2-1/left0000.jpg'
+probs: None
+save_dir: 'runs/detect/predict21'
+speed: {'preprocess': 1.1267662048339844, 'inference': 26.90720558166504, 'postprocess': 33.19525718688965}]
+image 1/1 /home/leo/mts/src/coverage/Yolo/drone-detection-2-1/left0000.jpg: 384x640 2 Drones, 1.8ms
+Speed: 0.6ms preprocess, 1.8ms inference, 0.4ms postprocess per image at shape (1, 3, 384, 640)
+Results saved to [1mruns/detect/predict21
+results2:  [ultralytics.engine.results.Results object with attributes:
+boxes: ultralytics.engine.results.Boxes object
+keypoints: None
+masks: None
+names: {0: 'Drone'}
+obb: None
+orig_img: array([[[178, 178, 178],
+        [178, 178, 178],
+        [178, 178, 178],
+        ...,
+        [178, 178, 178],
+        [178, 178, 178],
+        [178, 178, 178]],
+       [[178, 178, 178],
+        [178, 178, 178],
+        [178, 178, 178],
+        ...,
+        [178, 178, 178],
+        [178, 178, 178],
+        [178, 178, 178]],
+       [[178, 178, 178],
+        [178, 178, 178],
+        [178, 178, 178],
+        ...,
+        [178, 178, 178],
+        [178, 178, 178],
+        [178, 178, 178]],
+       ...,
+       [[155, 155, 155],
+        [155, 155, 155],
+        [155, 155, 155],
+        ...,
+        [155, 155, 155],
+        [155, 155, 155],
+        [155, 155, 155]],
+       [[155, 155, 155],
+        [155, 155, 155],
+        [155, 155, 155],
+        ...,
+        [155, 155, 155],
+        [155, 155, 155],
+        [155, 155, 155]],
+       [[155, 155, 155],
+        [155, 155, 155],
+        [155, 155, 155],
+        ...,
+        [155, 155, 155],
+        [155, 155, 155],
+        [155, 155, 155]]], dtype=uint8)
+orig_shape: (720, 1280)
+path: '/home/leo/mts/src/coverage/Yolo/drone-detection-2-1/left0000.jpg'
+probs: None
+save_dir: 'runs/detect/predict21'

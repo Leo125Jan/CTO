@@ -1,0 +1,208 @@
+{
+    "os": "Linux-5.15.0-107-generic-x86_64-with-glibc2.29",
+    "python": "3.8.10",
+    "heartbeatAt": "2024-05-17T06:13:42.727903",
+    "startedAt": "2024-05-17T06:13:41.508784",
+    "docker": null,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "detect.py",
+    "codePathLocal": "detect.py",
+    "codePath": "coverage/Yolo/detect.py",
+    "git": {
+        "remote": null,
+        "commit": null
+    },
+    "email": "leomagic170@gmail.com",
+    "root": "/home/leo/mts/src",
+    "host": "leo-System-Product-Name",
+    "username": "leo",
+    "executable": "/usr/bin/python3",
+    "cpu_count": 24,
+    "cpu_count_logical": 32,
+    "cpu_freq": {
+        "current": 3299.87153125,
+        "min": 800.0,
+        "max": 4937.5
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 2482.581,
+            "min": 800.0,
+            "max": 5500.0
+        },
+        {
+            "current": 4203.435,
+            "min": 800.0,
+            "max": 5500.0
+        },
+        {
+            "current": 3686.097,
+            "min": 800.0,
+            "max": 5500.0
+        },
+        {
+            "current": 1487.263,
+            "min": 800.0,
+            "max": 5500.0
+        },
+        {
+            "current": 3282.084,
+            "min": 800.0,
+            "max": 5500.0
+        },
+        {
+            "current": 2637.069,
+            "min": 800.0,
+            "max": 5500.0
+        },
+        {
+            "current": 1987.11,
+            "min": 800.0,
+            "max": 5500.0
+        },
+        {
+            "current": 1886.258,
+            "min": 800.0,
+            "max": 5500.0
+        },
+        {
+            "current": 4674.516,
+            "min": 800.0,
+            "max": 5800.0
+        },
+        {
+            "current": 1446.762,
+            "min": 800.0,
+            "max": 5800.0
+        },
+        {
+            "current": 3415.124,
+            "min": 800.0,
+            "max": 5800.0
+        },
+        {
+            "current": 1696.58,
+            "min": 800.0,
+            "max": 5800.0
+        },
+        {
+            "current": 2454.204,
+            "min": 800.0,
+            "max": 5500.0
+        },
+        {
+            "current": 1796.511,
+            "min": 800.0,
+            "max": 5500.0
+        },
+        {
+            "current": 2076.308,
+            "min": 800.0,
+            "max": 5500.0
+        },
+        {
+            "current": 1865.185,
+            "min": 800.0,
+            "max": 5500.0
+        },
+        {
+            "current": 2865.742,
+            "min": 800.0,
+            "max": 4300.0
+        },
+        {
+            "current": 986.251,
+            "min": 800.0,
+            "max": 4300.0
+        },
+        {
+            "current": 1188.15,
+            "min": 800.0,
+            "max": 4300.0
+        },
+        {
+            "current": 2263.088,
+            "min": 800.0,
+            "max": 4300.0
+        },
+        {
+            "current": 1569.972,
+            "min": 800.0,
+            "max": 4300.0
+        },
+        {
+            "current": 2240.462,
+            "min": 800.0,
+            "max": 4300.0
+        },
+        {
+            "current": 1397.13,
+            "min": 800.0,
+            "max": 4300.0
+        },
+        {
+            "current": 2994.309,
+            "min": 800.0,
+            "max": 4300.0
+        },
+        {
+            "current": 1263.417,
+            "min": 800.0,
+            "max": 4300.0
+        },
+        {
+            "current": 799.519,
+            "min": 800.0,
+            "max": 4300.0
+        },
+        {
+            "current": 1253.255,
+            "min": 800.0,
+            "max": 4300.0
+        },
+        {
+            "current": 2124.182,
+            "min": 800.0,
+            "max": 4300.0
+        },
+        {
+            "current": 1630.904,
+            "min": 800.0,
+            "max": 4300.0
+        },
+        {
+            "current": 1138.526,
+            "min": 800.0,
+            "max": 4300.0
+        },
+        {
+            "current": 925.314,
+            "min": 800.0,
+            "max": 4300.0
+        },
+        {
+            "current": 801.018,
+            "min": 800.0,
+            "max": 4300.0
+        }
+    ],
+    "disk": {
+        "/": {
+            "total": 915.3223114013672,
+            "used": 522.8563079833984
+        }
+    },
+    "gpu": "NVIDIA GeForce RTX 3070 Ti",
+    "gpu_count": 1,
+    "gpu_devices": [
+        {
+            "name": "NVIDIA GeForce RTX 3070 Ti",
+            "memory_total": 8589934592
+        }
+    ],
+    "memory": {
+        "total": 62.50286102294922
+    }
+}

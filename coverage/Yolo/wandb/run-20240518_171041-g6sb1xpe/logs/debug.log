@@ -1,0 +1,38 @@
+2024-05-18 17:10:41,218 INFO    MainThread:236514 [wandb_setup.py:_flush():76] Current SDK version is 0.15.11
+2024-05-18 17:10:41,219 INFO    MainThread:236514 [wandb_setup.py:_flush():76] Configure stats pid to 236514
+2024-05-18 17:10:41,219 INFO    MainThread:236514 [wandb_setup.py:_flush():76] Loading settings from /home/leo/.config/wandb/settings
+2024-05-18 17:10:41,219 INFO    MainThread:236514 [wandb_setup.py:_flush():76] Loading settings from /home/leo/mts/src/coverage/Yolo/wandb/settings
+2024-05-18 17:10:41,219 INFO    MainThread:236514 [wandb_setup.py:_flush():76] Loading settings from environment variables: {}
+2024-05-18 17:10:41,219 INFO    MainThread:236514 [wandb_setup.py:_flush():76] Applying setup settings: {'_disable_service': False}
+2024-05-18 17:10:41,219 INFO    MainThread:236514 [wandb_setup.py:_flush():76] Inferring run settings from compute environment: {'program_relpath': 'coverage/Yolo/detect.py', 'program_abspath': '/home/leo/mts/src/coverage/Yolo/detect.py', 'program': 'detect.py'}
+2024-05-18 17:10:41,219 INFO    MainThread:236514 [wandb_init.py:_log_setup():528] Logging user logs to /home/leo/mts/src/coverage/Yolo/wandb/run-20240518_171041-g6sb1xpe/logs/debug.log
+2024-05-18 17:10:41,219 INFO    MainThread:236514 [wandb_init.py:_log_setup():529] Logging internal logs to /home/leo/mts/src/coverage/Yolo/wandb/run-20240518_171041-g6sb1xpe/logs/debug-internal.log
+2024-05-18 17:10:41,219 INFO    MainThread:236514 [wandb_init.py:init():568] calling init triggers
+2024-05-18 17:10:41,219 INFO    MainThread:236514 [wandb_init.py:init():575] wandb.init called with sweep_config: {}
+config: {}
+2024-05-18 17:10:41,219 INFO    MainThread:236514 [wandb_init.py:init():618] starting backend
+2024-05-18 17:10:41,219 INFO    MainThread:236514 [wandb_init.py:init():622] setting up manager
+2024-05-18 17:10:41,219 INFO    MainThread:236514 [backend.py:_multiprocessing_setup():105] multiprocessing start_methods=fork,spawn,forkserver, using: spawn
+2024-05-18 17:10:41,220 INFO    MainThread:236514 [wandb_init.py:init():628] backend started and connected
+2024-05-18 17:10:41,221 INFO    MainThread:236514 [wandb_init.py:init():720] updated telemetry
+2024-05-18 17:10:41,221 INFO    MainThread:236514 [wandb_init.py:init():753] communicating run to backend with 90.0 second timeout
+2024-05-18 17:10:41,657 INFO    MainThread:236514 [wandb_run.py:_on_init():2220] communicating current version
+2024-05-18 17:10:41,830 INFO    MainThread:236514 [wandb_run.py:_on_init():2229] got version response upgrade_message: "wandb version 0.17.0 is available!  To upgrade, please run:\n $ pip install wandb --upgrade"
+
+2024-05-18 17:10:41,830 INFO    MainThread:236514 [wandb_init.py:init():804] starting run threads in backend
+2024-05-18 17:10:42,563 INFO    MainThread:236514 [wandb_run.py:_console_start():2199] atexit reg
+2024-05-18 17:10:42,563 INFO    MainThread:236514 [wandb_run.py:_redirect():2054] redirect: wrap_raw
+2024-05-18 17:10:42,563 INFO    MainThread:236514 [wandb_run.py:_redirect():2119] Wrapping output streams.
+2024-05-18 17:10:42,564 INFO    MainThread:236514 [wandb_run.py:_redirect():2144] Redirects installed.
+2024-05-18 17:10:42,565 INFO    MainThread:236514 [wandb_init.py:init():845] run started, returning control to user process
+2024-05-18 17:13:20,507 INFO    MainThread:236514 [wandb_run.py:_config_callback():1324] config_cb ('_wandb', 'visualize', 'curves/Precision-Recall(B)') {'panel_type': 'Vega2', 'panel_config': {'panelDefId': 'wandb/area-under-curve/v0', 'fieldSettings': {'x': 'x', 'y': 'y', 'class': 'class'}, 'stringSettings': {'title': 'Precision-Recall(B)', 'x-axis-title': 'Recall', 'y-axis-title': 'Precision'}, 'transform': {'name': 'tableWithLeafColNames'}, 'userQuery': {'queryFields': [{'name': 'runSets', 'args': [{'name': 'runSets', 'value': '${runSets}'}], 'fields': [{'name': 'id', 'fields': []}, {'name': 'name', 'fields': []}, {'name': '_defaultColorIndex', 'fields': []}, {'name': 'summaryTable', 'args': [{'name': 'tableKey', 'value': 'curves/Precision-Recall(B)_table'}], 'fields': []}]}]}}} None
+2024-05-18 17:13:20,724 INFO    MainThread:236514 [wandb_run.py:_config_callback():1324] config_cb ('_wandb', 'visualize', 'curves/F1-Confidence(B)') {'panel_type': 'Vega2', 'panel_config': {'panelDefId': 'wandb/area-under-curve/v0', 'fieldSettings': {'x': 'x', 'y': 'y', 'class': 'class'}, 'stringSettings': {'title': 'F1-Confidence(B)', 'x-axis-title': 'Confidence', 'y-axis-title': 'F1'}, 'transform': {'name': 'tableWithLeafColNames'}, 'userQuery': {'queryFields': [{'name': 'runSets', 'args': [{'name': 'runSets', 'value': '${runSets}'}], 'fields': [{'name': 'id', 'fields': []}, {'name': 'name', 'fields': []}, {'name': '_defaultColorIndex', 'fields': []}, {'name': 'summaryTable', 'args': [{'name': 'tableKey', 'value': 'curves/F1-Confidence(B)_table'}], 'fields': []}]}]}}} None
+2024-05-18 17:13:20,938 INFO    MainThread:236514 [wandb_run.py:_config_callback():1324] config_cb ('_wandb', 'visualize', 'curves/Precision-Confidence(B)') {'panel_type': 'Vega2', 'panel_config': {'panelDefId': 'wandb/area-under-curve/v0', 'fieldSettings': {'x': 'x', 'y': 'y', 'class': 'class'}, 'stringSettings': {'title': 'Precision-Confidence(B)', 'x-axis-title': 'Confidence', 'y-axis-title': 'Precision'}, 'transform': {'name': 'tableWithLeafColNames'}, 'userQuery': {'queryFields': [{'name': 'runSets', 'args': [{'name': 'runSets', 'value': '${runSets}'}], 'fields': [{'name': 'id', 'fields': []}, {'name': 'name', 'fields': []}, {'name': '_defaultColorIndex', 'fields': []}, {'name': 'summaryTable', 'args': [{'name': 'tableKey', 'value': 'curves/Precision-Confidence(B)_table'}], 'fields': []}]}]}}} None
+2024-05-18 17:13:21,137 INFO    MainThread:236514 [wandb_run.py:_config_callback():1324] config_cb ('_wandb', 'visualize', 'curves/Recall-Confidence(B)') {'panel_type': 'Vega2', 'panel_config': {'panelDefId': 'wandb/area-under-curve/v0', 'fieldSettings': {'x': 'x', 'y': 'y', 'class': 'class'}, 'stringSettings': {'title': 'Recall-Confidence(B)', 'x-axis-title': 'Confidence', 'y-axis-title': 'Recall'}, 'transform': {'name': 'tableWithLeafColNames'}, 'userQuery': {'queryFields': [{'name': 'runSets', 'args': [{'name': 'runSets', 'value': '${runSets}'}], 'fields': [{'name': 'id', 'fields': []}, {'name': 'name', 'fields': []}, {'name': '_defaultColorIndex', 'fields': []}, {'name': 'summaryTable', 'args': [{'name': 'tableKey', 'value': 'curves/Recall-Confidence(B)_table'}], 'fields': []}]}]}}} None
+2024-05-18 17:13:21,344 INFO    MainThread:236514 [wandb_run.py:_finish():1934] finishing run cae1/yolov8/g6sb1xpe
+2024-05-18 17:13:21,344 INFO    MainThread:236514 [wandb_run.py:_atexit_cleanup():2168] got exitcode: 0
+2024-05-18 17:13:21,344 INFO    MainThread:236514 [wandb_run.py:_restore():2151] restore
+2024-05-18 17:13:21,344 INFO    MainThread:236514 [wandb_run.py:_restore():2157] restore done
+2024-05-18 17:13:37,678 INFO    MainThread:236514 [wandb_run.py:_footer_history_summary_info():3554] rendering history
+2024-05-18 17:13:37,679 INFO    MainThread:236514 [wandb_run.py:_footer_history_summary_info():3586] rendering summary
+2024-05-18 17:13:37,680 INFO    MainThread:236514 [wandb_run.py:_footer_sync_info():3513] logging synced files

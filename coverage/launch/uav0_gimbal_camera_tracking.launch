@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<launch>
+
+	<group ns="uav0">
+		<node pkg="coverage" name="gimbal_control" type="gimbal_control" output="screen" />
+		<rosparam file="$(find coverage)/config/params_ibvs.yaml"/>
+		<param name="self_name" value="uav0" />
+		<param name="target_name" value="/uav0/Ttarget"/>
+	</group>
+
+	<group ns="uav4">
+		<node pkg="coverage" name="gimbal_control" type="gimbal_control" output="screen" />
+		<rosparam file="$(find coverage)/config/params_ibvs.yaml"/>
+		<param name="self_name" value="uav4" />
+		<param name="target_name" value="/uav4/Ttarget"/>
+	</group>
+
+	<group ns="uav1">
+		<node pkg="coverage" name="gimbal_control" type="gimbal_control" output="screen" />
+		<rosparam file="$(find coverage)/config/params_ibvs.yaml"/>
+		<param name="self_name" value="uav1" />
+		<param name="target_name" value="/uav1/Ttarget"/>
+	</group>
+
+	<group ns="uav2">
+		<node pkg="coverage" name="gimbal_control" type="gimbal_control" output="screen" />
+		<rosparam file="$(find coverage)/config/params_ibvs.yaml"/>
+		<param name="self_name" value="uav2" />
+		<param name="target_name" value="/uav2/Ttarget"/>
+	</group>
+
+		<group ns="uav3">
+		<node pkg="coverage" name="gimbal_control" type="gimbal_control" output="screen" />
+		<rosparam file="$(find coverage)/config/params_ibvs.yaml"/>
+		<param name="self_name" value="uav3" />
+		<param name="target_name" value="/uav3/Ttarget"/>
+	</group>
+	
+</launch>
+

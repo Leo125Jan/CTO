@@ -1,0 +1,12 @@
+names:
+- drone
+nc: 1
+roboflow:
+  license: CC BY 4.0
+  project: drone-detection-2-xzagh
+  url: https://universe.roboflow.com/drone-detection-izrum/drone-detection-2-xzagh/dataset/1
+  version: 1
+  workspace: drone-detection-izrum
+test: /home/leo/mts/src/coverage/Yolo/drone-detection-2-1/test/images
+train: /home/leo/mts/src/coverage/Yolo/drone-detection-2-1/train/images
+val: /home/leo/mts/src/coverage/Yolo/drone-detection-2-1/valid/images

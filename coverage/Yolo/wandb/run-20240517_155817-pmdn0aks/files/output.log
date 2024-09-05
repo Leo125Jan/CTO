@@ -1,0 +1,11 @@
+[31m[1mrequirements:[39m[22m Ultralytics requirement ['lapx>=0.5.2'] not found, attempting AutoUpdate...
+Collecting lapx>=0.5.2
+  Downloading lapx-0.5.9-cp38-cp38-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl (1.7 MB)
+Requirement already satisfied: numpy>=1.21.6 in /home/leo/.local/lib/python3.8/site-packages (from lapx>=0.5.2) (1.24.3)
+Installing collected packages: lapx
+Successfully installed lapx-0.5.9
+[31m[1mrequirements:[39m[22m AutoUpdate success ✅ 1.5s, installed 1 package: ['lapx>=0.5.2']
+[31m[1mrequirements:[39m[22m ⚠️ [1mRestart runtime or rerun command for updates to take effect
+WARNING ⚠️ Environment does not support cv2.imshow() or PIL Image.show()
+OpenCV(4.8.0) /io/opencv/modules/highgui/src/window.cpp:1272: error: (-2:Unspecified error) The function is not implemented. Rebuild the library with Windows, GTK+ 2.x or Cocoa support. If you are on Ubuntu or Debian, install libgtk2.0-dev and pkg-config, then re-run cmake or configure script in function 'cvShowImage'
+image 1/1 /home/leo/mts/src/coverage/Yolo/drone-detection-2-1/left0000.jpg: 384x640 2 drones, 27.1ms

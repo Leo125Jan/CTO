@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+
+<launch>
+        <arg name="vehicle" default="uav"/>
+        <arg name="ID" default="0"/>
+
+        <group ns="uav0">
+                <node name="gimbal_control_typ" pkg="coverage" type="gimbal_control_typ" output="screen"></node>
+                <param name="Self_ID" value="0" />
+                <param name="Target_ID" value="6"/>
+        </group>
+        <group ns="uav4">
+                <node name="gimbal_control_typ" pkg="coverage" type="gimbal_control_typ" output="screen"></node>
+                <param name="Self_ID" value="4" />
+                <param name="Target_ID" value="5"/>
+        </group>
+        <group ns="uav2">
+                <node name="gimbal_control_typ" pkg="coverage" type="gimbal_control_typ" output="screen"></node>
+                <param name="Self_ID" value="2" />
+                <param name="Target_ID" value="8"/>
+        </group>
+        <group ns="uav1">
+                <node name="gimbal_control_typ" pkg="coverage" type="gimbal_control_typ" output="screen"></node>
+                <param name="Self_ID" value="1" />
+                <param name="Target_ID" value="7"/>
+        </group>
+        <group ns="uav3">
+                <node name="gimbal_control_typ" pkg="coverage" type="gimbal_control_typ" output="screen"></node>
+                <param name="Self_ID" value="3" />
+                <param name="Target_ID" value="9"/>
+        </group>
+</launch>
